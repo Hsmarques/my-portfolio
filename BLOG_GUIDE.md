@@ -4,22 +4,19 @@ This guide explains how to add new blog posts to your SolidJS Start website.
 
 ## Current Implementation
 
-The blog system is currently implemented with hardcoded posts in the route files. This is a simple approach that works well for a personal blog with infrequent updates.
+The blog system is currently implemented with hardcoded posts in a shared data file (`src/lib/blogData.ts`). This is a simple approach that works well for a personal blog with infrequent updates.
 
 ## Adding a New Blog Post
 
 ### Step 1: Add the Post Data
 
-1. Open `src/routes/blog/[slug].tsx`
-2. Find the `getBlogPost` function
-3. Add a new entry to the `posts` object:
+1. Open `src/lib/blogData.ts`
+2. Find the `blogPosts` array
+3. Add a new blog post object to the array:
 
 ```typescript
-const posts: Record<string, BlogPost> = {
-  "welcome": {
-    // ... existing welcome post
-  },
-  "your-new-post-slug": {
+export const blogPosts: BlogPost[] = [
+  {
     slug: "your-new-post-slug",
     title: "Your Post Title",
     date: "2024-01-20", // Use YYYY-MM-DD format
@@ -39,36 +36,20 @@ Your post content goes here...
 
 You can use emojis and any text formatting you need.
     `
+  },
+  {
+    slug: "welcome",
+    title: "Welcome to my blog!",
+    date: "2024-01-15",
+    excerpt: "This is my first blog post. Welcome to my corner of the internet where I share my thoughts on development, technology, and life.",
+    content: `...` // existing content
   }
-};
+];
 ```
 
-### Step 2: Add to Blog Index
+**Note:** Posts are automatically sorted by date (newest first), so you can add new posts anywhere in the array.
 
-1. Open `src/routes/blog.tsx`
-2. Find the `getBlogPosts` function
-3. Add your new post to the array:
-
-```typescript
-const getBlogPosts = async (): Promise<BlogPost[]> => {
-  return [
-    {
-      slug: "your-new-post-slug",
-      title: "Your Post Title", 
-      date: "2024-01-20",
-      excerpt: "A brief description that appears on the blog index page"
-    },
-    {
-      slug: "welcome",
-      title: "Welcome to my blog!",
-      date: "2024-01-15",
-      excerpt: "This is my first blog post. Welcome to my corner of the internet where I share my thoughts on development, technology, and life."
-    }
-  ];
-};
-```
-
-**Note:** Posts are displayed in the order they appear in the array, so put newer posts first.
+That's it! No need to update multiple files - both the blog index and individual post pages will automatically pick up the new post.
 
 ## Markdown Support
 
@@ -101,6 +82,8 @@ For a more scalable solution, consider:
 
 ```
 src/
+  lib/
+    blogData.ts       # Shared blog data and functions
   routes/
     blog.tsx          # Blog index page (lists all posts)
     blog/

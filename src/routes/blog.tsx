@@ -1,24 +1,6 @@
 import { For } from "solid-js";
 import { createAsync } from "@solidjs/router";
-
-interface BlogPost {
-  slug: string;
-  title: string;
-  date: string;
-  excerpt: string;
-}
-
-// In a real app, this would fetch from a CMS or markdown files
-const getBlogPosts = async (): Promise<BlogPost[]> => {
-  return [
-    {
-      slug: "welcome",
-      title: "Welcome to my blog!",
-      date: "2024-01-15",
-      excerpt: "This is my first blog post. Welcome to my corner of the internet where I share my thoughts on development, technology, and life."
-    }
-  ];
-};
+import { getBlogPosts, type BlogPost } from "~/lib/blogData";
 
 export default function Blog() {
   const posts = createAsync(() => getBlogPosts());
