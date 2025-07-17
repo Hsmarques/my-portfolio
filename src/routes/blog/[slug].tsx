@@ -1,7 +1,7 @@
 import { useParams } from "@solidjs/router";
 import { createAsync } from "@solidjs/router";
 import { Show } from "solid-js";
-import { getBlogPost, type BlogPost } from "~/lib/blogData";
+import { getBlogPost, type BlogPost } from "../../lib/blogData";
 
 // Simple markdown parser
 function parseMarkdown(content: string): string {

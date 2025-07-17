@@ -1,6 +1,6 @@
-import { For } from "solid-js";
+import { For, Show, Suspense } from "solid-js";
 import { createAsync } from "@solidjs/router";
-import { getBlogPosts, type BlogPost } from "~/lib/blogData";
+import { getBlogPosts, type BlogPost } from "../lib/blogData";
 
 export default function Blog() {
   const posts = createAsync(() => getBlogPosts());
@@ -13,8 +13,15 @@ export default function Blog() {
       </div>
       
       <div class="space-y-8">
-        <For each={posts()}>
-          {(post) => (
+        <Suspense fallback={<div class="text-gray-400 text-center">Loading posts...</div>}>
+          <Show when={posts() && posts()!.length > 0} fallback={
+            <div class="text-center text-gray-400">
+              <p>No blog posts available yet.</p>
+              <p class="text-sm mt-2">Check back soon for new content!</p>
+            </div>
+          }>
+            <For each={posts()}>
+              {(post) => (
             <article class="bg-gray-900/50 rounded-lg p-6 border border-gray-700 hover:border-gray-600 transition-colors">
               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
                 <h2 class="text-xl font-semibold text-gray-100 hover:text-blue-400 transition-colors">
@@ -38,8 +45,10 @@ export default function Blog() {
                 Read more →
               </a>
             </article>
-          )}
-        </For>
+               )}
+             </For>
+           </Show>
+         </Suspense>
       </div>
     </main>
   );
