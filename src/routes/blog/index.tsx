@@ -1,9 +1,15 @@
 import { For } from "solid-js";
-import { createAsync } from "@solidjs/router";
-import { getBlogPosts, type BlogPost } from "~/lib/blogData";
 
 export default function Blog() {
-  const posts = createAsync(() => getBlogPosts());
+  // Static blog posts for debugging
+  const posts = [
+    {
+      slug: "welcome",
+      title: "Welcome to my blog!",
+      date: "2024-01-15",
+      excerpt: "This is my first blog post. Welcome to my corner of the internet where I share my thoughts on development, technology, and life."
+    }
+  ];
 
   return (
     <main class="max-w-4xl mx-auto px-4 py-8">
@@ -13,7 +19,7 @@ export default function Blog() {
       </div>
       
       <div class="space-y-8">
-        <For each={posts()}>
+        <For each={posts}>
           {(post) => (
             <article class="bg-gray-900/50 rounded-lg p-6 border border-gray-700 hover:border-gray-600 transition-colors">
               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
