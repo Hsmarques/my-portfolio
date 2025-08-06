@@ -5,6 +5,7 @@ import { inject } from "@vercel/analytics";
 import { injectSpeedInsights } from "@vercel/speed-insights";
 
 import Nav from "~/components/Nav";
+import Footer from "~/components/Footer";
 
 import "./app.css";
 
@@ -18,6 +19,7 @@ export default function App() {
         <>
           <Nav />
           <Suspense>{props.children}</Suspense>
+          <Footer />
         </>
       )}
     >
