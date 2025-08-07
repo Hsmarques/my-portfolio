@@ -18,3 +18,7 @@ body {
   background: rgb(var(--background-rgb));
   color: rgb(var(--foreground-rgb));
 }
+
+img { image-rendering: auto; -webkit-font-smoothing: antialiased; }
+
+.container { max-width: 72rem; margin: 0 auto; }
