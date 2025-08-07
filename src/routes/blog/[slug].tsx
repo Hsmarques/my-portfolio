@@ -108,7 +108,7 @@ Happy coding! 🚀
           <p class="text-gray-400 mb-8">The blog post you're looking for doesn't exist.</p>
           <a 
             href="/blog" 
-            class="inline-block bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-4 rounded transition-colors"
+            class="inline-block bg-accent-600 hover:bg-accent-500 text-white font-medium py-2 px-4 rounded transition-colors"
           >
             Back to Blog
           </a>
@@ -124,7 +124,7 @@ Happy coding! 🚀
         <div class="mb-4">
           <a 
             href="/blog" 
-            class="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
+            class="text-accent-400 hover:text-accent-300 text-sm font-medium transition-colors"
           >
             ← Back to Blog
           </a>
@@ -144,11 +144,11 @@ Happy coding! 🚀
         class="prose prose-invert prose-gray max-w-none
           prose-headings:text-gray-100 
           prose-p:text-gray-300 prose-p:leading-relaxed
-          prose-a:text-blue-400 prose-a:no-underline hover:prose-a:text-blue-300
+          prose-a:text-accent-400 prose-a:no-underline hover:prose-a:text-accent-300
           prose-strong:text-gray-200
-          prose-code:text-blue-300 prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded
+          prose-code:text-accent-300 prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded
           prose-pre:bg-gray-800 prose-pre:border prose-pre:border-gray-700
-          prose-blockquote:border-l-blue-400 prose-blockquote:text-gray-300
+          prose-blockquote:border-l-accent-400 prose-blockquote:text-gray-300
           prose-ul:text-gray-300 prose-ol:text-gray-300
           prose-li:text-gray-300
           prose-hr:border-gray-700"

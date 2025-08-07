@@ -33,7 +33,7 @@ export default function Home() {
         <h2 class="text-xl text-gray-200 mb-4">Recent work</h2>
         <Gallery photos={preview} />
         <div class="text-center mt-6">
-          <a href="/photos" class="text-blue-400 hover:text-blue-300 font-medium">See full gallery →</a>
+          <a href="/photos" class="text-accent-400 hover:text-accent-300 font-medium">See full gallery →</a>
         </div>
       </section>
     </main>

@@ -48,7 +48,7 @@ export default function Gallery(props: { photos: Photo[] }) {
                   };
                   return (
                     <button
-                      class="group block w-full overflow-hidden rounded-lg border border-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      class="group block w-full overflow-hidden rounded-lg border border-gray-800 focus:outline-none focus:ring-2 focus:ring-accent-400"
                       onClick={() => open(index())}
                       aria-label={`Open photo ${photo.alt}`}
                     >

@@ -26,7 +26,7 @@ export default function Blog() {
           {(post) => (
             <article class="bg-gray-900/50 rounded-lg p-6 border border-gray-700 hover:border-gray-600 transition-colors">
               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
-                <h2 class="text-xl font-semibold text-gray-100 hover:text-blue-400 transition-colors">
+                <h2 class="text-xl font-semibold text-gray-100 hover:text-accent-400 transition-colors">
                   <a href={`/blog/${post.slug}`} class="block">
                     {post.title}
                   </a>
@@ -42,7 +42,7 @@ export default function Blog() {
               <p class="text-gray-400 leading-relaxed">{post.excerpt}</p>
               <a 
                 href={`/blog/${post.slug}`}
-                class="inline-block mt-4 text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
+                class="inline-block mt-4 text-accent-400 hover:text-accent-300 text-sm font-medium transition-colors"
               >
                 Read more →
               </a>

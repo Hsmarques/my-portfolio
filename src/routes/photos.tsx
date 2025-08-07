@@ -1,10 +1,21 @@
-import { For, Show, createMemo, createSignal } from "solid-js";
+import { For, Show, createMemo, createResource, createSignal } from "solid-js";
 import Gallery from "~/components/Gallery";
-import { allTags, photos } from "~/lib/photos";
+import staticPhotos, { allTags } from "~/lib/photos";
+
+async function fetchPhotos() {
+  try {
+    const res = await fetch("/api/photos");
+    if (!res.ok) throw new Error("Failed to fetch");
+    return (await res.json()) as typeof staticPhotos;
+  } catch {
+    return staticPhotos;
+  }
+}
 
 export default function PhotosPage() {
   const [activeTags, setActiveTags] = createSignal<Set<string>>(new Set());
   const [query, setQuery] = createSignal("");
+  const [photos] = createResource(fetchPhotos);
 
   const toggleTag = (tag: string) => {
     setActiveTags((prev) => {
@@ -18,10 +29,16 @@ export default function PhotosPage() {
   const filtered = createMemo(() => {
     const selected = activeTags();
     const q = query().trim().toLowerCase();
+    const list = photos() || staticPhotos;
 
-    return photos.filter((p) => {
-      const matchesTags = selected.size === 0 || p.tags.some((t) => selected.has(t));
-      const matchesQuery = q === "" || p.alt.toLowerCase().includes(q) || p.tags.some((t) => t.includes(q));
+    return list.filter((p) => {
+      const matchesTags = selected.size === 0 || p.tags?.some((t: string) => selected.has(t));
+      const matchesQuery =
+        q === "" ||
+        p.alt?.toLowerCase().includes(q) ||
+        (p.tags || []).some((t: string) => t.includes(q)) ||
+        (p.exif?.lens || "").toLowerCase().includes(q) ||
+        (p.exif?.camera || "").toLowerCase().includes(q);
       return matchesTags && matchesQuery;
     });
   });
@@ -38,7 +55,7 @@ export default function PhotosPage() {
           <For each={allTags}>
             {(tag) => (
               <button
-                class={`px-3 py-1 rounded-full border ${activeTags().has(tag) ? "bg-blue-600 border-blue-500 text-white" : "border-gray-700 text-gray-300 hover:border-gray-600"}`}
+                class={`px-3 py-1 rounded-full border ${activeTags().has(tag) ? "bg-accent-600 border-accent-500 text-white" : "border-gray-700 text-gray-300 hover:border-gray-600"}`}
                 onClick={() => toggleTag(tag)}
               >
                 #{tag}
@@ -50,14 +67,16 @@ export default function PhotosPage() {
           <input
             value={query()}
             onInput={(e) => setQuery(e.currentTarget.value)}
-            placeholder="Search captions or tags"
-            class="w-full bg-black/30 border border-gray-700 rounded px-3 py-2 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Search captions, tags, or gear"
+            class="w-full bg-black/30 border border-gray-700 rounded px-3 py-2 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent-500"
           />
         </div>
       </section>
 
-      <Show when={filtered().length > 0} fallback={<p class="text-gray-400">No photos match your filters.</p>}>
-        <Gallery photos={filtered()} />
+      <Show when={!photos.loading} fallback={<p class="text-gray-400">Loading photos…</p>}>
+        <Show when={filtered().length > 0} fallback={<p class="text-gray-400">No photos match your filters.</p>}>
+          <Gallery photos={filtered()} />
+        </Show>
       </Show>
     </main>
   );
