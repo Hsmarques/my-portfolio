@@ -2,11 +2,21 @@ import { For, Show, createMemo, createResource, createSignal } from "solid-js";
 import Gallery from "~/components/Gallery";
 import staticPhotos, { allTags } from "~/lib/photos";
 
+async function fetchManifest() {
+  try {
+    const res = await fetch("/photos-manifest.json", { cache: "no-cache" });
+    if (res.ok) return await res.json();
+  } catch {}
+  return null;
+}
+
 async function fetchPhotos() {
+  const manifest = await fetchManifest();
+  if (manifest) return manifest;
   try {
     const res = await fetch("/api/photos");
     if (!res.ok) throw new Error("Failed to fetch");
-    return (await res.json()) as typeof staticPhotos;
+    return await res.json();
   } catch {
     return staticPhotos;
   }
@@ -31,14 +41,14 @@ export default function PhotosPage() {
     const q = query().trim().toLowerCase();
     const list = photos() || staticPhotos;
 
-    return list.filter((p) => {
-      const matchesTags = selected.size === 0 || p.tags?.some((t: string) => selected.has(t));
+    return list.filter((p: any) => {
+      const matchesTags = selected.size === 0 || (p.tags || []).some((t: string) => selected.has(t));
       const matchesQuery =
         q === "" ||
-        p.alt?.toLowerCase().includes(q) ||
+        (p.alt || "").toLowerCase().includes(q) ||
         (p.tags || []).some((t: string) => t.includes(q)) ||
-        (p.exif?.lens || "").toLowerCase().includes(q) ||
-        (p.exif?.camera || "").toLowerCase().includes(q);
+        ((p.exif?.lens || "").toLowerCase().includes(q)) ||
+        ((p.exif?.camera || "").toLowerCase().includes(q));
       return matchesTags && matchesQuery;
     });
   });

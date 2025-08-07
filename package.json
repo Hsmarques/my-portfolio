@@ -3,11 +3,13 @@
   "type": "module",
   "scripts": {
     "dev": "vinxi dev",
+    "prebuild": "node scripts/generate-photos-manifest.mjs",
     "build": "vinxi build",
     "start": "vinxi start",
     "optimize:photos": "node scripts/optimize-images.mjs",
     "optimize:photos:max1600": "MAX_WIDTH=1600 QUALITY=80 node scripts/optimize-images.mjs",
-    "optimize:photos:1080p": "MAX_WIDTH=1920 MAX_HEIGHT=1080 QUALITY=80 node scripts/optimize-images.mjs"
+    "optimize:photos:1080p": "MAX_WIDTH=1920 MAX_HEIGHT=1080 QUALITY=80 node scripts/optimize-images.mjs",
+    "generate:photos-manifest": "node scripts/generate-photos-manifest.mjs"
   },
   "dependencies": {
     "@solidjs/router": "^0.15.0",
