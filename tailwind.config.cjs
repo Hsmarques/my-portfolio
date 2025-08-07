@@ -14,7 +14,8 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Cantarell", "Noto Sans", "Ubuntu", "Helvetica Neue", "Arial", "sans-serif"]
+        sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Cantarell", "Noto Sans", "Ubuntu", "Helvetica Neue", "Arial", "sans-serif"],
+        serif: ["Libre Baskerville", "ui-serif", "Georgia", "Cambria", "Times New Roman", "Times", "serif"]
       }
     }
   },
