@@ -6,7 +6,8 @@ import sharp from 'sharp';
 const srcDir = path.resolve('public/photos');
 const outDir = path.resolve('public/photos-optimized');
 
-const MAX_WIDTH = parseInt(process.env.MAX_WIDTH || '2000', 10);
+const MAX_WIDTH = parseInt(process.env.MAX_WIDTH || '1920', 10);
+const MAX_HEIGHT = parseInt(process.env.MAX_HEIGHT || '1080', 10);
 const QUALITY = parseInt(process.env.QUALITY || '78', 10);
 
 async function ensureDir(dir) {
@@ -15,19 +16,17 @@ async function ensureDir(dir) {
 
 async function optimizeOne(file) {
   const srcPath = path.join(srcDir, file);
-  const outPath = path.join(outDir, file.replace(/\.(jpe?g|png|tiff?)$/i, '.webp'));
+  const outFile = file.replace(/\.(jpe?g|png|tiff?)$/i, '.webp');
+  const outPath = path.join(outDir, outFile);
   const image = sharp(srcPath);
   const meta = await image.metadata();
 
-  const width = meta.width || MAX_WIDTH;
-  const targetWidth = Math.min(width, MAX_WIDTH);
-
-  await image
-    .resize({ width: targetWidth, withoutEnlargement: true })
+  const info = await image
+    .resize({ width: MAX_WIDTH, height: MAX_HEIGHT, fit: 'inside', withoutEnlargement: true })
     .webp({ quality: QUALITY })
     .toFile(outPath);
 
-  return { src: srcPath, out: outPath, width: targetWidth };
+  return { src: srcPath, out: outPath, width: info.width, height: info.height, original: meta.width + 'x' + meta.height };
 }
 
 async function main() {
@@ -39,7 +38,7 @@ async function main() {
     try {
       const r = await optimizeOne(f);
       results.push(r);
-      console.log(`Optimized: ${f} -> ${path.basename(r.out)} (${r.width}px)`);
+      console.log(`Optimized: ${f} [${r.original}] -> ${path.basename(r.out)} [${r.width}x${r.height}]`);
     } catch (e) {
       console.error(`Failed: ${f}`, e.message);
     }
