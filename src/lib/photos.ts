@@ -5,6 +5,14 @@ export type Photo = {
   width: number;
   height: number;
   tags: string[];
+  exif?: {
+    camera?: string;
+    lens?: string;
+    focalLengthMm?: number;
+    aperture?: string; // e.g. f/4
+    shutter?: string;  // e.g. 1/250s
+    iso?: number;
+  };
 };
 
 // Replace these with your own images placed in `public/photos/*`
@@ -16,7 +24,15 @@ export const photos: Photo[] = [
     alt: "Soft dawn light over alpine peaks and a misty valley",
     width: 1600,
     height: 1066,
-    tags: ["landscape", "mountains", "travel"]
+    tags: ["landscape", "mountains", "travel"],
+    exif: {
+      camera: "OM System OM-3",
+      lens: "M.Zuiko 12-45mm f/4 PRO",
+      focalLengthMm: 12,
+      aperture: "f/8",
+      shutter: "1/125s",
+      iso: 200
+    }
   },
   {
     id: "forest-fog",
@@ -24,7 +40,15 @@ export const photos: Photo[] = [
     alt: "Fog rolling through a dense evergreen forest",
     width: 1600,
     height: 1067,
-    tags: ["landscape", "forest", "moody"]
+    tags: ["landscape", "forest", "moody"],
+    exif: {
+      camera: "OM System OM-3",
+      lens: "M.Zuiko 45mm f/1.8",
+      focalLengthMm: 45,
+      aperture: "f/4",
+      shutter: "1/60s",
+      iso: 400
+    }
   },
   {
     id: "desert-dunes",
@@ -32,7 +56,15 @@ export const photos: Photo[] = [
     alt: "Golden sand dunes under a dramatic sky",
     width: 1600,
     height: 1066,
-    tags: ["landscape", "desert", "travel"]
+    tags: ["landscape", "desert", "travel"],
+    exif: {
+      camera: "OM System OM-3",
+      lens: "Panasonic Leica 9mm f/1.7",
+      focalLengthMm: 9,
+      aperture: "f/5.6",
+      shutter: "1/500s",
+      iso: 200
+    }
   },
   {
     id: "city-night",

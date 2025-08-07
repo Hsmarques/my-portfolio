@@ -134,7 +134,22 @@ function Lightbox(props: {
             </button>
           </div>
           <div class="absolute bottom-2 left-2 right-2 text-center text-sm text-gray-300">
-            {photo().alt}
+            <div class="mb-1">{photo().alt}</div>
+            <Show when={photo().exif}>
+              <div class="text-xs text-gray-400">
+                <span>{photo().exif?.camera}</span>
+                <span class="mx-2">•</span>
+                <span>{photo().exif?.lens}</span>
+                <span class="mx-2">•</span>
+                <span>{photo().exif?.focalLengthMm}mm</span>
+                <span class="mx-2">•</span>
+                <span>{photo().exif?.aperture}</span>
+                <span class="mx-2">•</span>
+                <span>{photo().exif?.shutter}</span>
+                <span class="mx-2">•</span>
+                <span>ISO {photo().exif?.iso}</span>
+              </div>
+            </Show>
           </div>
         </div>
       </div>
