@@ -7,7 +7,7 @@ export default function Blog() {
       slug: "welcome",
       title: "Welcome to my blog!",
       date: "2024-01-15",
-      excerpt: "This is my first blog post. Welcome to my corner of the internet where I share my thoughts on development, technology, and life."
+      excerpt: "Behind-the-shot notes, processing, and the code powering this site."
     }
   ];
 
@@ -15,7 +15,10 @@ export default function Blog() {
     <main class="max-w-4xl mx-auto px-4 py-8">
       <div class="text-center mb-12">
         <h1 class="text-4xl font-bold text-gray-100 mb-4">Blog</h1>
-        <p class="text-gray-400 text-lg">Thoughts, stories, and ideas</p>
+        <p class="text-gray-400 text-lg">
+          Photography field notes, editing workflows, and occasional deep dives into the
+          code that runs this site.
+        </p>
       </div>
       
       <div class="space-y-8">
