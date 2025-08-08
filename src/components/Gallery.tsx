@@ -115,31 +115,64 @@ function Lightbox(props: {
   });
 
   // Drag-to-dismiss (vertical) using Pointer Events
+  const [dragStartX, setDragStartX] = createSignal<number | null>(null);
   const [dragStartY, setDragStartY] = createSignal<number | null>(null);
+  const [dragDeltaX, setDragDeltaX] = createSignal(0);
   const [dragDeltaY, setDragDeltaY] = createSignal(0);
   const [isDragging, setIsDragging] = createSignal(false);
+  const [dragDirection, setDragDirection] = createSignal<'none' | 'horizontal' | 'vertical'>('none');
+  const ACTIVATE_AXIS_THRESHOLD_PX = 16;
+  const NAV_THRESHOLD_PX = 80;
   const DISMISS_THRESHOLD_PX = 120;
 
   const onPointerDown = (e: PointerEvent) => {
     const target = e.target as HTMLElement;
     if (target.closest('[data-no-drag]')) return;
     (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+    setDragStartX(e.clientX);
     setDragStartY(e.clientY);
+    setDragDeltaX(0);
     setDragDeltaY(0);
+    setDragDirection('none');
     setIsDragging(true);
   };
 
   const onPointerMove = (e: PointerEvent) => {
-    if (!isDragging() || dragStartY() === null) return;
-    setDragDeltaY(e.clientY - (dragStartY() as number));
+    if (!isDragging() || dragStartX() === null || dragStartY() === null) return;
+    const dx = e.clientX - (dragStartX() as number);
+    const dy = e.clientY - (dragStartY() as number);
+    setDragDeltaX(dx);
+    setDragDeltaY(dy);
+
+    if (dragDirection() === 'none') {
+      if (Math.abs(dx) > ACTIVATE_AXIS_THRESHOLD_PX || Math.abs(dy) > ACTIVATE_AXIS_THRESHOLD_PX) {
+        setDragDirection(Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical');
+      }
+    }
   };
 
   const endDrag = () => {
-    const shouldDismiss = Math.abs(dragDeltaY()) > DISMISS_THRESHOLD_PX;
+    const direction = dragDirection();
+    const dx = dragDeltaX();
+    const dy = dragDeltaY();
     setIsDragging(false);
+    setDragStartX(null);
     setDragStartY(null);
+    setDragDeltaX(0);
     setDragDeltaY(0);
-    if (shouldDismiss) props.onClose();
+    setDragDirection('none');
+
+    if (direction === 'horizontal' && Math.abs(dx) > NAV_THRESHOLD_PX) {
+      if (dx > 0) {
+        props.onPrev();
+      } else {
+        props.onNext();
+      }
+      return;
+    }
+    if (direction === 'vertical' && Math.abs(dy) > DISMISS_THRESHOLD_PX) {
+      props.onClose();
+    }
   };
 
   const onPointerUp = () => endDrag();
@@ -147,7 +180,14 @@ function Lightbox(props: {
 
   const contentStyle = () => {
     if (!isDragging()) return {} as any;
+    const direction = dragDirection();
+    const dx = dragDeltaX();
     const dy = dragDeltaY();
+    if (direction === 'horizontal') {
+      const opacity = Math.max(0.8, 1 - Math.abs(dx) / 600);
+      return { transform: `translateX(${dx}px)`, opacity: String(opacity) } as any;
+    }
+    // vertical (or undecided): use Y transform
     const opacity = Math.max(0.6, 1 - Math.abs(dy) / 400);
     return { transform: `translateY(${dy}px)`, opacity: String(opacity) } as any;
   };
