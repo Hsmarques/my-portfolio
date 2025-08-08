@@ -218,11 +218,11 @@ function Lightbox(props: {
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerCancel}
       >
-        <div class="relative max-w-6xl w-full" style={contentStyle()}>
+        <div class="relative max-w-6xl w-full flex items-center justify-center" style={contentStyle()}>
           <img
             src={photo().src}
             alt={photo().alt}
-            class="max-h-dvh sm:max-h-screen max-w-[95vw] w-auto h-auto object-contain rounded-lg shadow-xl cursor-pointer"
+            class="block mx-auto max-h-dvh sm:max-h-screen max-w-[95vw] w-auto h-auto object-contain rounded-lg shadow-xl cursor-pointer"
             width={photo().width}
             height={photo().height}
             draggable={false}
