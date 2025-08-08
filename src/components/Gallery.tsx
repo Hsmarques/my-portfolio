@@ -15,8 +15,16 @@ export default function Gallery(props: { photos: Photo[] }) {
     if (e.key === "ArrowLeft") setSelectedIndex((i) => (i === null ? 0 : Math.max(i - 1, 0)));
   };
 
-  onMount(() => window.addEventListener("keydown", handleKeydown));
-  onCleanup(() => window.removeEventListener("keydown", handleKeydown));
+  onMount(() => {
+    if (typeof window !== 'undefined') {
+      window.addEventListener("keydown", handleKeydown);
+    }
+  });
+  onCleanup(() => {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener("keydown", handleKeydown);
+    }
+  });
 
   const rows = createMemo(() => {
     // Simple 3-column masonry by distributing by shortest column height
