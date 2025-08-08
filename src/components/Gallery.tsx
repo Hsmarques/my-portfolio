@@ -34,7 +34,7 @@ export default function Gallery(props: { photos: Photo[] }) {
   });
 
   return (
-    <div class="w-full">
+    <div class="w-full select-none" onContextMenu={(e) => e.preventDefault()}>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <For each={rows()}>
           {(column, colIndex) => (
@@ -59,6 +59,9 @@ export default function Gallery(props: { photos: Photo[] }) {
                         class="transition-transform duration-300 ease-out group-hover:scale-[1.02] w-full h-auto"
                         width={photo.width}
                         height={photo.height}
+                        draggable={false}
+                        onContextMenu={(e) => e.preventDefault()}
+                        onDragStart={(e) => e.preventDefault()}
                       />
                     </button>
                   );
@@ -90,8 +93,21 @@ function Lightbox(props: {
   onNext: () => void;
 }) {
   const photo = () => props.photos[props.index];
+  const exifParts = createMemo(() => {
+    const e = photo().exif;
+    if (!e) return [] as string[];
+    const parts: string[] = [];
+    if (e.camera) parts.push(e.camera);
+    if (e.lens) parts.push(e.lens);
+    if (e.focalLengthMm) parts.push(`${e.focalLengthMm}mm`);
+    if (e.aperture) parts.push(e.aperture);
+    if (e.shutter) parts.push(e.shutter);
+    if (typeof e.iso === 'number') parts.push(`ISO ${e.iso}`);
+    return parts;
+  });
+
   return (
-    <div class="fixed inset-0 z-50">
+    <div class="fixed inset-0 z-50 select-none" onContextMenu={(e) => e.preventDefault()}>
       <div
         class="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={props.onClose}
@@ -106,6 +122,9 @@ function Lightbox(props: {
             class="w-full h-auto rounded-lg shadow-xl"
             width={photo().width}
             height={photo().height}
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
           />
           <div class="absolute top-2 right-2 flex gap-2">
             <button
@@ -135,19 +154,9 @@ function Lightbox(props: {
           </div>
           <div class="absolute bottom-2 left-2 right-2 text-center text-sm text-gray-300">
             <div class="mb-1">{photo().alt}</div>
-            <Show when={photo().exif}>
+            <Show when={exifParts().length > 0}>
               <div class="text-xs text-gray-400">
-                <span>{photo().exif?.camera}</span>
-                <span class="mx-2">•</span>
-                <span>{photo().exif?.lens}</span>
-                <span class="mx-2">•</span>
-                <span>{photo().exif?.focalLengthMm}mm</span>
-                <span class="mx-2">•</span>
-                <span>{photo().exif?.aperture}</span>
-                <span class="mx-2">•</span>
-                <span>{photo().exif?.shutter}</span>
-                <span class="mx-2">•</span>
-                <span>ISO {photo().exif?.iso}</span>
+                {exifParts().join(' • ')}
               </div>
             </Show>
           </div>
