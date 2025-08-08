@@ -23,6 +23,7 @@ async function optimizeOne(file) {
 
   const info = await image
     .resize({ width: MAX_WIDTH, height: MAX_HEIGHT, fit: 'inside', withoutEnlargement: true })
+    .withMetadata() // preserve EXIF/ICC/XMP when possible
     .webp({ quality: QUALITY })
     .toFile(outPath);
 

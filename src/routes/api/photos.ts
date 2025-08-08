@@ -12,6 +12,34 @@ async function resolvePhotosDir() {
   return path.join(process.cwd(), "public", "photos");
 }
 
+async function readExifBestEffort(filepath: string) {
+  // Try current file first
+  try {
+    const exif = await exifr.parse(filepath, { iptc: true });
+    if (exif && Object.keys(exif).length > 0) return exif as any;
+  } catch {}
+
+  // If it's an optimized webp, look for an original counterpart
+  const basename = path.parse(filepath).name;
+  const candidates = [
+    path.join(process.cwd(), "public", "photos", basename + ".jpg"),
+    path.join(process.cwd(), "public", "photos", basename + ".jpeg"),
+    path.join(process.cwd(), "public", "photos", basename + ".png"),
+    path.join(process.cwd(), "public", "photos", basename + ".tif"),
+    path.join(process.cwd(), "public", "photos", basename + ".tiff"),
+  ];
+  for (const p of candidates) {
+    try {
+      const st = await fs.stat(p);
+      if (st.isFile()) {
+        const exif = await exifr.parse(p, { iptc: true });
+        if (exif && Object.keys(exif).length > 0) return exif as any;
+      }
+    } catch {}
+  }
+  return {} as any;
+}
+
 export const GET = eventHandler(async () => {
   try {
     const photosDir = await resolvePhotosDir();
@@ -36,11 +64,8 @@ export const GET = eventHandler(async () => {
           height = meta.height || 0;
         } catch {}
 
-        // EXIF best-effort (likely absent on optimized webp)
-        let exif: any = {};
-        try {
-          exif = await exifr.parse(filepath, { iptc: true });
-        } catch {}
+        // EXIF best-effort: try current file, else original
+        const exif: any = await readExifBestEffort(filepath);
 
         return {
           id: path.parse(file).name,

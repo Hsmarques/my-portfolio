@@ -17,6 +17,20 @@ async function pickSourceDir() {
   return { dir: srcOriginal, prefix: '/photos' };
 }
 
+async function readExifBestEffort(filepath, originalPathIfAny) {
+  try {
+    const exif = await exifr.parse(filepath, { iptc: true });
+    if (exif && Object.keys(exif).length > 0) return exif;
+  } catch {}
+  if (originalPathIfAny) {
+    try {
+      const exifOrig = await exifr.parse(originalPathIfAny, { iptc: true });
+      if (exifOrig && Object.keys(exifOrig).length > 0) return exifOrig;
+    } catch {}
+  }
+  return {};
+}
+
 async function generate() {
   const { dir, prefix } = await pickSourceDir();
   try {
@@ -32,10 +46,11 @@ async function generate() {
         height = meta.height || 0;
       } catch {}
 
-      let exif = {};
-      try {
-        exif = await exifr.parse(filepath, { iptc: true });
-      } catch {}
+      const originalCandidate = file.endsWith('.webp')
+        ? path.join(srcOriginal, file.replace(/\.webp$/i, '.jpg').replace(/\.jpeg$/i, '.jpg').replace(/\.png$/i, '.png').replace(/\.tif?f$/i, '.tif'))
+        : null;
+
+      let exif = await readExifBestEffort(filepath, originalCandidate);
 
       return {
         id: path.parse(file).name,
