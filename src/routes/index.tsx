@@ -12,15 +12,15 @@ async function fetchManifest() {
 }
 
 async function fetchPhotos() {
-  if (typeof window === 'undefined') return staticPhotos;
+  if (typeof window === 'undefined') return null; // Return null during SSR
   const manifest = await fetchManifest();
-  if (manifest) return manifest;
+  if (manifest !== null) return manifest;
   try {
     const res = await fetch("/api/photos");
     if (!res.ok) throw new Error("Failed to fetch");
     return await res.json();
   } catch {
-    return staticPhotos;
+    return staticPhotos; // Only use static as last resort on client
   }
 }
 
@@ -29,12 +29,23 @@ export default function Home() {
   const safeList = createMemo<any[]>(() => {
     const data = photos();
     if (Array.isArray(data)) return data;
-    return Array.isArray(staticPhotos) ? (staticPhotos as any[]) : [];
+    return []; // Don't show anything until we have real data
   });
 
   return (
     <main class="mx-auto max-w-7xl">
-      <Show when={safeList().length > 0}>
+      <Show when={safeList().length > 0} fallback={
+        <section class="relative h-[48vh] sm:h-[60vh] bg-gray-900 flex items-center justify-center">
+          <div class="text-center">
+            <h1 class="text-3xl sm:text-5xl font-bold text-white drop-shadow mb-4">Photography & Code</h1>
+            <p class="text-gray-300 drop-shadow mb-6">Loading gallery...</p>
+            <div class="flex gap-3 justify-center">
+              <a href="/photos" class="bg-white/90 hover:bg-white text-black font-semibold px-4 py-2 rounded">View photos</a>
+              <a href="/blog" class="bg-black/50 hover:bg-black/70 text-white font-semibold px-4 py-2 rounded border border-white/30">Read blog</a>
+            </div>
+          </div>
+        </section>
+      }>
         <section class="relative select-none" onContextMenu={(e) => e.preventDefault()}>
           <img
             src={safeList()[0].src}
@@ -50,7 +61,7 @@ export default function Home() {
           <div class="absolute bottom-6 left-6 right-6">
             <h1 class="text-3xl sm:text-5xl font-bold text-white drop-shadow">Photography & Code</h1>
             <p class="mt-3 max-w-2xl text-gray-200 drop-shadow">
-              I’m Hugo — I capture landscapes, streets, and portraits. I also build
+              I'm Hugo — I capture landscapes, streets, and portraits. I also build
               fast web experiences. Enjoy the photos; the code lives in the blog.
             </p>
             <div class="mt-4 flex gap-3">
