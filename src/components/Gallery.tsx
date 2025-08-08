@@ -114,13 +114,51 @@ function Lightbox(props: {
     return parts;
   });
 
+  // Drag-to-dismiss (vertical) using Pointer Events
+  const [dragStartY, setDragStartY] = createSignal<number | null>(null);
+  const [dragDeltaY, setDragDeltaY] = createSignal(0);
+  const [isDragging, setIsDragging] = createSignal(false);
+  const DISMISS_THRESHOLD_PX = 120;
+
+  const onPointerDown = (e: PointerEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-no-drag]')) return;
+    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+    setDragStartY(e.clientY);
+    setDragDeltaY(0);
+    setIsDragging(true);
+  };
+
+  const onPointerMove = (e: PointerEvent) => {
+    if (!isDragging() || dragStartY() === null) return;
+    setDragDeltaY(e.clientY - (dragStartY() as number));
+  };
+
+  const endDrag = () => {
+    const shouldDismiss = Math.abs(dragDeltaY()) > DISMISS_THRESHOLD_PX;
+    setIsDragging(false);
+    setDragStartY(null);
+    setDragDeltaY(0);
+    if (shouldDismiss) props.onClose();
+  };
+
+  const onPointerUp = () => endDrag();
+  const onPointerCancel = () => endDrag();
+
+  const contentStyle = () => {
+    if (!isDragging()) return {} as any;
+    const dy = dragDeltaY();
+    const opacity = Math.max(0.6, 1 - Math.abs(dy) / 400);
+    return { transform: `translateY(${dy}px)`, opacity: String(opacity) } as any;
+  };
+
   return (
     <div class="fixed inset-0 z-50 select-none" onContextMenu={(e) => e.preventDefault()}>
       <div
         class="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-zoom-out"
-         onClick={props.onClose}
-         role="button"
-         aria-label="Close lightbox"
+        onClick={props.onClose}
+        role="button"
+        aria-label="Close lightbox"
       />
       <div class="absolute top-4 right-4 z-50">
         <button
@@ -128,28 +166,36 @@ function Lightbox(props: {
           class="bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-400"
           aria-label="Close"
           title="Close (Esc)"
+          data-no-drag
         >
           ×
         </button>
       </div>
-      <div class="relative h-full w-full flex items-center justify-center px-4 cursor-zoom-out" onClick={props.onClose}>
-        <div class="relative max-w-6xl w-full">
+      <div
+        class="relative h-full w-full flex items-center justify-center px-4 touch-none"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerCancel}
+      >
+        <div class="relative max-w-6xl w-full" style={contentStyle()}>
           <img
             src={photo().src}
             alt={photo().alt}
-            class="max-h-dvh sm:max-h-screen max-w-[95vw] w-auto h-auto object-contain rounded-lg shadow-xl"
+            class="max-h-dvh sm:max-h-screen max-w-[95vw] w-auto h-auto object-contain rounded-lg shadow-xl cursor-pointer"
             width={photo().width}
             height={photo().height}
             draggable={false}
             onContextMenu={(e) => e.preventDefault()}
             onDragStart={(e) => e.preventDefault()}
-            onClick={(e) => { e.stopPropagation(); props.onClose(); }}
+            onClick={(e) => { e.stopPropagation(); props.onNext(); }}
           />
           <div class="absolute inset-y-0 left-0 flex items-center">
             <button
               onClick={(e) => { e.stopPropagation(); props.onPrev(); }}
               class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
               aria-label="Previous photo"
+              data-no-drag
             >
               ‹
             </button>
@@ -159,6 +205,7 @@ function Lightbox(props: {
               onClick={(e) => { e.stopPropagation(); props.onNext(); }}
               class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
               aria-label="Next photo"
+              data-no-drag
             >
               ›
             </button>
