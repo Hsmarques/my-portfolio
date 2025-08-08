@@ -114,48 +114,139 @@ function Lightbox(props: {
     return parts;
   });
 
+  // Drag-to-dismiss (vertical) using Pointer Events
+  const [dragStartX, setDragStartX] = createSignal<number | null>(null);
+  const [dragStartY, setDragStartY] = createSignal<number | null>(null);
+  const [dragDeltaX, setDragDeltaX] = createSignal(0);
+  const [dragDeltaY, setDragDeltaY] = createSignal(0);
+  const [isDragging, setIsDragging] = createSignal(false);
+  const [dragDirection, setDragDirection] = createSignal<'none' | 'horizontal' | 'vertical'>('none');
+  const ACTIVATE_AXIS_THRESHOLD_PX = 16;
+  const NAV_THRESHOLD_PX = 80;
+  const DISMISS_THRESHOLD_PX = 120;
+
+  const onPointerDown = (e: PointerEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-no-drag]')) return;
+    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+    setDragStartX(e.clientX);
+    setDragStartY(e.clientY);
+    setDragDeltaX(0);
+    setDragDeltaY(0);
+    setDragDirection('none');
+    setIsDragging(true);
+  };
+
+  const onPointerMove = (e: PointerEvent) => {
+    if (!isDragging() || dragStartX() === null || dragStartY() === null) return;
+    const dx = e.clientX - (dragStartX() as number);
+    const dy = e.clientY - (dragStartY() as number);
+    setDragDeltaX(dx);
+    setDragDeltaY(dy);
+
+    if (dragDirection() === 'none') {
+      if (Math.abs(dx) > ACTIVATE_AXIS_THRESHOLD_PX || Math.abs(dy) > ACTIVATE_AXIS_THRESHOLD_PX) {
+        setDragDirection(Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical');
+      }
+    }
+  };
+
+  const endDrag = () => {
+    const direction = dragDirection();
+    const dx = dragDeltaX();
+    const dy = dragDeltaY();
+    setIsDragging(false);
+    setDragStartX(null);
+    setDragStartY(null);
+    setDragDeltaX(0);
+    setDragDeltaY(0);
+    setDragDirection('none');
+
+    if (direction === 'horizontal' && Math.abs(dx) > NAV_THRESHOLD_PX) {
+      if (dx > 0) {
+        props.onPrev();
+      } else {
+        props.onNext();
+      }
+      return;
+    }
+    if (direction === 'vertical' && Math.abs(dy) > DISMISS_THRESHOLD_PX) {
+      props.onClose();
+    }
+  };
+
+  const onPointerUp = () => endDrag();
+  const onPointerCancel = () => endDrag();
+
+  const contentStyle = () => {
+    if (!isDragging()) return {} as any;
+    const direction = dragDirection();
+    const dx = dragDeltaX();
+    const dy = dragDeltaY();
+    if (direction === 'horizontal') {
+      const opacity = Math.max(0.8, 1 - Math.abs(dx) / 600);
+      return { transform: `translateX(${dx}px)`, opacity: String(opacity) } as any;
+    }
+    // vertical (or undecided): use Y transform
+    const opacity = Math.max(0.6, 1 - Math.abs(dy) / 400);
+    return { transform: `translateY(${dy}px)`, opacity: String(opacity) } as any;
+  };
+
   return (
     <div class="fixed inset-0 z-50 select-none" onContextMenu={(e) => e.preventDefault()}>
       <div
-        class="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        class="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-zoom-out"
         onClick={props.onClose}
         role="button"
         aria-label="Close lightbox"
       />
-      <div class="relative h-full w-full flex items-center justify-center px-4">
-        <div class="relative max-w-6xl w-full">
+      <div class="absolute top-4 right-4 z-50">
+        <button
+          onClick={props.onClose}
+          class="bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-400"
+          aria-label="Close"
+          title="Close (Esc)"
+          data-no-drag
+        >
+          ×
+        </button>
+      </div>
+      <div
+         class="relative h-full w-full flex items-center justify-center px-4 touch-none cursor-zoom-out"
+         onClick={props.onClose}
+         onPointerDown={onPointerDown}
+         onPointerMove={onPointerMove}
+         onPointerUp={onPointerUp}
+         onPointerCancel={onPointerCancel}
+       >
+        <div class="relative max-w-6xl w-full flex items-center justify-center" style={contentStyle()}>
           <img
             src={photo().src}
             alt={photo().alt}
-            class="w-full h-auto rounded-lg shadow-xl"
+            class="block mx-auto max-h-dvh sm:max-h-screen max-w-[95vw] w-auto h-auto object-contain rounded-lg shadow-xl cursor-pointer"
             width={photo().width}
             height={photo().height}
             draggable={false}
             onContextMenu={(e) => e.preventDefault()}
             onDragStart={(e) => e.preventDefault()}
+            onClick={(e) => { e.stopPropagation(); props.onNext(); }}
           />
-          <div class="absolute top-2 right-2 flex gap-2">
-            <button
-              onClick={props.onClose}
-              class="bg-black/60 hover:bg-black/80 text-white rounded px-3 py-1"
-            >
-              Close
-            </button>
-          </div>
           <div class="absolute inset-y-0 left-0 flex items-center">
             <button
-              onClick={props.onPrev}
+              onClick={(e) => { e.stopPropagation(); props.onPrev(); }}
               class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
               aria-label="Previous photo"
+              data-no-drag
             >
               ‹
             </button>
           </div>
           <div class="absolute inset-y-0 right-0 flex items-center">
             <button
-              onClick={props.onNext}
+              onClick={(e) => { e.stopPropagation(); props.onNext(); }}
               class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
               aria-label="Next photo"
+              data-no-drag
             >
               ›
             </button>
