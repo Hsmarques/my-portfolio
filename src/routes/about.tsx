@@ -21,7 +21,6 @@ export default function About() {
           </p>
           <div class="flex gap-3 pt-2">
             <A href="/photos" class="bg-white/90 hover:bg-white text-black font-semibold px-4 py-2 rounded">View photos</A>
-            <A href="/blog" class="bg-black/50 hover:bg-black/70 text-white font-semibold px-4 py-2 rounded border border-white/20">Read blog</A>
           </div>
         </div>
 
