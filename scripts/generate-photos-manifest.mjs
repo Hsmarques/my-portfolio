@@ -31,6 +31,17 @@ async function readExifBestEffort(filepath, originalPathIfAny) {
   return {};
 }
 
+function pickRelevantExif(exif) {
+  return {
+    camera: exif?.Model || undefined,
+    lens: exif?.LensModel || undefined,
+    focalLengthMm: exif?.FocalLengthIn35mmFilm || exif?.FocalLength || undefined,
+    aperture: exif?.FNumber ? `f/${exif.FNumber}` : undefined,
+    shutter: exif?.ExposureTime ? `${exif.ExposureTime}s` : undefined,
+    iso: exif?.ISO || undefined
+  };
+}
+
 async function generate() {
   const { dir, prefix } = await pickSourceDir();
   try {
@@ -50,23 +61,17 @@ async function generate() {
         ? path.join(srcOriginal, file.replace(/\.webp$/i, '.jpg').replace(/\.jpeg$/i, '.jpg').replace(/\.png$/i, '.png').replace(/\.tif?f$/i, '.tif'))
         : null;
 
-      let exif = await readExifBestEffort(filepath, originalCandidate);
+      const exifRaw = await readExifBestEffort(filepath, originalCandidate);
+      const exif = pickRelevantExif(exifRaw);
 
       return {
         id: path.parse(file).name,
         src: `${prefix}/${file}`,
-        alt: exif?.ImageDescription || exif?.iptc?.ObjectName || path.parse(file).name,
+        alt: exifRaw?.ImageDescription || exifRaw?.iptc?.ObjectName || path.parse(file).name,
         width,
         height,
         tags: [],
-        exif: {
-          camera: exif?.Model || undefined,
-          lens: exif?.LensModel || undefined,
-          focalLengthMm: exif?.FocalLengthIn35mmFilm || exif?.FocalLength || undefined,
-          aperture: exif?.FNumber ? `f/${exif.FNumber}` : undefined,
-          shutter: exif?.ExposureTime ? `${exif.ExposureTime}s` : undefined,
-          iso: exif?.ISO || undefined
-        }
+        exif
       };
     }));
 

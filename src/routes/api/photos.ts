@@ -40,6 +40,17 @@ async function readExifBestEffort(filepath: string) {
   return {} as any;
 }
 
+function pickRelevantExif(exif: any) {
+  return {
+    camera: exif?.Model || undefined,
+    lens: exif?.LensModel || undefined,
+    focalLengthMm: exif?.FocalLengthIn35mmFilm || exif?.FocalLength || undefined,
+    aperture: exif?.FNumber ? `f/${exif.FNumber}` : undefined,
+    shutter: exif?.ExposureTime ? `${exif.ExposureTime}s` : undefined,
+    iso: exif?.ISO || undefined
+  };
+}
+
 export const GET = eventHandler(async () => {
   try {
     const photosDir = await resolvePhotosDir();
@@ -65,23 +76,17 @@ export const GET = eventHandler(async () => {
         } catch {}
 
         // EXIF best-effort: try current file, else original
-        const exif: any = await readExifBestEffort(filepath);
+        const exifRaw: any = await readExifBestEffort(filepath);
+        const exif = pickRelevantExif(exifRaw);
 
         return {
           id: path.parse(file).name,
           src: `${publicPrefix}/${file}`,
-          alt: exif?.ImageDescription || exif?.iptc?.ObjectName || path.parse(file).name,
+          alt: exifRaw?.ImageDescription || exifRaw?.iptc?.ObjectName || path.parse(file).name,
           width,
           height,
           tags: [] as string[],
-          exif: {
-            camera: exif?.Model || undefined,
-            lens: exif?.LensModel || undefined,
-            focalLengthMm: exif?.FocalLengthIn35mmFilm || exif?.FocalLength || undefined,
-            aperture: exif?.FNumber ? `f/${exif.FNumber}` : undefined,
-            shutter: exif?.ExposureTime ? `${exif.ExposureTime}s` : undefined,
-            iso: exif?.ISO || undefined
-          }
+          exif
         };
       })
     );

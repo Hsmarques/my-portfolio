@@ -22,8 +22,8 @@ async function optimizeOne(file) {
   const meta = await image.metadata();
 
   const info = await image
+    .rotate() // apply EXIF orientation but do not keep EXIF
     .resize({ width: MAX_WIDTH, height: MAX_HEIGHT, fit: 'inside', withoutEnlargement: true })
-    .withMetadata() // preserve EXIF/ICC/XMP when possible
     .webp({ quality: QUALITY })
     .toFile(outPath);
 
