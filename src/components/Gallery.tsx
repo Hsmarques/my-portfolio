@@ -212,12 +212,13 @@ function Lightbox(props: {
         </button>
       </div>
       <div
-        class="relative h-full w-full flex items-center justify-center px-4 touch-none"
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerCancel}
-      >
+         class="relative h-full w-full flex items-center justify-center px-4 touch-none cursor-zoom-out"
+         onClick={props.onClose}
+         onPointerDown={onPointerDown}
+         onPointerMove={onPointerMove}
+         onPointerUp={onPointerUp}
+         onPointerCancel={onPointerCancel}
+       >
         <div class="relative max-w-6xl w-full flex items-center justify-center" style={contentStyle()}>
           <img
             src={photo().src}
