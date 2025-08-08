@@ -14,7 +14,7 @@ async function fetchManifest() {
 async function fetchPhotos() {
   if (typeof window === 'undefined') return staticPhotos;
   const manifest = await fetchManifest();
-  if (manifest) return manifest;
+  if (manifest !== null) return manifest;
   try {
     const res = await fetch("/api/photos");
     if (!res.ok) throw new Error("Failed to fetch");
@@ -27,7 +27,14 @@ async function fetchPhotos() {
 export default function PhotosPage() {
   const [activeTags, setActiveTags] = createSignal<Set<string>>(new Set());
   const [query, setQuery] = createSignal("");
-  const [photos] = createResource(fetchPhotos);
+  const [remotePhotos] = createResource(fetchPhotos);
+
+  const photos = createMemo<any[]>(() => {
+    const data = remotePhotos();
+    if (Array.isArray(data)) return data; // manifest or API result
+    if (Array.isArray(staticPhotos)) return staticPhotos as any[];
+    return [];
+  });
 
   const toggleTag = (tag: string) => {
     setActiveTags((prev) => {
@@ -41,7 +48,7 @@ export default function PhotosPage() {
   const filtered = createMemo(() => {
     const selected = activeTags();
     const q = query().trim().toLowerCase();
-    const list = photos() || staticPhotos;
+    const list = photos();
 
     return list.filter((p: any) => {
       const matchesTags = selected.size === 0 || (p.tags || []).some((t: string) => selected.has(t));
@@ -85,8 +92,8 @@ export default function PhotosPage() {
         </div>
       </section>
 
-      <Show when={!photos.loading} fallback={<p class="text-gray-400">Loading photos…</p>}>
-        <Show when={filtered().length > 0} fallback={<p class="text-gray-400">No photos match your filters.</p>}>
+      <Show when={!remotePhotos.loading} fallback={<p class="text-gray-400">Loading photos…</p>}>
+        <Show when={filtered().length > 0} fallback={<p class="text-gray-400">No photos yet. Add images to public/photos and redeploy.</p>}>
           <Gallery photos={filtered()} />
         </Show>
       </Show>
