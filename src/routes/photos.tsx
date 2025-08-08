@@ -3,6 +3,7 @@ import Gallery from "~/components/Gallery";
 import staticPhotos, { allTags } from "~/lib/photos";
 
 async function fetchManifest() {
+  if (typeof window === 'undefined') return null;
   try {
     const res = await fetch("/photos-manifest.json", { cache: "no-cache" });
     if (res.ok) return await res.json();
@@ -11,6 +12,7 @@ async function fetchManifest() {
 }
 
 async function fetchPhotos() {
+  if (typeof window === 'undefined') return staticPhotos;
   const manifest = await fetchManifest();
   if (manifest) return manifest;
   try {
