@@ -117,34 +117,37 @@ function Lightbox(props: {
   return (
     <div class="fixed inset-0 z-50 select-none" onContextMenu={(e) => e.preventDefault()}>
       <div
-        class="absolute inset-0 bg-black/80 backdrop-blur-sm"
-        onClick={props.onClose}
-        role="button"
-        aria-label="Close lightbox"
+        class="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-zoom-out"
+         onClick={props.onClose}
+         role="button"
+         aria-label="Close lightbox"
       />
-      <div class="relative h-full w-full flex items-center justify-center px-4">
+      <div class="absolute top-4 right-4 z-50">
+        <button
+          onClick={props.onClose}
+          class="bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-400"
+          aria-label="Close"
+          title="Close (Esc)"
+        >
+          ×
+        </button>
+      </div>
+      <div class="relative h-full w-full flex items-center justify-center px-4 cursor-zoom-out" onClick={props.onClose}>
         <div class="relative max-w-6xl w-full">
           <img
             src={photo().src}
             alt={photo().alt}
-            class="w-full h-auto rounded-lg shadow-xl"
+            class="max-h-dvh sm:max-h-screen max-w-[95vw] w-auto h-auto object-contain rounded-lg shadow-xl"
             width={photo().width}
             height={photo().height}
             draggable={false}
             onContextMenu={(e) => e.preventDefault()}
             onDragStart={(e) => e.preventDefault()}
+            onClick={(e) => { e.stopPropagation(); props.onClose(); }}
           />
-          <div class="absolute top-2 right-2 flex gap-2">
-            <button
-              onClick={props.onClose}
-              class="bg-black/60 hover:bg-black/80 text-white rounded px-3 py-1"
-            >
-              Close
-            </button>
-          </div>
           <div class="absolute inset-y-0 left-0 flex items-center">
             <button
-              onClick={props.onPrev}
+              onClick={(e) => { e.stopPropagation(); props.onPrev(); }}
               class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
               aria-label="Previous photo"
             >
@@ -153,7 +156,7 @@ function Lightbox(props: {
           </div>
           <div class="absolute inset-y-0 right-0 flex items-center">
             <button
-              onClick={props.onNext}
+              onClick={(e) => { e.stopPropagation(); props.onNext(); }}
               class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
               aria-label="Next photo"
             >
