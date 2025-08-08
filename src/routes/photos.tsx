@@ -1,4 +1,4 @@
-import { For, Show, createMemo, createResource, createSignal } from "solid-js";
+import { For, Show, createMemo, createResource, createSignal, onMount } from "solid-js";
 import Gallery from "~/components/Gallery";
 import staticPhotos, { allTags } from "~/lib/photos";
 
@@ -12,7 +12,7 @@ async function fetchManifest() {
 }
 
 async function fetchPhotos() {
-  if (typeof window === 'undefined') return staticPhotos;
+  if (typeof window === 'undefined') return null; // do not return placeholders on SSR
   const manifest = await fetchManifest();
   if (manifest !== null) return manifest;
   try {
@@ -27,12 +27,15 @@ async function fetchPhotos() {
 export default function PhotosPage() {
   const [activeTags, setActiveTags] = createSignal<Set<string>>(new Set());
   const [query, setQuery] = createSignal("");
-  const [remotePhotos] = createResource(fetchPhotos);
+
+  const [isClient, setIsClient] = createSignal(false);
+  onMount(() => setIsClient(true));
+
+  const [remotePhotos] = createResource(isClient, async () => fetchPhotos());
 
   const photos = createMemo<any[]>(() => {
     const data = remotePhotos();
     if (Array.isArray(data)) return data; // manifest or API result
-    if (Array.isArray(staticPhotos)) return staticPhotos as any[];
     return [];
   });
 
