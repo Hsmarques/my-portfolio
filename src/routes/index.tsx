@@ -1,21 +1,84 @@
-import Terminal from "~/components/Terminal";
+import { Show, createMemo, createResource } from "solid-js";
+import Gallery from "~/components/Gallery";
+import staticPhotos from "~/lib/photos";
+
+async function fetchManifest() {
+  if (typeof window === 'undefined') return null;
+  try {
+    const res = await fetch("/photos-manifest.json", { cache: "no-cache" });
+    if (res.ok) return await res.json();
+  } catch {}
+  return null;
+}
+
+async function fetchPhotos() {
+  if (typeof window === 'undefined') return null; // Return null during SSR
+  const manifest = await fetchManifest();
+  if (manifest !== null) return manifest;
+  try {
+    const res = await fetch("/api/photos");
+    if (!res.ok) throw new Error("Failed to fetch");
+    return await res.json();
+  } catch {
+    return staticPhotos; // Only use static as last resort on client
+  }
+}
 
 export default function Home() {
-  return (
-    <main class="text-center mx-auto text-gray-400 p-4">
-      <Terminal
-        preText={`
- _    _      _ _       _
-| |  | |    | | |     | |
-| |__| | ___| | | ___ | |
-|  __  |/ _ \\ | |/ _ \\| |
-| |  | |  __/ | | (_) |_|
-|_|  |_|\\___|_|_|\\___/(_)
+  const [photos] = createResource(fetchPhotos);
+  const safeList = createMemo<any[]>(() => {
+    const data = photos();
+    if (Array.isArray(data)) return data;
+    return []; // Don't show anything until we have real data
+  });
 
-`}
-        text="Welcome to my page! I'm Hugo, a developer from Portugal. And this is still a work in progress 🚧 👷‍♂️"
-        typingSpeed={50}
-      />
+  return (
+    <main class="mx-auto max-w-7xl">
+      <Show when={safeList().length > 0} fallback={
+        <section class="relative h-[48vh] sm:h-[60vh] bg-gray-900 flex items-center justify-center">
+          <div class="text-center">
+            <h1 class="text-3xl sm:text-5xl font-bold text-white drop-shadow mb-4">Photography & Code</h1>
+            <p class="text-gray-300 drop-shadow mb-6">Loading gallery...</p>
+            <div class="flex gap-3 justify-center">
+              <a href="/photos" class="bg-white/90 hover:bg-white text-black font-semibold px-4 py-2 rounded">View photos</a>
+              <a href="/blog" class="bg-black/50 hover:bg-black/70 text-white font-semibold px-4 py-2 rounded border border-white/30">Read blog</a>
+            </div>
+          </div>
+        </section>
+      }>
+        <section class="relative select-none" onContextMenu={(e) => e.preventDefault()}>
+          <img
+            src={safeList()[0].src}
+            alt={safeList()[0].alt}
+            class="w-full h-[48vh] sm:h-[60vh] object-cover object-center opacity-90"
+            width={safeList()[0].width}
+            height={safeList()[0].height}
+            draggable={false}
+            onDragStart={(e) => e.preventDefault()}
+            onContextMenu={(e) => e.preventDefault()}
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+          <div class="absolute bottom-6 left-6 right-6">
+            <h1 class="text-3xl sm:text-5xl font-bold text-white drop-shadow">Photography & Code</h1>
+            <p class="mt-3 max-w-2xl text-gray-200 drop-shadow">
+              I'm Hugo — I capture landscapes, streets, and portraits. I also build
+              fast web experiences. Enjoy the photos; the code lives in the blog.
+            </p>
+            <div class="mt-4 flex gap-3">
+              <a href="/photos" class="bg-white/90 hover:bg-white text-black font-semibold px-4 py-2 rounded">View photos</a>
+              <a href="/blog" class="bg-black/50 hover:bg-black/70 text-white font-semibold px-4 py-2 rounded border border-white/30">Read blog</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="px-4 py-8">
+          <h2 class="text-xl text-gray-200 mb-4">Recent work</h2>
+          <Gallery photos={safeList().slice(0, 6)} />
+          <div class="text-center mt-6">
+            <a href="/photos" class="text-accent-400 hover:text-accent-300 font-medium">See full gallery →</a>
+          </div>
+        </section>
+      </Show>
     </main>
   );
 }
