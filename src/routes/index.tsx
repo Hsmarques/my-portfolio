@@ -1,4 +1,4 @@
-import { Show, createMemo, createResource } from "solid-js";
+import { Show, createMemo, createResource, createSignal, onMount } from "solid-js";
 import Gallery from "~/components/Gallery";
 import staticPhotos from "~/lib/photos";
 
@@ -25,7 +25,10 @@ async function fetchPhotos() {
 }
 
 export default function Home() {
-  const [photos] = createResource(fetchPhotos);
+  const [isClient, setIsClient] = createSignal(false);
+  onMount(() => setIsClient(true));
+
+  const [photos] = createResource(isClient, async () => fetchPhotos());
   const safeList = createMemo<any[]>(() => {
     const data = photos();
     if (Array.isArray(data)) return data;
