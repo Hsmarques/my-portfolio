@@ -41,19 +41,22 @@ export default function Gallery(props: { photos: Photo[] }) {
     return columns.map((c) => c.items);
   });
 
+  // Map photo id to its index in the provided list so clicks open the correct image
+  const idToIndex = createMemo(() => {
+    const map = new Map<string, number>();
+    props.photos.forEach((p, idx) => map.set(p.id, idx));
+    return map;
+  });
+
   return (
     <div class="w-full select-none" onContextMenu={(e) => e.preventDefault()}>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <For each={rows()}>
-          {(column, colIndex) => (
+          {(column) => (
             <div class="space-y-3">
               <For each={column}>
-                {(photo, i) => {
-                  const index = () => {
-                    const previousColumns = rows().slice(0, colIndex());
-                    const flattenedBefore = previousColumns.reduce((acc, arr) => acc + arr.length, 0);
-                    return flattenedBefore + i();
-                  };
+                {(photo) => {
+                  const index = () => idToIndex().get(photo.id) ?? 0;
                   return (
                     <button
                       class="group block w-full overflow-hidden rounded-lg border border-gray-800 focus:outline-none focus:ring-2 focus:ring-accent-400"

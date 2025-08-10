@@ -1,10 +1,28 @@
 [
   {
+    "id": "3840A7C6-02A3-4859-A75E-3025801EA82E_1_105_c",
+    "src": "/photos-optimized/3840A7C6-02A3-4859-A75E-3025801EA82E_1_105_c.webp",
+    "alt": "3840A7C6-02A3-4859-A75E-3025801EA82E_1_105_c",
+    "width": 1024,
+    "height": 768,
+    "tags": [],
+    "exif": {}
+  },
+  {
     "id": "49308672-78E7-4D03-A8FE-91DC8275421E_1_105_c",
     "src": "/photos-optimized/49308672-78E7-4D03-A8FE-91DC8275421E_1_105_c.webp",
     "alt": "49308672-78E7-4D03-A8FE-91DC8275421E_1_105_c",
     "width": 768,
     "height": 1024,
+    "tags": [],
+    "exif": {}
+  },
+  {
+    "id": "635E2028-C47F-42E2-AF8A-7D4F8D4E3875_1_102_o",
+    "src": "/photos-optimized/635E2028-C47F-42E2-AF8A-7D4F8D4E3875_1_102_o.webp",
+    "alt": "635E2028-C47F-42E2-AF8A-7D4F8D4E3875_1_102_o",
+    "width": 1440,
+    "height": 1080,
     "tags": [],
     "exif": {}
   },
