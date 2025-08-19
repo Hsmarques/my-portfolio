@@ -17,7 +17,7 @@ export default createHandler(() => (
         </head>
         <body class="font-sans">
           <div id="app" class="[&_h1]:font-serif [&_h2]:font-serif [&_h3]:font-serif">{children}</div>
-          <a href="https://www.buymeacoffee.com/hugosmarques" target="_blank" style="position: fixed; left: 50%; transform: translateX(-50%); bottom: 16px; z-index: 50;"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" /></a>
+          <a href="https://www.buymeacoffee.com/hugosmarques" target="_blank" rel="noopener noreferrer" class="fixed bottom-4 z-50 left-1/2 -translate-x-1/2 md:left-auto md:right-4 md:translate-x-0"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" /></a>
           {scripts}
         </body>
       </html>
