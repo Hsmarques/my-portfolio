@@ -1,53 +1,54 @@
 [
   {
-    "id": "IMG_1971+SG3",
-    "src": "/photos-optimized/IMG_1971+SG3.webp",
-    "alt": "IMG_1971+SG3",
-    "width": 0,
-    "height": 0,
-    "tags": [],
-    "createdAt": "2025-08-16T08:28:37.741Z",
-    "exif": {}
-  },
-  {
-    "id": "IMG_1767+IH5",
-    "src": "/photos-optimized/IMG_1767+IH5.webp",
-    "alt": "IMG_1767+IH5",
-    "width": 0,
-    "height": 0,
-    "tags": [],
-    "createdAt": "2025-08-16T08:28:37.741Z",
-    "exif": {}
-  },
-  {
-    "id": "EF97C194-4218-4127-93C3-8D3E90074ED3_1_105_c",
-    "src": "/photos-optimized/EF97C194-4218-4127-93C3-8D3E90074ED3_1_105_c.webp",
-    "alt": "EF97C194-4218-4127-93C3-8D3E90074ED3_1_105_c",
-    "width": 1024,
-    "height": 768,
-    "tags": [],
-    "createdAt": "2025-08-16T08:28:37.737Z",
-    "exif": {}
-  },
-  {
     "id": "BC71E8AC-D10D-48FE-B110-0216A872D8F6_1_102_o",
     "src": "/photos-optimized/BC71E8AC-D10D-48FE-B110-0216A872D8F6_1_102_o.webp",
     "alt": "BC71E8AC-D10D-48FE-B110-0216A872D8F6_1_102_o",
-    "width": 0,
-    "height": 0,
-    "tags": [],
-    "createdAt": "2025-08-16T08:28:37.737Z",
-    "exif": {}
-  },
-  {
-    "id": "635E2028-C47F-42E2-AF8A-7D4F8D4E3875_1_102_o",
-    "src": "/photos-optimized/635E2028-C47F-42E2-AF8A-7D4F8D4E3875_1_102_o.webp",
-    "alt": "635E2028-C47F-42E2-AF8A-7D4F8D4E3875_1_102_o",
     "width": 1440,
     "height": 1080,
     "tags": [],
-    "createdAt": "2025-08-16T08:28:37.737Z",
-    "exif": {}
+    "createdAt": "2025-08-17T14:47:17.000Z",
+    "exif": {
+      "camera": "OM-3",
+      "lens": "OM 12-45mm F4.0",
+      "focalLengthMm": 45,
+      "aperture": "f/4",
+      "shutter": "0.125s",
+      "iso": 800
+    }
+  },
+  {
+    "id": "00C0FABD-995A-4598-B281-4D98E813B039_1_102_o",
+    "src": "/photos-optimized/00C0FABD-995A-4598-B281-4D98E813B039_1_102_o.webp",
+    "alt": "00C0FABD-995A-4598-B281-4D98E813B039_1_102_o",
+    "width": 810,
+    "height": 1080,
+    "tags": [],
+    "createdAt": "2025-08-17T13:59:08.000Z",
+    "exif": {
+      "camera": "OM-3",
+      "lens": "OM 12-45mm F4.0",
+      "focalLengthMm": 37,
+      "aperture": "f/4",
+      "shutter": "0.000625s",
+      "iso": 200
+    }
+  },
+  {
+    "id": "IMG_1971+SG3",
+    "src": "/photos-optimized/IMG_1971+SG3.webp",
+    "alt": "IMG_1971+SG3",
+    "width": 1080,
+    "height": 810,
+    "tags": [],
+    "createdAt": "2025-08-07T10:43:26.000Z",
+    "exif": {
+      "camera": "OM-3",
+      "lens": "OM 12-45mm F4.0",
+      "focalLengthMm": 45,
+      "aperture": "f/4",
+      "shutter": "0.000625s",
+      "iso": 200
+    }
   },
   {
     "id": "49308672-78E7-4D03-A8FE-91DC8275421E_1_105_c",
@@ -56,8 +57,32 @@
     "width": 768,
     "height": 1024,
     "tags": [],
-    "createdAt": "2025-08-16T08:28:37.737Z",
-    "exif": {}
+    "createdAt": "2025-08-05T18:09:51.000Z",
+    "exif": {
+      "camera": "OM-3",
+      "lens": "OM 12-45mm F4.0",
+      "focalLengthMm": 45,
+      "aperture": "f/10",
+      "shutter": "0.002s",
+      "iso": 200
+    }
+  },
+  {
+    "id": "EF97C194-4218-4127-93C3-8D3E90074ED3_1_105_c",
+    "src": "/photos-optimized/EF97C194-4218-4127-93C3-8D3E90074ED3_1_105_c.webp",
+    "alt": "EF97C194-4218-4127-93C3-8D3E90074ED3_1_105_c",
+    "width": 1024,
+    "height": 768,
+    "tags": [],
+    "createdAt": "2025-08-05T12:32:30.000Z",
+    "exif": {
+      "camera": "OM-3",
+      "lens": "OM 12-45mm F4.0",
+      "focalLengthMm": 45,
+      "aperture": "f/4",
+      "shutter": "0.00625s",
+      "iso": 200
+    }
   },
   {
     "id": "3840A7C6-02A3-4859-A75E-3025801EA82E_1_105_c",
@@ -66,17 +91,48 @@
     "width": 1024,
     "height": 768,
     "tags": [],
-    "createdAt": "2025-08-16T08:28:37.733Z",
-    "exif": {}
+    "createdAt": "2025-08-04T18:16:57.000Z",
+    "exif": {
+      "camera": "OM-3",
+      "lens": "OM 40-150mm F4.0",
+      "focalLengthMm": 150,
+      "aperture": "f/4",
+      "shutter": "0.002s",
+      "iso": 80
+    }
   },
   {
-    "id": "00C0FABD-995A-4598-B281-4D98E813B039_1_102_o",
-    "src": "/photos-optimized/00C0FABD-995A-4598-B281-4D98E813B039_1_102_o.webp",
-    "alt": "00C0FABD-995A-4598-B281-4D98E813B039_1_102_o",
-    "width": 0,
-    "height": 0,
+    "id": "IMG_1767+IH5",
+    "src": "/photos-optimized/IMG_1767+IH5.webp",
+    "alt": "IMG_1767+IH5",
+    "width": 1080,
+    "height": 810,
     "tags": [],
-    "createdAt": "2025-08-16T08:28:37.733Z",
-    "exif": {}
+    "createdAt": "2025-08-03T17:51:18.000Z",
+    "exif": {
+      "camera": "OM-3",
+      "lens": "OM 12-45mm F4.0",
+      "focalLengthMm": 36,
+      "aperture": "f/4",
+      "shutter": "0.0001s",
+      "iso": 200
+    }
+  },
+  {
+    "id": "635E2028-C47F-42E2-AF8A-7D4F8D4E3875_1_102_o",
+    "src": "/photos-optimized/635E2028-C47F-42E2-AF8A-7D4F8D4E3875_1_102_o.webp",
+    "alt": "635E2028-C47F-42E2-AF8A-7D4F8D4E3875_1_102_o",
+    "width": 1440,
+    "height": 1080,
+    "tags": [],
+    "createdAt": "2025-08-01T16:46:00.000Z",
+    "exif": {
+      "camera": "OM-3",
+      "lens": "OLYMPUS M.45mm F1.8",
+      "focalLengthMm": 45,
+      "aperture": "f/1.8",
+      "shutter": "0.000625s",
+      "iso": 200
+    }
   }
 ]
