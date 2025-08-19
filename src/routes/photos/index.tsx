@@ -35,7 +35,16 @@ export default function PhotosPage() {
 
   const photos = createMemo<any[]>(() => {
     const data = remotePhotos();
-    if (Array.isArray(data)) return data; // manifest or API result
+    if (Array.isArray(data)) {
+      const list = [...data];
+      list.sort((a: any, b: any) => {
+        const ad = a.createdAt ? Date.parse(a.createdAt) : 0;
+        const bd = b.createdAt ? Date.parse(b.createdAt) : 0;
+        if (ad !== bd) return bd - ad;
+        return String(b.id).localeCompare(String(a.id));
+      });
+      return list;
+    } // manifest or API result
     return [];
   });
 

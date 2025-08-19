@@ -31,7 +31,16 @@ export default function Home() {
   const [photos] = createResource(isClient, async () => fetchPhotos());
   const safeList = createMemo<any[]>(() => {
     const data = photos();
-    if (Array.isArray(data)) return data;
+    if (Array.isArray(data)) {
+      const list = [...data];
+      list.sort((a: any, b: any) => {
+        const ad = a.createdAt ? Date.parse(a.createdAt) : 0;
+        const bd = b.createdAt ? Date.parse(b.createdAt) : 0;
+        if (ad !== bd) return bd - ad;
+        return String(b.id).localeCompare(String(a.id));
+      });
+      return list;
+    }
     return []; // Don't show anything until we have real data
   });
 

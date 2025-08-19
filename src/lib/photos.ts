@@ -5,6 +5,7 @@ export type Photo = {
   width: number;
   height: number;
   tags: string[];
+  createdAt?: string;
   exif?: {
     camera?: string;
     lens?: string;
