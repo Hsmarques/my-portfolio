@@ -203,7 +203,8 @@ function Lightbox(props: {
         role="button"
         aria-label="Close lightbox"
       />
-      <div class="absolute top-4 right-4 z-50">
+      <div class="absolute top-4 right-4 z-50 flex gap-2">
+        <ShareButton id={photo().id} />
         <button
           onClick={props.onClose}
           class="bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-400"
@@ -264,6 +265,51 @@ function Lightbox(props: {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ShareButton(props: { id: string }) {
+  const [copied, setCopied] = createSignal(false);
+
+  const buildUrl = () => {
+    if (typeof window === 'undefined') return `/photo/${props.id}`;
+    const url = new URL(window.location.href);
+    url.pathname = `/photo/${props.id}`;
+    url.search = "";
+    url.hash = "";
+    return url.toString();
+  };
+
+  const share = async () => {
+    const url = buildUrl();
+    const title = "Photo";
+    try {
+      if (typeof navigator !== 'undefined' && (navigator as any).share) {
+        await (navigator as any).share({ title, url });
+        return;
+      }
+    } catch {}
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  };
+
+  return (
+    <div class="relative" data-no-drag>
+      <button
+        onClick={(e) => { e.stopPropagation(); share(); }}
+        class="bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg leading-none focus:outline-none focus:ring-2 focus:ring-accent-400"
+        aria-label="Share photo"
+        title="Share"
+      >
+        ⤴
+      </button>
+      <Show when={copied()}>
+        <span class="absolute right-0 mt-2 px-2 py-1 rounded bg-black/80 text-white text-xs whitespace-nowrap">Link copied</span>
+      </Show>
     </div>
   );
 }
