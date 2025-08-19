@@ -1,27 +1,29 @@
-import { For, Show, createEffect, createMemo, createSignal, onCleanup, onMount } from "solid-js";
-import { useNavigate, useParams } from "@solidjs/router";
+import { For, Show, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import type { Photo } from "~/lib/photos";
 
 export default function Gallery(props: { photos: Photo[] }) {
-  const params = useParams();
-  const navigate = useNavigate();
+  const [selectedIndex, setSelectedIndex] = createSignal<number | null>(null);
 
-  const [expandedId, setExpandedId] = createSignal<string | null>(null);
-  let expandedRef: HTMLDivElement | undefined;
+  const close = () => setSelectedIndex(null);
+  const open = (index: number) => setSelectedIndex(index);
 
-  // Keep expandedId in sync with the route param
-  createEffect(() => {
-    const id = (params as any).id as string | undefined;
-    setExpandedId(id ?? null);
+  const handleKeydown = (e: KeyboardEvent) => {
+    if (selectedIndex() === null) return;
+    if (e.key === "Escape") return close();
+    if (e.key === "ArrowRight")
+      setSelectedIndex((i) => (i === null ? 0 : Math.min(i + 1, props.photos.length - 1)));
+    if (e.key === "ArrowLeft") setSelectedIndex((i) => (i === null ? 0 : Math.max(i - 1, 0)));
+  };
+
+  onMount(() => {
+    if (typeof window !== 'undefined') {
+      window.addEventListener("keydown", handleKeydown);
+    }
   });
-
-  // After expandedId changes and the DOM renders, scroll the expanded panel into view
-  createEffect(() => {
-    const id = expandedId();
-    if (!id) return;
-    requestAnimationFrame(() => {
-      expandedRef?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+  onCleanup(() => {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener("keydown", handleKeydown);
+    }
   });
 
   const rows = createMemo(() => {
@@ -48,42 +50,6 @@ export default function Gallery(props: { photos: Photo[] }) {
 
   return (
     <div class="w-full select-none" onContextMenu={(e) => e.preventDefault()}>
-      <Show when={expandedId() !== null}>
-        <div
-          ref={expandedRef}
-          class="mb-6 overflow-hidden rounded-lg border border-gray-800 bg-black/30"
-        >
-          <div
-            class="transition-all duration-300 ease-out"
-            classList={{
-              "opacity-0 max-h-0": expandedId() === null,
-              "opacity-100 max-h-[90vh]": expandedId() !== null,
-            }}
-          >
-            <img
-              src={(() => {
-                const id = expandedId();
-                if (!id) return "";
-                const idx = idToIndex().get(id);
-                if (idx === undefined) return "";
-                return props.photos[idx].src;
-              })()}
-              alt={(() => {
-                const id = expandedId();
-                if (!id) return "";
-                const idx = idToIndex().get(id);
-                if (idx === undefined) return "";
-                return props.photos[idx].alt;
-              })()}
-              class="block w-full h-auto max-h-[85vh] object-contain"
-              draggable={false}
-              onContextMenu={(e) => e.preventDefault()}
-              onDragStart={(e) => e.preventDefault()}
-              onClick={() => navigate('/photos')}
-            />
-          </div>
-        </div>
-      </Show>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         <For each={rows()}>
           {(column) => (
@@ -94,7 +60,7 @@ export default function Gallery(props: { photos: Photo[] }) {
                   return (
                     <button
                       class="group block w-full overflow-hidden rounded-lg border border-gray-800 focus:outline-none focus:ring-2 focus:ring-accent-400"
-                      onClick={() => navigate(`/photos/${photo.id}`)}
+                      onClick={() => open(index())}
                       aria-label={`Open photo ${photo.alt}`}
                     >
                       <img
@@ -116,7 +82,188 @@ export default function Gallery(props: { photos: Photo[] }) {
           )}
         </For>
       </div>
+
+      <Show when={selectedIndex() !== null}>
+        <Lightbox
+          photos={props.photos}
+          index={selectedIndex() as number}
+          onClose={close}
+          onPrev={() => setSelectedIndex((i) => (i === null ? 0 : Math.max(i - 1, 0)))}
+          onNext={() => setSelectedIndex((i) => (i === null ? 0 : Math.min(i + 1, props.photos.length - 1)))}
+        />
+      </Show>
     </div>
   );
 }
- 
+
+function Lightbox(props: {
+  photos: Photo[];
+  index: number;
+  onClose: () => void;
+  onPrev: () => void;
+  onNext: () => void;
+}) {
+  const photo = () => props.photos[props.index];
+  const exifParts = createMemo(() => {
+    const e = photo().exif;
+    if (!e) return [] as string[];
+    const parts: string[] = [];
+    if (e.camera) parts.push(e.camera);
+    if (e.lens) parts.push(e.lens);
+    if (e.focalLengthMm) parts.push(`${e.focalLengthMm}mm`);
+    if (e.aperture) parts.push(e.aperture);
+    if (e.shutter) parts.push(e.shutter);
+    if (typeof e.iso === 'number') parts.push(`ISO ${e.iso}`);
+    return parts;
+  });
+
+  // Drag-to-dismiss (vertical) using Pointer Events
+  const [dragStartX, setDragStartX] = createSignal<number | null>(null);
+  const [dragStartY, setDragStartY] = createSignal<number | null>(null);
+  const [dragDeltaX, setDragDeltaX] = createSignal(0);
+  const [dragDeltaY, setDragDeltaY] = createSignal(0);
+  const [isDragging, setIsDragging] = createSignal(false);
+  const [dragDirection, setDragDirection] = createSignal<'none' | 'horizontal' | 'vertical'>('none');
+  const ACTIVATE_AXIS_THRESHOLD_PX = 16;
+  const NAV_THRESHOLD_PX = 80;
+  const DISMISS_THRESHOLD_PX = 120;
+
+  const onPointerDown = (e: PointerEvent) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-no-drag]')) return;
+    (e.currentTarget as HTMLElement).setPointerCapture?.(e.pointerId);
+    setDragStartX(e.clientX);
+    setDragStartY(e.clientY);
+    setDragDeltaX(0);
+    setDragDeltaY(0);
+    setDragDirection('none');
+    setIsDragging(true);
+  };
+
+  const onPointerMove = (e: PointerEvent) => {
+    if (!isDragging() || dragStartX() === null || dragStartY() === null) return;
+    const dx = e.clientX - (dragStartX() as number);
+    const dy = e.clientY - (dragStartY() as number);
+    setDragDeltaX(dx);
+    setDragDeltaY(dy);
+
+    if (dragDirection() === 'none') {
+      if (Math.abs(dx) > ACTIVATE_AXIS_THRESHOLD_PX || Math.abs(dy) > ACTIVATE_AXIS_THRESHOLD_PX) {
+        setDragDirection(Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical');
+      }
+    }
+  };
+
+  const endDrag = () => {
+    const direction = dragDirection();
+    const dx = dragDeltaX();
+    const dy = dragDeltaY();
+    setIsDragging(false);
+    setDragStartX(null);
+    setDragStartY(null);
+    setDragDeltaX(0);
+    setDragDeltaY(0);
+    setDragDirection('none');
+
+    if (direction === 'horizontal' && Math.abs(dx) > NAV_THRESHOLD_PX) {
+      if (dx > 0) {
+        props.onPrev();
+      } else {
+        props.onNext();
+      }
+      return;
+    }
+    if (direction === 'vertical' && Math.abs(dy) > DISMISS_THRESHOLD_PX) {
+      props.onClose();
+    }
+  };
+
+  const onPointerUp = () => endDrag();
+  const onPointerCancel = () => endDrag();
+
+  const contentStyle = () => {
+    if (!isDragging()) return {} as any;
+    const direction = dragDirection();
+    const dx = dragDeltaX();
+    const dy = dragDeltaY();
+    if (direction === 'horizontal') {
+      const opacity = Math.max(0.8, 1 - Math.abs(dx) / 600);
+      return { transform: `translateX(${dx}px)`, opacity: String(opacity) } as any;
+    }
+    // vertical (or undecided): use Y transform
+    const opacity = Math.max(0.6, 1 - Math.abs(dy) / 400);
+    return { transform: `translateY(${dy}px)`, opacity: String(opacity) } as any;
+  };
+
+  return (
+    <div class="fixed inset-0 z-50 select-none" onContextMenu={(e) => e.preventDefault()}>
+      <div
+        class="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-zoom-out"
+        onClick={props.onClose}
+        role="button"
+        aria-label="Close lightbox"
+      />
+      <div class="absolute top-4 right-4 z-50">
+        <button
+          onClick={props.onClose}
+          class="bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-400"
+          aria-label="Close"
+          title="Close (Esc)"
+          data-no-drag
+        >
+          ×
+        </button>
+      </div>
+      <div
+         class="relative h-full w-full flex items-center justify-center px-4 touch-none cursor-zoom-out"
+         onClick={props.onClose}
+         onPointerDown={onPointerDown}
+         onPointerMove={onPointerMove}
+         onPointerUp={onPointerUp}
+         onPointerCancel={onPointerCancel}
+       >
+        <div class="relative max-w-6xl w-full flex items-center justify-center" style={contentStyle()}>
+          <img
+            src={photo().src}
+            alt={photo().alt}
+            class="block mx-auto max-h-dvh sm:max-h-screen max-w-[95vw] w-auto h-auto object-contain rounded-lg shadow-xl cursor-pointer"
+            width={photo().width}
+            height={photo().height}
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
+            onClick={(e) => { e.stopPropagation(); props.onNext(); }}
+          />
+          <div class="absolute inset-y-0 left-0 flex items-center">
+            <button
+              onClick={(e) => { e.stopPropagation(); props.onPrev(); }}
+              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
+              aria-label="Previous photo"
+              data-no-drag
+            >
+              ‹
+            </button>
+          </div>
+          <div class="absolute inset-y-0 right-0 flex items-center">
+            <button
+              onClick={(e) => { e.stopPropagation(); props.onNext(); }}
+              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
+              aria-label="Next photo"
+              data-no-drag
+            >
+              ›
+            </button>
+          </div>
+          <div class="absolute bottom-2 left-2 right-2 text-center text-sm text-gray-300">
+            <div class="mb-1">{photo().alt}</div>
+            <Show when={exifParts().length > 0}>
+              <div class="text-xs text-gray-400">
+                {exifParts().join(' • ')}
+              </div>
+            </Show>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
