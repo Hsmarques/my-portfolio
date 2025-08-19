@@ -238,7 +238,7 @@ function Lightbox(props: {
           <div class="absolute inset-y-0 left-0 flex items-center">
             <button
               onClick={(e) => { e.stopPropagation(); props.onPrev(); }}
-              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
+              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-6 text-2xl"
               aria-label="Previous photo"
               data-no-drag
             >
@@ -248,7 +248,7 @@ function Lightbox(props: {
           <div class="absolute inset-y-0 right-0 flex items-center">
             <button
               onClick={(e) => { e.stopPropagation(); props.onNext(); }}
-              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
+              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-6 text-2xl"
               aria-label="Next photo"
               data-no-drag
             >
