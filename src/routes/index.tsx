@@ -48,7 +48,13 @@ export default function Home() {
           </div>
         </section>
       }>
-        <section class="relative select-none" onContextMenu={(e) => e.preventDefault()}>
+        <section class="relative select-none isolate" onContextMenu={(e) => e.preventDefault()}>
+          {/* Full-bleed blurred background that extends to viewport edges for color bleed */}
+          <div
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-full bg-center bg-cover blur-3xl opacity-60 -z-10"
+            style={{ "background-image": `url(${safeList()[0].src})` }}
+            aria-hidden="true"
+          />
           <img
             src={safeList()[0].src}
             alt={safeList()[0].alt}
@@ -72,7 +78,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section class="px-4 py-8">
+        <section class="py-8">
           <h2 class="text-xl text-gray-200 mb-4">Recent work</h2>
           <Gallery photos={safeList().slice(0, 6)} />
           <div class="text-center mt-6">
