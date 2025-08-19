@@ -51,8 +51,12 @@ export default function Home() {
         <section class="relative select-none isolate" onContextMenu={(e) => e.preventDefault()}>
           {/* Full-bleed blurred background that extends to viewport edges for color bleed */}
           <div
-            class="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-full bg-center bg-cover blur-3xl opacity-60 -z-10"
-            style={{ "background-image": `url(${safeList()[0].src})` }}
+            class="absolute top-0 left-1/2 -translate-x-1/2 w-screen h-full bg-center bg-cover blur-2xl opacity-30 -z-10"
+            style={{
+              "background-image": `url(${safeList()[0].src})`,
+              "mask-image": "linear-gradient(to bottom, black 0%, black 55%, transparent 85%)",
+              "-webkit-mask-image": "linear-gradient(to bottom, black 0%, black 55%, transparent 85%)"
+            }}
             aria-hidden="true"
           />
           <img
