@@ -255,14 +255,11 @@ function Lightbox(props: {
               ›
             </button>
           </div>
-          <div class="absolute bottom-2 left-2 right-2 text-center text-sm text-gray-300">
-            <div class="mb-1">{photo().alt}</div>
-            <Show when={exifParts().length > 0}>
-              <div class="text-xs text-gray-400">
-                {exifParts().join(' • ')}
-              </div>
-            </Show>
-          </div>
+          <Show when={exifParts().length > 0}>
+            <div class="absolute bottom-4 left-4 right-4 text-center text-xs text-gray-400">
+              {exifParts().join(' • ')}
+            </div>
+          </Show>
         </div>
       </div>
     </div>
