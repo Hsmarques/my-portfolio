@@ -83,7 +83,7 @@ export default function Home() {
 
         <section class="px-4 py-8">
           <h2 class="text-xl text-gray-200 mb-4">Recent work</h2>
-          <Gallery photos={safeList().slice(0, 6)} />
+          <Gallery photos={safeList().slice(0, 9)} />
           <div class="text-center mt-6">
             <a href="/photos" class="text-accent-400 hover:text-accent-300 font-medium">See full gallery →</a>
           </div>

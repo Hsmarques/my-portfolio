@@ -238,7 +238,7 @@ function Lightbox(props: {
           <div class="absolute inset-y-0 left-0 flex items-center">
             <button
               onClick={(e) => { e.stopPropagation(); props.onPrev(); }}
-              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
+              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-6 text-2xl"
               aria-label="Previous photo"
               data-no-drag
             >
@@ -248,21 +248,18 @@ function Lightbox(props: {
           <div class="absolute inset-y-0 right-0 flex items-center">
             <button
               onClick={(e) => { e.stopPropagation(); props.onNext(); }}
-              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3"
+              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-6 text-2xl"
               aria-label="Next photo"
               data-no-drag
             >
               ›
             </button>
           </div>
-          <div class="absolute bottom-2 left-2 right-2 text-center text-sm text-gray-300">
-            <div class="mb-1">{photo().alt}</div>
-            <Show when={exifParts().length > 0}>
-              <div class="text-xs text-gray-400">
-                {exifParts().join(' • ')}
-              </div>
-            </Show>
-          </div>
+          <Show when={exifParts().length > 0}>
+            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-xs text-white bg-black/60 rounded-full px-4 py-2">
+              {exifParts().join(' • ')}
+            </div>
+          </Show>
         </div>
       </div>
     </div>
