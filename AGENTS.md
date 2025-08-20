@@ -1,5 +1,11 @@
 # Agent Guidelines for Portfolio Project
 
+## Git Workflow
+- **ALWAYS** create a new branch for any code changes: `git checkout -b feature/description`
+- **ALWAYS** commit and push changes after making them
+- Never work directly on main branch
+- Branch naming: `feature/`, `fix/`, `enhance/` prefixes
+
 ## Commands
 - **Dev**: `npm run dev` (or `pnpm dev`)
 - **Build**: `npm run build` (includes photo manifest generation)
