@@ -293,7 +293,7 @@ function CopyUrlButton(props: { id: () => string }) {
     <div class="relative" data-no-drag>
       <button
         onClick={(e) => { e.stopPropagation(); copyUrl(); }}
-        class="bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-400"
+        class="bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-400"
         aria-label="Copy photo URL"
         title="Copy URL"
       >
