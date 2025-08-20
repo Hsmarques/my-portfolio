@@ -297,7 +297,7 @@ function CopyUrlButton(props: { id: () => string }) {
         aria-label="Copy photo URL"
         title="Copy URL"
       >
-        🔗
+        ⎘
       </button>
       <Show when={copied()}>
         <span class="absolute right-0 mt-2 px-2 py-1 rounded bg-black/80 text-white text-xs whitespace-nowrap">Link copied</span>
