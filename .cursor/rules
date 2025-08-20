@@ -1,0 +1,30 @@
+# Cursor Rules for Portfolio Project
+
+## Tech Stack
+- SolidJS with @solidjs/start (file-based routing)
+- TailwindCSS with custom accent colors (camel theme: accent-300 to accent-600)
+- Vinxi bundler
+- TypeScript strict mode
+- Path alias: ~/src/*
+
+## Code Style
+- Framework imports first, then type imports, then local components/libs
+- Use `type` imports for TypeScript types
+- Default exports for pages/components, named exports for utilities
+- Props: explicit interface/type definitions like `{ photos: Photo[] }`
+- SolidJS: createSignal, createMemo, createResource patterns
+- Event handlers: arrow functions with explicit types `(e: KeyboardEvent)`
+- Always check `typeof window !== 'undefined'` for client-only code
+- Include ARIA labels and keyboard navigation
+- Use lazy loading, draggable={false}, prevent context menus on images
+
+## Commands
+- Dev: `npm run dev`
+- Build: `npm run build` (includes photo manifest generation)
+- No test framework - use TypeScript compiler for validation
+
+## File Structure
+- Components in ~/components/
+- Routes in ~/routes/ (file-based routing)
+- Utilities in ~/lib/
+- Types defined inline or in component files
