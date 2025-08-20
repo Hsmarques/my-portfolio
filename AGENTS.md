@@ -2,7 +2,7 @@
 
 ## Git Workflow
 - **ALWAYS** create a new branch for any code changes: `git checkout -b feature/description`
-- **ALWAYS** commit and push changes after making them
+- **ALWAYS** commit and push after making changes
 - Never work directly on main branch
 - Branch naming: `feature/`, `fix/`, `enhance/` prefixes
 
