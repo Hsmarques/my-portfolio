@@ -256,7 +256,7 @@ function Lightbox(props: {
             </button>
           </div>
           <Show when={exifParts().length > 0}>
-            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-xs text-white bg-black/60 rounded px-2 py-1">
+            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-xs text-white bg-black/60 rounded-full px-4 py-2">
               {exifParts().join(' • ')}
             </div>
           </Show>
