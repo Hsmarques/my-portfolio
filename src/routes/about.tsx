@@ -30,7 +30,7 @@ export default function About() {
             <li><span class="text-gray-500">Gear</span>: OM System OM-3</li>
             <li><span class="text-gray-500">Genres</span>: landscape, street, portrait</li>
             <li><span class="text-gray-500">Tech</span>: SolidStart, Tailwind, TypeScript</li>
-             <li><span class="text-gray-500">Base</span>: UK</li>
+             <li><span class="text-gray-500">Base</span>: United Kingdom</li>
           </ul>
         </aside>
       </section>
