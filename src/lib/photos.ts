@@ -1,6 +1,7 @@
 export type Photo = {
   id: string;
   src: string;
+  srcFull?: string; // Optional full-size URL for lightbox
   alt: string;
   width: number;
   height: number;

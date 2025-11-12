@@ -1,108 +1,73 @@
 import { eventHandler } from "vinxi/http";
-import fs from "node:fs/promises";
-import path from "node:path";
-import exifr from "exifr";
-
-async function resolvePhotosDir() {
-  const optimized = path.join(process.cwd(), "public", "photos-optimized");
-  try {
-    const stat = await fs.stat(optimized);
-    if (stat.isDirectory()) return optimized;
-  } catch {}
-  return path.join(process.cwd(), "public", "photos");
-}
+import { listCloudinaryResources, getCloudinaryUrl, type CloudinaryResource } from "~/lib/cloudinary";
 
 export const GET = eventHandler(async () => {
   try {
-    const photosDir = await resolvePhotosDir();
-    const publicPrefix = photosDir.endsWith("photos-optimized") ? "/photos-optimized" : "/photos";
+    // Check if Cloudinary credentials are available
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
-    const entries = await fs.readdir(photosDir, { withFileTypes: true });
-    const files = entries
-      .filter((e) => e.isFile() && /\.(jpe?g|png|webp|tiff?)$/i.test(e.name))
-      .map((e) => e.name);
+    if (!cloudName || !apiKey || !apiSecret) {
+      console.error('Cloudinary credentials missing');
+      return [];
+    }
+
+    // Fetch resources from the 'my-portfolio' folder in Cloudinary
+    const resources = await listCloudinaryResources('my-portfolio');
 
     const result = await Promise.all(
-      files.map(async (file) => {
-        const filepath = path.join(photosDir, file);
-        const base = path.parse(file).name;
-        // If serving optimized, try to locate original for EXIF/createdAt
-        const originalsDir = path.join(process.cwd(), "public", "photos");
-        const originalCandidates = [
-          path.join(originalsDir, `${base}.jpg`),
-          path.join(originalsDir, `${base}.jpeg`),
-          path.join(originalsDir, `${base}.png`),
-          path.join(originalsDir, `${base}.tif`),
-          path.join(originalsDir, `${base}.tiff`)
-        ];
-        let originalPath: string | null = null;
-        for (const p of originalCandidates) {
-          try {
-            const st = await fs.stat(p);
-            if (st.isFile()) { originalPath = p; break; }
-          } catch {}
-        }
+      resources.map(async (resource: CloudinaryResource) => {
+        // Extract metadata from Cloudinary resource
+        const exif = resource.exif || {};
+        const context = resource.context?.custom || {};
 
-        // Dimensions from image metadata (best-effort if sharp is available)
-        let width = 0;
-        let height = 0;
-        try {
-          const sharp = await import("sharp").then(m => m.default || m);
-          const meta = await sharp(filepath).metadata();
-          width = meta.width || 0;
-          height = meta.height || 0;
-        } catch {}
-
-        // EXIF best-effort (likely absent on optimized webp)
-        let exif: any = {};
-        // Prefer EXIF from original if available, fallback to current file
-        try {
-          if (originalPath) {
-            exif = await exifr.parse(originalPath, { iptc: true });
-          } else {
-            exif = await exifr.parse(filepath, { iptc: true });
-          }
-        } catch {}
-
-        // Created date: prefer EXIF DateTimeOriginal/Created, then file mtime
+        // Parse created date
         let createdAt: string | undefined = undefined;
         try {
-          const exifDate = (exif?.DateTimeOriginal || exif?.CreateDate || exif?.ModifyDate);
-          if (exifDate instanceof Date) {
-            createdAt = exifDate.toISOString();
-          } else if (typeof exifDate === 'string') {
-            const d = new Date(exifDate);
-            if (!isNaN(d.getTime())) createdAt = d.toISOString();
+          if (resource.created_at) {
+            createdAt = new Date(resource.created_at).toISOString();
           }
-        } catch {}
-        if (!createdAt) {
-          try {
-            const st = await fs.stat(originalPath || filepath);
-            createdAt = new Date(st.mtimeMs).toISOString();
-          } catch {}
-        }
+        } catch { }
+
+        // Get optimized image URL (1600px width, auto quality, auto format)
+        const optimizedUrl = getCloudinaryUrl(resource.public_id, {
+          width: 1600,
+          quality: 'auto',
+          format: 'auto',
+          crop: 'limit',
+        });
+
+        // Get thumbnail URL for gallery (600px width)
+        const thumbnailUrl = getCloudinaryUrl(resource.public_id, {
+          width: 600,
+          quality: 'auto',
+          format: 'auto',
+          crop: 'limit',
+        });
 
         return {
-          id: path.parse(file).name,
-          src: `${publicPrefix}/${file}`,
-          alt: exif?.ImageDescription || exif?.iptc?.ObjectName || path.parse(file).name,
-          width,
-          height,
-          tags: [] as string[],
+          id: resource.public_id.split('/').pop() || resource.public_id,
+          src: thumbnailUrl, // Use thumbnail for gallery grid
+          srcFull: optimizedUrl, // Full size for lightbox
+          alt: context.alt || exif?.ImageDescription || resource.public_id,
+          width: resource.width || 0,
+          height: resource.height || 0,
+          tags: context.tags ? (typeof context.tags === 'string' ? context.tags.split(',').map(t => t.trim()) : context.tags) : [],
           createdAt,
           exif: {
-            camera: exif?.Model || undefined,
-            lens: exif?.LensModel || undefined,
+            camera: context.camera || exif?.Model || exif?.CameraModelName || undefined,
+            lens: context.lens || exif?.LensModel || exif?.Lens || undefined,
             focalLengthMm: exif?.FocalLengthIn35mmFilm || exif?.FocalLength || undefined,
             aperture: exif?.FNumber ? `f/${exif.FNumber}` : undefined,
             shutter: exif?.ExposureTime ? `${exif.ExposureTime}s` : undefined,
-            iso: exif?.ISO || undefined
-          }
+            iso: exif?.ISO || exif?.ISOSpeedRatings || undefined,
+          },
         };
       })
     );
 
-    // Sort by createdAt desc when available; fallback to name desc
+    // Sort by createdAt desc when available; fallback to public_id desc
     result.sort((a: any, b: any) => {
       const ad = a.createdAt ? Date.parse(a.createdAt) : 0;
       const bd = b.createdAt ? Date.parse(b.createdAt) : 0;
@@ -112,6 +77,7 @@ export const GET = eventHandler(async () => {
 
     return result;
   } catch (err) {
+    console.error('Error fetching photos from Cloudinary:', err);
     return [];
   }
 });

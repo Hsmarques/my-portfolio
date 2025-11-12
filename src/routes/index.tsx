@@ -1,9 +1,15 @@
-import { Show, createMemo, createResource, createSignal, onMount } from "solid-js";
+import {
+  Show,
+  createMemo,
+  createResource,
+  createSignal,
+  onMount,
+} from "solid-js";
 import Gallery from "~/components/Gallery";
 import staticPhotos from "~/lib/photos";
 
 async function fetchManifest() {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
   try {
     const res = await fetch("/photos-manifest.json", { cache: "no-cache" });
     if (res.ok) return await res.json();
@@ -12,16 +18,24 @@ async function fetchManifest() {
 }
 
 async function fetchPhotos() {
-  if (typeof window === 'undefined') return null; // Return null during SSR
-  const manifest = await fetchManifest();
-  if (manifest !== null) return manifest;
+  if (typeof window === "undefined") return null; // Return null during SSR
+  // Prioritize Cloudinary API over static manifest
   try {
     const res = await fetch("/api/photos");
-    if (!res.ok) throw new Error("Failed to fetch");
-    return await res.json();
-  } catch {
-    return staticPhotos; // Only use static as last resort on client
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data; // Use Cloudinary photos if available
+      }
+    }
+  } catch (err) {
+    // Silently fall back to manifest
   }
+  // Fallback to manifest if API fails or returns empty
+  const manifest = await fetchManifest();
+  if (manifest !== null) return manifest;
+  // Last resort: static photos
+  return staticPhotos;
 }
 
 export default function Home() {
@@ -46,20 +60,33 @@ export default function Home() {
 
   return (
     <main class="mx-auto max-w-7xl">
-      <Show when={safeList().length > 0} fallback={
-        <section class="relative h-[48vh] sm:h-[60vh] bg-gray-900 flex items-center justify-center">
-          <div class="text-center">
-            <h1 class="text-3xl sm:text-5xl font-bold text-white drop-shadow mb-4">Photography & Code</h1>
-            <p class="text-gray-300 drop-shadow mb-6">Loading gallery...</p>
-            <div class="flex gap-3 justify-center">
-              <a href="/photos" class="bg-white/90 hover:bg-white text-black font-semibold px-4 py-2 rounded">View photos</a>
+      <Show
+        when={safeList().length > 0}
+        fallback={
+          <section class="relative h-[48vh] sm:h-[60vh] bg-gray-900 flex items-center justify-center">
+            <div class="text-center">
+              <h1 class="text-3xl sm:text-5xl font-bold text-white drop-shadow mb-4">
+                Photography & Code
+              </h1>
+              <p class="text-gray-300 drop-shadow mb-6">Loading gallery...</p>
+              <div class="flex gap-3 justify-center">
+                <a
+                  href="/photos"
+                  class="bg-white/90 hover:bg-white text-black font-semibold px-4 py-2 rounded"
+                >
+                  View photos
+                </a>
+              </div>
             </div>
-          </div>
-        </section>
-      }>
-        <section class="relative select-none" onContextMenu={(e) => e.preventDefault()}>
+          </section>
+        }
+      >
+        <section
+          class="relative select-none"
+          onContextMenu={(e) => e.preventDefault()}
+        >
           <img
-            src={safeList()[0].src}
+            src={(safeList()[0] as any).srcFull || safeList()[0].src}
             alt={safeList()[0].alt}
             class="w-full h-[48vh] sm:h-[60vh] object-cover object-center opacity-90"
             width={safeList()[0].width}
@@ -70,13 +97,20 @@ export default function Home() {
           />
           <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
           <div class="absolute bottom-6 left-6 right-6">
-            <h1 class="text-3xl sm:text-5xl font-bold text-white drop-shadow">Photography & Code</h1>
+            <h1 class="text-3xl sm:text-5xl font-bold text-white drop-shadow">
+              Photography & Code
+            </h1>
             <p class="mt-3 max-w-2xl text-gray-200 drop-shadow">
-              I'm Hugo — I capture landscapes, streets, and portraits. I also build
-              fast web experiences. Enjoy the photos.
+              I'm Hugo — I capture landscapes, streets, and portraits. I also
+              build fast web experiences. Enjoy the photos.
             </p>
             <div class="mt-4 flex gap-3">
-              <a href="/photos" class="bg-white/90 hover:bg-white text-black font-semibold px-4 py-2 rounded">View photos</a>
+              <a
+                href="/photos"
+                class="bg-white/90 hover:bg-white text-black font-semibold px-4 py-2 rounded"
+              >
+                View photos
+              </a>
             </div>
           </div>
         </section>
@@ -85,7 +119,12 @@ export default function Home() {
           <h2 class="text-xl text-gray-200 mb-4">Recent work</h2>
           <Gallery photos={safeList().slice(0, 9)} />
           <div class="text-center mt-6">
-            <a href="/photos" class="text-accent-400 hover:text-accent-300 font-medium">See full gallery →</a>
+            <a
+              href="/photos"
+              class="text-accent-400 hover:text-accent-300 font-medium"
+            >
+              See full gallery →
+            </a>
           </div>
         </section>
       </Show>
