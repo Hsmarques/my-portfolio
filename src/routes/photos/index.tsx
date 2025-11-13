@@ -96,7 +96,7 @@ export default function PhotosPage() {
       <header class="mb-8">
         <h1 class="text-4xl font-bold text-gray-100 mb-3">Photography</h1>
         <p class="text-gray-400">
-          A selection of my recent work. Click any photo to view larger.
+          A selection of my recent work.
         </p>
       </header>
 
