@@ -1,10 +1,17 @@
-import { Show, For, createMemo, createResource, createSignal, onMount } from "solid-js";
+import {
+  Show,
+  For,
+  createMemo,
+  createResource,
+  createSignal,
+  onMount,
+} from "solid-js";
 import { useParams } from "@solidjs/router";
 import staticPhotos from "~/lib/photos";
 import type { Photo } from "~/lib/photos";
 
 async function fetchManifest() {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null;
   try {
     const res = await fetch("/photos-manifest.json", { cache: "no-cache" });
     if (res.ok) return await res.json();
@@ -13,16 +20,24 @@ async function fetchManifest() {
 }
 
 async function fetchPhotos() {
-  if (typeof window === 'undefined') return null; // do not return placeholders on SSR
-  const manifest = await fetchManifest();
-  if (manifest !== null) return manifest;
+  if (typeof window === "undefined") return null; // do not return placeholders on SSR
+  // Prioritize Cloudinary API over static manifest
   try {
     const res = await fetch("/api/photos");
-    if (!res.ok) throw new Error("Failed to fetch");
-    return await res.json();
-  } catch {
-    return staticPhotos;
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        return data; // Use Cloudinary photos if available
+      }
+    }
+  } catch (err) {
+    // Silently fall back to manifest
   }
+  // Fallback to manifest if API fails or returns empty
+  const manifest = await fetchManifest();
+  if (manifest !== null) return manifest;
+  // Last resort: static photos
+  return staticPhotos;
 }
 
 export default function SinglePhotoPage() {
@@ -50,7 +65,7 @@ export default function SinglePhotoPage() {
     if (e.focalLengthMm) parts.push(`${e.focalLengthMm}mm`);
     if (e.aperture) parts.push(e.aperture);
     if (e.shutter) parts.push(e.shutter);
-    if (typeof e.iso === 'number') parts.push(`ISO ${e.iso}`);
+    if (typeof e.iso === "number") parts.push(`ISO ${e.iso}`);
     return parts;
   });
 
@@ -66,13 +81,19 @@ export default function SinglePhotoPage() {
 
   return (
     <main class="mx-auto max-w-7xl px-4 py-6">
-      <Show when={remotePhotos.loading === false} fallback={<p class="text-gray-400">Loading…</p>}>
-        <Show when={photo()} fallback={<p class="text-gray-400">Photo not found.</p>}>
+      <Show
+        when={remotePhotos.loading === false}
+        fallback={<p class="text-gray-400">Loading…</p>}
+      >
+        <Show
+          when={photo()}
+          fallback={<p class="text-gray-400">Photo not found.</p>}
+        >
           {(p: any) => (
             <div class="space-y-6">
               <div class="w-full flex items-center justify-center relative">
                 <img
-                  src={p().src}
+                  src={(p() as any).srcFull || p().src}
                   alt={p().alt}
                   class="block w-full h-auto max-h-[calc(100dvh-200px)] object-contain rounded-lg"
                   width={p().width}
@@ -81,11 +102,11 @@ export default function SinglePhotoPage() {
                   onContextMenu={(e) => e.preventDefault()}
                   onDragStart={(e) => e.preventDefault()}
                 />
-                
+
                 {/* Metadata overlay */}
                 <Show when={exifParts().length > 0}>
                   <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-xs text-white bg-black/60 rounded-full px-4 py-2">
-                    {exifParts().join(' • ')}
+                    {exifParts().join(" • ")}
                   </div>
                 </Show>
               </div>
@@ -123,4 +144,3 @@ export default function SinglePhotoPage() {
     </main>
   );
 }
-
