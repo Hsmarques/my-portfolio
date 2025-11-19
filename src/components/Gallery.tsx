@@ -268,8 +268,8 @@ function Lightbox(props: {
         aria-label="Close lightbox"
       />
       
-      {/* Controls Header */}
-      <div class="absolute top-0 inset-x-0 z-50 p-4 flex justify-between items-start bg-gradient-to-b from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300">
+      {/* Controls Header - Always visible on mobile, hover on desktop */}
+      <div class="absolute top-0 inset-x-0 z-50 p-4 flex justify-between items-start bg-gradient-to-b from-black/60 to-transparent opacity-100 lg:opacity-0 lg:hover:opacity-100 transition-opacity duration-300">
         <div class="text-white/80 text-sm font-medium bg-black/20 backdrop-blur px-3 py-1 rounded-full border border-white/10">
           {props.index + 1} / {props.photos.length}
         </div>
