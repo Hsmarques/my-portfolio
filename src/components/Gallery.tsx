@@ -143,18 +143,6 @@ function Lightbox(props: {
   onNext: () => void;
 }) {
   const photo = () => props.photos[props.index];
-  const exifParts = createMemo(() => {
-    const e = photo().exif;
-    if (!e) return [] as string[];
-    const parts: string[] = [];
-    if (e.camera) parts.push(e.camera);
-    if (e.lens) parts.push(e.lens);
-    if (e.focalLengthMm) parts.push(`${e.focalLengthMm}mm`);
-    if (e.aperture) parts.push(e.aperture);
-    if (e.shutter) parts.push(e.shutter);
-    if (typeof e.iso === "number") parts.push(`ISO ${e.iso}`);
-    return parts;
-  });
 
   // Drag-to-dismiss (vertical) using Pointer Events
   const [dragStartX, setDragStartX] = createSignal<number | null>(null);
@@ -323,11 +311,6 @@ function Lightbox(props: {
               ›
             </button>
           </div>
-          <Show when={exifParts().length > 0}>
-            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-xs text-white bg-black/60 rounded-full px-4 py-2">
-              {exifParts().join(" • ")}
-            </div>
-          </Show>
         </div>
       </div>
     </div>

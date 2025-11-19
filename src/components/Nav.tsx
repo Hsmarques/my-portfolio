@@ -26,11 +26,6 @@ export default function Nav() {
             </a>
           </li>
           <li>
-            <a href="/gear" class={active("/gear")}>
-              Gear
-            </a>
-          </li>
-          <li>
             <a href="/about" class={active("/about")}>
               About
             </a>

@@ -55,20 +55,6 @@ export default function SinglePhotoPage() {
 
   const photo = createMemo(() => photos().find((p: any) => p.id === params.id));
 
-  const exifParts = createMemo(() => {
-    const p = photo();
-    if (!p?.exif) return [] as string[];
-    const e = p.exif;
-    const parts: string[] = [];
-    if (e.camera) parts.push(e.camera);
-    if (e.lens) parts.push(e.lens);
-    if (e.focalLengthMm) parts.push(`${e.focalLengthMm}mm`);
-    if (e.aperture) parts.push(e.aperture);
-    if (e.shutter) parts.push(e.shutter);
-    if (typeof e.iso === "number") parts.push(`ISO ${e.iso}`);
-    return parts;
-  });
-
   // Get random related photos (excluding current photo)
   const relatedPhotos = createMemo(() => {
     const allPhotos = photos();
@@ -102,13 +88,6 @@ export default function SinglePhotoPage() {
                   onContextMenu={(e) => e.preventDefault()}
                   onDragStart={(e) => e.preventDefault()}
                 />
-
-                {/* Metadata overlay */}
-                <Show when={exifParts().length > 0}>
-                  <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-xs text-white bg-black/60 rounded-full px-4 py-2">
-                    {exifParts().join(" • ")}
-                  </div>
-                </Show>
               </div>
 
               {/* Related Photos */}
