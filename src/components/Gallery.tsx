@@ -82,16 +82,16 @@ export default function Gallery(props: { photos: Photo[] }) {
 
   return (
     <div class="w-full select-none" onContextMenu={(e) => e.preventDefault()}>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <For each={rows()}>
           {(column) => (
-            <div class="space-y-3">
+            <div class="space-y-4">
               <For each={column}>
                 {(photo) => {
                   const index = () => idToIndex().get(photo.id) ?? 0;
                   return (
                     <button
-                      class="group block w-full overflow-hidden rounded-lg border border-gray-800 focus:outline-none focus:ring-2 focus:ring-accent-400"
+                      class="group relative block w-full overflow-hidden rounded-sm bg-gray-900 focus:outline-none transition-all duration-500 hover:shadow-2xl hover:shadow-accent-900/20"
                       onClick={() => open(index())}
                       aria-label={`Open photo ${photo.alt}`}
                     >
@@ -99,13 +99,14 @@ export default function Gallery(props: { photos: Photo[] }) {
                         src={photo.src}
                         alt={photo.alt}
                         loading="lazy"
-                        class="transition-transform duration-300 ease-out group-hover:scale-[1.02] w-full h-auto"
+                        class="transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110 w-full h-auto opacity-90 group-hover:opacity-100"
                         width={photo.width}
                         height={photo.height}
                         draggable={false}
                         onContextMenu={(e) => e.preventDefault()}
                         onDragStart={(e) => e.preventDefault()}
                       />
+                      <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
                     </button>
                   );
                 }}
@@ -252,7 +253,7 @@ function Lightbox(props: {
       onContextMenu={(e) => e.preventDefault()}
     >
       <div
-        class="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-zoom-out"
+        class="absolute inset-0 bg-black/95 backdrop-blur-xl cursor-zoom-out transition-opacity duration-300"
         onClick={props.onClose}
         role="button"
         aria-label="Close lightbox"

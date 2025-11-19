@@ -19,6 +19,15 @@ body {
   color: rgb(var(--foreground-rgb));
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background-color: rgba(201, 176, 133, 0.3); /* accent-400 with opacity */
+  color: white;
+}
+
 img { image-rendering: auto; -webkit-font-smoothing: antialiased; }
 
 .container { max-width: 72rem; margin: 0 auto; }
