@@ -29,16 +29,35 @@ export default function About() {
               </A>
             </div>
           </section>
+
+          <section>
+            <h2 class="text-xl font-serif text-accent-300 mb-6">My Gear</h2>
+            <div class="space-y-6">
+              <div>
+                <h3 class="font-medium text-white mb-2">Camera Body</h3>
+                <ul class="list-disc list-inside text-gray-400 pl-2">
+                  <li>OM System OM-3</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h3 class="font-medium text-white mb-2">Lenses</h3>
+                <ul class="list-disc list-inside text-gray-400 pl-2 space-y-1">
+                  <li>M.Zuiko 12–45mm f/4 PRO</li>
+                  <li>OM System 40–150mm f/4 PRO</li>
+                  <li>Panasonic Leica 9mm f/1.7</li>
+                  <li>Olympus 25mm f/1.2</li>
+                  <li>M.Zuiko 45mm f/1.8</li>
+                </ul>
+              </div>
+            </div>
+          </section>
         </div>
 
         <aside class="md:col-span-2 space-y-8">
           <div class="bg-white/5 border border-white/10 rounded-lg p-6 backdrop-blur-sm">
             <h2 class="text-lg font-serif text-white mb-4">Quick Facts</h2>
             <ul class="space-y-3 text-sm text-gray-300">
-              <li class="flex justify-between border-b border-white/5 pb-2">
-                <span class="text-gray-500">Camera</span>
-                <span>OM System OM-3</span>
-              </li>
               <li class="flex justify-between border-b border-white/5 pb-2">
                 <span class="text-gray-500">Genres</span>
                 <span>Landscape, Street, Portrait</span>
