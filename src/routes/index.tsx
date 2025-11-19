@@ -64,7 +64,9 @@ export default function Home() {
         when={safeList().length > 0}
         fallback={
           <div class="h-screen w-full flex items-center justify-center bg-black text-white/50">
-            <div class="animate-pulse tracking-widest uppercase text-xs">Loading Gallery...</div>
+            <div class="animate-pulse tracking-widest uppercase text-xs">
+              Loading Gallery...
+            </div>
           </div>
         }
       >
@@ -86,10 +88,11 @@ export default function Home() {
 
           <div class="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-8 pt-20">
             <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl text-white tracking-tight drop-shadow-2xl">
-              Capturing <span class="italic text-accent-300">Light</span> & <span class="italic text-accent-300">Code</span>
+              Capturing <span class="italic text-accent-300">Light</span> &{" "}
+              <span class="italic text-accent-300">Code</span>
             </h1>
             <p class="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md opacity-90">
-              I'm Hugo — I capture landscapes, streets, and portraits. I also build fast web experiences.
+              I'm Hugo - I take photos and build websites.
             </p>
             <div class="pt-8 animate-fade-in-up">
               <a
@@ -103,7 +106,10 @@ export default function Home() {
         </section>
 
         {/* Recent Work */}
-        <section id="gallery" class="py-24 px-4 md:px-8 max-w-7xl mx-auto bg-[#0a0a0a]">
+        <section
+          id="gallery"
+          class="py-24 px-4 md:px-8 max-w-7xl mx-auto bg-[#0a0a0a]"
+        >
           <div class="flex items-end justify-between mb-12 pb-4 border-b border-white/10">
             <h2 class="text-3xl font-serif text-white">Recent Captures</h2>
             <a
@@ -114,7 +120,7 @@ export default function Home() {
             </a>
           </div>
           <Gallery photos={safeList().slice(0, 9)} />
-          
+
           <div class="mt-20 text-center">
             <p class="text-gray-500 text-sm font-light">
               Designed & Built with SolidJS
