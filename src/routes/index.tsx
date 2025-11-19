@@ -59,72 +59,66 @@ export default function Home() {
   });
 
   return (
-    <main class="mx-auto max-w-7xl">
+    <main class="bg-black min-h-screen">
       <Show
         when={safeList().length > 0}
         fallback={
-          <section class="relative h-[48vh] sm:h-[60vh] bg-gray-900 flex items-center justify-center">
-            <div class="text-center">
-              <h1 class="text-3xl sm:text-5xl font-bold text-white drop-shadow mb-4">
-                Photography & Code
-              </h1>
-              <p class="text-gray-300 drop-shadow mb-6">Loading gallery...</p>
-              <div class="flex gap-3 justify-center">
-                <a
-                  href="/photos"
-                  class="bg-white/90 hover:bg-white text-black font-semibold px-4 py-2 rounded"
-                >
-                  View photos
-                </a>
-              </div>
-            </div>
-          </section>
+          <div class="h-screen w-full flex items-center justify-center bg-black text-white/50">
+            <div class="animate-pulse tracking-widest uppercase text-xs">Loading Gallery...</div>
+          </div>
         }
       >
-        <section
-          class="relative select-none"
-          onContextMenu={(e) => e.preventDefault()}
-        >
-          <img
-            src={(safeList()[0] as any).srcFull || safeList()[0].src}
-            alt={safeList()[0].alt}
-            class="w-full h-[48vh] sm:h-[60vh] object-cover object-center opacity-90"
-            width={safeList()[0].width}
-            height={safeList()[0].height}
-            draggable={false}
-            onDragStart={(e) => e.preventDefault()}
-            onContextMenu={(e) => e.preventDefault()}
-          />
-          <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-          <div class="absolute bottom-6 left-6 right-6">
-            <h1 class="text-3xl sm:text-5xl font-bold text-white drop-shadow">
-              Photography & Code
+        {/* Hero Section */}
+        <section class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+          <div class="absolute inset-0 z-0 select-none">
+            <img
+              src={(safeList()[0] as any).srcFull || safeList()[0].src}
+              alt={safeList()[0].alt}
+              class="w-full h-full object-cover object-center opacity-60 scale-105"
+              width={safeList()[0].width}
+              height={safeList()[0].height}
+              draggable={false}
+              onDragStart={(e) => e.preventDefault()}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#0a0a0a]" />
+          </div>
+
+          <div class="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-8 pt-20">
+            <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl text-white tracking-tight drop-shadow-2xl">
+              Capturing <span class="italic text-accent-300">Light</span> & <span class="italic text-accent-300">Code</span>
             </h1>
-            <p class="mt-3 max-w-2xl text-gray-200 drop-shadow">
-              I'm Hugo — I capture landscapes, streets, and portraits. I also
-              build fast web experiences. Enjoy the photos.
+            <p class="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md opacity-90">
+              I'm Hugo — I capture landscapes, streets, and portraits. I also build fast web experiences.
             </p>
-            <div class="mt-4 flex gap-3">
+            <div class="pt-8 animate-fade-in-up">
               <a
-                href="/photos"
-                class="bg-white/90 hover:bg-white text-black font-semibold px-4 py-2 rounded"
+                href="#gallery"
+                class="inline-block px-8 py-3 border border-white/20 hover:bg-white/10 hover:border-white/40 rounded-full text-xs font-bold tracking-[0.2em] uppercase text-white transition-all duration-300 backdrop-blur-sm"
               >
-                View photos
+                Explore Work
               </a>
             </div>
           </div>
         </section>
 
-        <section class="px-4 py-8">
-          <h2 class="text-xl text-gray-200 mb-4">Recent work</h2>
-          <Gallery photos={safeList().slice(0, 9)} />
-          <div class="text-center mt-6">
+        {/* Recent Work */}
+        <section id="gallery" class="py-24 px-4 md:px-8 max-w-7xl mx-auto bg-[#0a0a0a]">
+          <div class="flex items-end justify-between mb-12 pb-4 border-b border-white/10">
+            <h2 class="text-3xl font-serif text-white">Recent Captures</h2>
             <a
               href="/photos"
-              class="text-accent-400 hover:text-accent-300 font-medium"
+              class="text-accent-400 hover:text-accent-300 text-sm font-medium transition-colors mb-1"
             >
-              See full gallery →
+              View all photos →
             </a>
+          </div>
+          <Gallery photos={safeList().slice(0, 9)} />
+          
+          <div class="mt-20 text-center">
+            <p class="text-gray-500 text-sm font-light">
+              Designed & Built with SolidJS
+            </p>
           </div>
         </section>
       </Show>
