@@ -2,47 +2,78 @@ import { A } from "@solidjs/router";
 
 export default function About() {
   return (
-    <main class="mx-auto max-w-4xl px-4 py-10 text-gray-100">
-      <header class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-100">About Hugo</h1>
-        <p class="mt-2 text-gray-400">
-          Photographer first, developer second. From Portugal, based in United Kingdom.
+    <main class="mx-auto max-w-4xl px-4 py-20 text-gray-100">
+      <header class="mb-12 text-center">
+        <h1 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">About Hugo</h1>
+        <p class="text-gray-400 text-lg font-light max-w-2xl mx-auto">
+          Developer & Amateur Photographer. Based in the United Kingdom.
         </p>
       </header>
 
-      <section class="grid grid-cols-1 md:grid-cols-5 gap-8 items-start">
-        <div class="md:col-span-3 space-y-4">
-          <p>I try to take nice photos.</p>
-          <div class="flex gap-3 pt-2">
-            <A
-              href="/photos"
-              class="bg-white/90 hover:bg-white text-black font-semibold px-4 py-2 rounded"
-            >
-              View photos
-            </A>
-          </div>
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-12 items-start">
+        <div class="md:col-span-3 space-y-8">
+          <section>
+            <h2 class="text-xl font-serif text-accent-300 mb-4">Hello</h2>
+            <p class="leading-relaxed text-gray-300 mb-4">
+              I'm an amateur photographer just trying to learn how to take good pictures. Photography is a way for me to disconnect and observe the world a little closer.
+            </p>
+            <p class="leading-relaxed text-gray-300">
+              The photos on this website are simply a collection of my personal favorites—the ones that I feel turned out well. I'm constantly experimenting and trying to improve my craft.
+            </p>
+            <div class="pt-6">
+              <A
+                href="/photos"
+                class="inline-block px-6 py-2 border border-white/20 hover:bg-white/10 rounded-full text-sm font-medium tracking-wide transition-colors"
+              >
+                View Gallery
+              </A>
+            </div>
+          </section>
+
+          <section>
+            <h2 class="text-xl font-serif text-accent-300 mb-6">My Gear</h2>
+            <div class="space-y-6">
+              <div>
+                <h3 class="font-medium text-white mb-2">Camera Body</h3>
+                <ul class="list-disc list-inside text-gray-400 pl-2">
+                  <li>OM System OM-3</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h3 class="font-medium text-white mb-2">Lenses</h3>
+                <ul class="list-disc list-inside text-gray-400 pl-2 space-y-1">
+                  <li>M.Zuiko 12–45mm f/4 PRO</li>
+                  <li>OM System 40–150mm f/4 PRO</li>
+                  <li>Panasonic Leica 9mm f/1.7</li>
+                  <li>Olympus 25mm f/1.2</li>
+                  <li>M.Zuiko 45mm f/1.8</li>
+                </ul>
+              </div>
+            </div>
+          </section>
         </div>
 
-        <aside class="md:col-span-2 bg-gray-900/40 border border-gray-800 rounded-lg p-5">
-          <h2 class="text-lg font-semibold text-gray-200 mb-3">Quick facts</h2>
-          <ul class="space-y-2 text-gray-300">
-            <li>
-              <span class="text-gray-500">Gear</span>: OM System OM-3
-            </li>
-            <li>
-              <span class="text-gray-500">Genres</span>: landscape, street,
-              portrait
-            </li>
-            <li>
-              <span class="text-gray-500">Tech</span>: SolidStart, Tailwind,
-              TypeScript
-            </li>
-            <li>
-              <span class="text-gray-500">Base</span>: United Kingdom
-            </li>
-          </ul>
+        <aside class="md:col-span-2 space-y-8">
+          <div class="bg-white/5 border border-white/10 rounded-lg p-6 backdrop-blur-sm">
+            <h2 class="text-lg font-serif text-white mb-4">Quick Facts</h2>
+            <ul class="space-y-3 text-sm text-gray-300">
+              <li class="flex justify-between border-b border-white/5 pb-2">
+                <span class="text-gray-500">Genres</span>
+                <span>Landscape, Street, Portrait</span>
+              </li>
+              <li class="flex justify-between border-b border-white/5 pb-2">
+                <span class="text-gray-500">Based in</span>
+                <span>United Kingdom</span>
+              </li>
+              <li class="flex justify-between border-b border-white/5 pb-2">
+                <span class="text-gray-500">Tech Stack</span>
+                <span class="text-right">SolidStart, Tailwind, TS</span>
+              </li>
+            </ul>
+          </div>
         </aside>
-      </section>
+      </div>
     </main>
   );
 }

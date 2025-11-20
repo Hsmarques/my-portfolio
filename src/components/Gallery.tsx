@@ -143,17 +143,26 @@ function Lightbox(props: {
   onNext: () => void;
 }) {
   const photo = () => props.photos[props.index];
-  const exifParts = createMemo(() => {
-    const e = photo().exif;
-    if (!e) return [] as string[];
-    const parts: string[] = [];
-    if (e.camera) parts.push(e.camera);
-    if (e.lens) parts.push(e.lens);
-    if (e.focalLengthMm) parts.push(`${e.focalLengthMm}mm`);
-    if (e.aperture) parts.push(e.aperture);
-    if (e.shutter) parts.push(e.shutter);
-    if (typeof e.iso === "number") parts.push(`ISO ${e.iso}`);
-    return parts;
+  const [loaded, setLoaded] = createSignal(false);
+  
+  // Reset loaded state when photo changes
+  createMemo(() => {
+    photo();
+    setLoaded(false);
+  });
+
+  // Preload next and prev images
+  createMemo(() => {
+    const idx = props.index;
+    const next = idx < props.photos.length - 1 ? props.photos[idx + 1] : null;
+    const prev = idx > 0 ? props.photos[idx - 1] : null;
+    
+    [next, prev].forEach(p => {
+      if (p) {
+        const img = new Image();
+        img.src = (p as any).srcFull || p.src;
+      }
+    });
   });
 
   // Drag-to-dismiss (vertical) using Pointer Events
@@ -253,24 +262,32 @@ function Lightbox(props: {
       onContextMenu={(e) => e.preventDefault()}
     >
       <div
-        class="absolute inset-0 bg-black/95 backdrop-blur-xl cursor-zoom-out transition-opacity duration-300"
+        class="absolute inset-0 bg-black/95 backdrop-blur-2xl transition-opacity duration-300 animate-fade-in"
         onClick={props.onClose}
         role="button"
         aria-label="Close lightbox"
       />
-      <div class="absolute top-4 right-4 z-50 flex gap-2">
-        <CopyUrlButton id={() => photo().id} />
-        <ShareButton id={() => photo().id} />
-        <button
-          onClick={props.onClose}
-          class="bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-400"
-          aria-label="Close"
-          title="Close (Esc)"
-          data-no-drag
-        >
-          ×
-        </button>
+      
+      {/* Controls Header - Always visible on mobile, dimmed on desktop until hover */}
+      <div class="absolute top-0 inset-x-0 z-50 p-4 flex justify-between items-start bg-gradient-to-b from-black/60 to-transparent opacity-100 lg:opacity-30 lg:hover:opacity-100 transition-opacity duration-500">
+        <div class="text-white/80 text-sm font-medium bg-black/20 backdrop-blur px-3 py-1 rounded-full border border-white/10">
+          {props.index + 1} / {props.photos.length}
+        </div>
+        <div class="flex gap-3">
+          <CopyUrlButton id={() => photo().id} />
+          <ShareButton id={() => photo().id} />
+          <button
+            onClick={props.onClose}
+            class="bg-white/10 hover:bg-white/20 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl leading-none backdrop-blur transition-colors"
+            aria-label="Close"
+            title="Close (Esc)"
+            data-no-drag
+          >
+            ×
+          </button>
+        </div>
       </div>
+
       <div
         class="relative h-full w-full flex items-center justify-center px-4 touch-none cursor-zoom-out"
         onClick={props.onClose}
@@ -280,13 +297,25 @@ function Lightbox(props: {
         onPointerCancel={onPointerCancel}
       >
         <div
-          class="relative max-w-6xl w-full flex items-center justify-center"
+          class="relative max-w-7xl w-full h-full flex items-center justify-center py-12"
           style={contentStyle()}
         >
+          {/* Loading State */}
+          <Show when={!loaded()}>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+            </div>
+          </Show>
+          
+          {/* Main Image */}
           <img
             src={(photo() as any).srcFull || photo().src}
             alt={photo().alt}
-            class="block mx-auto max-h-dvh sm:max-h-screen max-w-[95vw] w-auto h-auto object-contain rounded-lg shadow-xl cursor-pointer"
+            class={`
+              max-h-full max-w-full object-contain shadow-2xl transition-all duration-500
+              ${loaded() ? "opacity-100 scale-100" : "opacity-0 scale-95"}
+            `}
+            onLoad={() => setLoaded(true)}
             width={photo().width}
             height={photo().height}
             draggable={false}
@@ -297,36 +326,34 @@ function Lightbox(props: {
               props.onNext();
             }}
           />
-          <div class="absolute inset-y-0 left-0 flex items-center">
+
+          {/* Navigation Arrows - Floating */}
+          <Show when={props.index > 0}>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 props.onPrev();
               }}
-              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-6 text-2xl"
+              class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all opacity-0 hover:opacity-100 sm:opacity-100"
               aria-label="Previous photo"
               data-no-drag
             >
-              ‹
+              <span class="text-4xl font-light">‹</span>
             </button>
-          </div>
-          <div class="absolute inset-y-0 right-0 flex items-center">
+          </Show>
+          
+          <Show when={props.index < props.photos.length - 1}>
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 props.onNext();
               }}
-              class="m-2 bg-black/50 hover:bg-black/70 text-white rounded-full p-6 text-2xl"
+              class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all opacity-0 hover:opacity-100 sm:opacity-100"
               aria-label="Next photo"
               data-no-drag
             >
-              ›
+              <span class="text-4xl font-light">›</span>
             </button>
-          </div>
-          <Show when={exifParts().length > 0}>
-            <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-center text-xs text-white bg-black/60 rounded-full px-4 py-2">
-              {exifParts().join(" • ")}
-            </div>
           </Show>
         </div>
       </div>
@@ -363,17 +390,12 @@ function CopyUrlButton(props: { id: () => string }) {
           e.stopPropagation();
           copyUrl();
         }}
-        class="bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl leading-none focus:outline-none focus:ring-2 focus:ring-accent-400"
+        class="bg-white/10 hover:bg-white/20 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl leading-none backdrop-blur transition-colors"
         aria-label="Copy photo URL"
         title="Copy URL"
       >
-        ⎘
+        <span class={copied() ? "text-green-400" : ""}>⎘</span>
       </button>
-      <Show when={copied()}>
-        <span class="absolute right-0 mt-2 px-2 py-1 rounded bg-black/80 text-white text-xs whitespace-nowrap">
-          Link copied
-        </span>
-      </Show>
     </div>
   );
 }
@@ -406,7 +428,7 @@ function ShareButton(props: { id: () => string }) {
           e.stopPropagation();
           share();
         }}
-        class="bg-black/60 hover:bg-black/80 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg leading-none focus:outline-none focus:ring-2 focus:ring-accent-400"
+        class="bg-white/10 hover:bg-white/20 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg leading-none backdrop-blur transition-colors"
         aria-label="Share photo"
         title="Share"
       >
