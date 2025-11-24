@@ -107,7 +107,7 @@ export default function Gallery(props: { photos: Photo[] }) {
                         }
                       }}
                       aria-label={`Open photo ${photo.alt}`}
-                      title={isGlitchTrigger() ? "⚠️ WARNING: REALITY BREACH DETECTED" : undefined}
+                      title={isGlitchTrigger() ? "✨ Est. 1895 - A Window to the Past" : undefined}
                     >
                       <img
                         src={photo.src}

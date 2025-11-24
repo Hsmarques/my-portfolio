@@ -92,8 +92,8 @@ export default function Home() {
             <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl text-white tracking-tight drop-shadow-2xl">
               {isBrutalistMode() ? (
                 <>
-                  CAPTURING <span class="italic text-accent-300">LIGHT</span> &{" "}
-                  <span class="italic text-accent-300">CODE</span>
+                  Capturing <span class="italic text-accent-300">Light</span> &{" "}
+                  <span class="italic text-accent-300">Craft</span>
                 </>
               ) : (
                 <>
@@ -104,7 +104,7 @@ export default function Home() {
             </h1>
             <p class="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md opacity-90">
               {isBrutalistMode() 
-                ? "SYSTEM: HUGO.EXE | FUNCTION: PHOTOGRAPHY.DLL + WEBDEV.DLL" 
+                ? "Hugo Marques — Photographer & Digital Craftsman, Est. 2024" 
                 : "I'm Hugo - I take photos and build websites."}
             </p>
             <div class="pt-8 animate-fade-in-up">
@@ -112,7 +112,7 @@ export default function Home() {
                 href="#gallery"
                 class="inline-block px-8 py-3 border border-white/20 hover:bg-white/10 hover:border-white/40 rounded-full text-xs font-bold tracking-[0.2em] uppercase text-white transition-all duration-300 backdrop-blur-sm"
               >
-                {isBrutalistMode() ? "[ EXECUTE: VIEW_WORK ]" : "Explore Work"}
+                {isBrutalistMode() ? "View Collection" : "Explore Work"}
               </a>
             </div>
           </div>
@@ -125,13 +125,13 @@ export default function Home() {
         >
           <div class="flex items-end justify-between mb-12 pb-4 border-b border-white/10">
             <h2 class="text-3xl font-serif text-white">
-              {isBrutalistMode() ? "[ RECENT_CAPTURES.DAT ]" : "Recent Captures"}
+              {isBrutalistMode() ? "Recent Exhibitions" : "Recent Captures"}
             </h2>
             <a
               href="/photos"
               class="text-accent-400 hover:text-accent-300 text-sm font-medium transition-colors mb-1"
             >
-              {isBrutalistMode() ? ">> ALL PHOTOS" : "View all photos →"}
+              {isBrutalistMode() ? "Complete Gallery →" : "View all photos →"}
             </a>
           </div>
           <Gallery photos={safeList().slice(0, 9)} />
@@ -139,7 +139,7 @@ export default function Home() {
           <div class="mt-20 text-center">
             <p class="text-gray-500 text-sm font-light">
               {isBrutalistMode() 
-                ? "POWERED BY: SOLIDJS.FRAMEWORK | STATUS: OPERATIONAL" 
+                ? "Hand-crafted with SolidJS — A Modern Web Publication" 
                 : "Designed & Built with SolidJS"}
             </p>
           </div>

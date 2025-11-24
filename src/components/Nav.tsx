@@ -19,18 +19,18 @@ export default function Nav() {
             location.pathname === "/" ? "text-white" : "text-gray-300 hover:text-white"
           }`}
         >
-          {isBrutalistMode() ? "[ HUGO.EXE ]" : "Hugo"}
+          {isBrutalistMode() ? "Hugo Marques, Esq." : "Hugo"}
         </a>
         <div class="h-4 w-px bg-white/10" />
         <ul class="flex items-center gap-6 text-sm font-medium tracking-wide">
           <li>
             <a href="/photos" class={active("/photos")}>
-              {isBrutalistMode() ? "[ PHOTOS ]" : "Photos"}
+              {isBrutalistMode() ? "Photographs" : "Photos"}
             </a>
           </li>
           <li>
             <a href="/about" class={active("/about")}>
-              {isBrutalistMode() ? "[ ABOUT ]" : "About"}
+              {isBrutalistMode() ? "Biography" : "About"}
             </a>
           </li>
         </ul>
