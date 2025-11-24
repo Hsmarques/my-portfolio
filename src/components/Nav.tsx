@@ -1,7 +1,10 @@
 import { useLocation } from "@solidjs/router";
+import { useGlitch } from "~/lib/GlitchContext";
 
 export default function Nav() {
   const location = useLocation();
+  const { isBrutalistMode } = useGlitch();
+  
   const active = (path: string) =>
     path == location.pathname
       ? "text-accent-400"
@@ -16,18 +19,18 @@ export default function Nav() {
             location.pathname === "/" ? "text-white" : "text-gray-300 hover:text-white"
           }`}
         >
-          Hugo
+          {isBrutalistMode() ? "[ HUGO.EXE ]" : "Hugo"}
         </a>
         <div class="h-4 w-px bg-white/10" />
         <ul class="flex items-center gap-6 text-sm font-medium tracking-wide">
           <li>
             <a href="/photos" class={active("/photos")}>
-              Photos
+              {isBrutalistMode() ? "[ PHOTOS ]" : "Photos"}
             </a>
           </li>
           <li>
             <a href="/about" class={active("/about")}>
-              About
+              {isBrutalistMode() ? "[ ABOUT ]" : "About"}
             </a>
           </li>
         </ul>

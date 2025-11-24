@@ -7,8 +7,10 @@ import {
   onMount,
 } from "solid-js";
 import type { Photo } from "~/lib/photos";
+import { useGlitch } from "~/lib/GlitchContext";
 
 export default function Gallery(props: { photos: Photo[] }) {
+  const { toggleBrutalistMode } = useGlitch();
   const [selectedIndex, setSelectedIndex] = createSignal<number | null>(null);
 
   const close = () => setSelectedIndex(null);
@@ -86,14 +88,26 @@ export default function Gallery(props: { photos: Photo[] }) {
         <For each={rows()}>
           {(column) => (
             <div class="space-y-4">
-              <For each={column}>
+                <For each={column}>
                 {(photo) => {
                   const index = () => idToIndex().get(photo.id) ?? 0;
+                  // First photo in the entire list is the glitch trigger
+                  const isGlitchTrigger = () => index() === 0;
+                  
                   return (
                     <button
-                      class="group relative block w-full overflow-hidden rounded-sm bg-gray-900 focus:outline-none transition-all duration-500 hover:shadow-2xl hover:shadow-accent-900/20"
-                      onClick={() => open(index())}
+                      class={`group relative block w-full overflow-hidden rounded-sm bg-gray-900 focus:outline-none transition-all duration-500 hover:shadow-2xl hover:shadow-accent-900/20 ${
+                        isGlitchTrigger() ? "glitch-trigger" : ""
+                      }`}
+                      onClick={() => {
+                        if (isGlitchTrigger()) {
+                          toggleBrutalistMode();
+                        } else {
+                          open(index());
+                        }
+                      }}
                       aria-label={`Open photo ${photo.alt}`}
+                      title={isGlitchTrigger() ? "⚠️ WARNING: REALITY BREACH DETECTED" : undefined}
                     >
                       <img
                         src={photo.src}
