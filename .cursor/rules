@@ -19,8 +19,8 @@
 - Use lazy loading, draggable={false}, prevent context menus on images
 
 ## Commands
-- Dev: `npm run dev`
-- Build: `npm run build` (includes photo manifest generation)
+- Dev: `pnpm dev`
+- Build: `pnpm build` (includes photo manifest generation)
 - No test framework - use TypeScript compiler for validation
 
 ## File Structure
