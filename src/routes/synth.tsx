@@ -17,7 +17,8 @@ export default function SynthPage() {
             Web Synth
           </h1>
           <p class="text-gray-400 max-w-xl mx-auto">
-            A browser-based synthesizer built with the Web Audio API. Drag the knobs, select waveforms, and play notes with your keyboard.
+            A browser-based synthesizer built with the Web Audio API. Drag the
+            knobs, select waveforms, and play notes with your keyboard.
           </p>
         </div>
 
