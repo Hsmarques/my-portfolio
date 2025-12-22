@@ -7,10 +7,10 @@
 - Branch naming: `feature/`, `fix/`, `enhance/` prefixes
 
 ## Commands
-- **Dev**: `npm run dev` (or `pnpm dev`)
-- **Build**: `npm run build` (includes photo manifest generation)
-- **Generate photos**: `npm run generate:photos-manifest`
-- **Optimize photos**: `npm run optimize:photos`
+- **Dev**: `pnpm dev`
+- **Build**: `pnpm build` (includes photo manifest generation)
+- **Generate photos**: `pnpm generate:photos-manifest`
+- **Optimize photos**: `pnpm optimize:photos`
 - **No tests defined** - use TypeScript compiler for validation
 
 ## Tech Stack
