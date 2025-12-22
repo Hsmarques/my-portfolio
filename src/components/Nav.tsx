@@ -2,6 +2,7 @@ import { useLocation } from "@solidjs/router";
 
 export default function Nav() {
   const location = useLocation();
+
   const active = (path: string) =>
     path == location.pathname
       ? "text-accent-400"
@@ -23,6 +24,11 @@ export default function Nav() {
           <li>
             <a href="/photos" class={active("/photos")}>
               Photos
+            </a>
+          </li>
+          <li>
+            <a href="/synth" class={active("/synth")}>
+              Synth
             </a>
           </li>
           <li>
