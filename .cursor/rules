@@ -1,13 +1,15 @@
 # Cursor Rules for Portfolio Project
 
 ## Tech Stack
+
 - SolidJS with @solidjs/start (file-based routing)
 - TailwindCSS with custom accent colors (camel theme: accent-300 to accent-600)
 - Vinxi bundler
 - TypeScript strict mode
-- Path alias: ~/src/*
+- Path alias: ~/src/\*
 
 ## Code Style
+
 - Framework imports first, then type imports, then local components/libs
 - Use `type` imports for TypeScript types
 - Default exports for pages/components, named exports for utilities
@@ -19,11 +21,13 @@
 - Use lazy loading, draggable={false}, prevent context menus on images
 
 ## Commands
+
 - Dev: `pnpm dev`
 - Build: `pnpm build` (includes photo manifest generation)
 - No test framework - use TypeScript compiler for validation
 
 ## File Structure
+
 - Components in ~/components/
 - Routes in ~/routes/ (file-based routing)
 - Utilities in ~/lib/
