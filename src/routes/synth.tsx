@@ -1,8 +1,12 @@
 import { onMount, createSignal, Show } from "solid-js";
 import Synth from "~/components/Synth";
+import MinimoogSynth from "~/components/MinimoogSynth";
+
+type SynthType = "hugo" | "minimoog";
 
 export default function SynthPage() {
   const [isClient, setIsClient] = createSignal(false);
+  const [synthType, setSynthType] = createSignal<SynthType>("hugo");
 
   onMount(() => {
     setIsClient(true);
@@ -22,6 +26,56 @@ export default function SynthPage() {
           </p>
         </div>
 
+        {/* Synth Type Selector */}
+        <div class="flex justify-center mb-8">
+          <div
+            class="inline-flex rounded-lg p-1"
+            style={{
+              background: "rgba(255, 255, 255, 0.05)",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+            }}
+          >
+            <button
+              type="button"
+              onClick={() => setSynthType("hugo")}
+              class="px-6 py-2 rounded-md text-sm font-medium transition-all duration-200"
+              style={{
+                background: synthType() === "hugo"
+                  ? "linear-gradient(145deg, #2a2a2a, #1a1a1a)"
+                  : "transparent",
+                color: synthType() === "hugo" ? "#D4AF37" : "#666",
+                "box-shadow": synthType() === "hugo"
+                  ? "inset 0 2px 4px rgba(0,0,0,0.5), 0 0 8px rgba(212, 175, 55, 0.2)"
+                  : "none",
+                border: synthType() === "hugo"
+                  ? "1px solid rgba(212, 175, 55, 0.3)"
+                  : "1px solid transparent",
+              }}
+            >
+              Hugo Synth
+            </button>
+            <button
+              type="button"
+              onClick={() => setSynthType("minimoog")}
+              class="px-6 py-2 rounded-md text-sm font-medium transition-all duration-200"
+              style={{
+                background: synthType() === "minimoog"
+                  ? "linear-gradient(145deg, #2a2a2a, #1a1a1a)"
+                  : "transparent",
+                color: synthType() === "minimoog" ? "#c41e3a" : "#666",
+                "box-shadow": synthType() === "minimoog"
+                  ? "inset 0 2px 4px rgba(0,0,0,0.5), 0 0 8px rgba(196, 30, 58, 0.2)"
+                  : "none",
+                border: synthType() === "minimoog"
+                  ? "1px solid rgba(196, 30, 58, 0.3)"
+                  : "1px solid transparent",
+              }}
+            >
+              Minimoog
+            </button>
+          </div>
+        </div>
+
         {/* Synth component - only render on client */}
         <Show
           when={isClient()}
@@ -33,7 +87,9 @@ export default function SynthPage() {
             </div>
           }
         >
-          <Synth />
+          <Show when={synthType() === "hugo"} fallback={<MinimoogSynth />}>
+            <Synth />
+          </Show>
         </Show>
 
         {/* Instructions */}
@@ -50,17 +106,16 @@ export default function SynthPage() {
             </div>
             <div class="flex items-center gap-2">
               <span class="w-8 h-8 rounded bg-zinc-800 flex items-center justify-center text-xs font-mono text-gray-300">
-                A-K
+                {synthType() === "hugo" ? "A-K" : "A-K"}
               </span>
-              <span>Play notes</span>
+              <span>Play notes with keyboard</span>
             </div>
-            <div class="flex items-center gap-2">
-              <span
-                class="w-3 h-3 rounded-full"
-                style={{ background: "#D4AF37" }}
-              />
-              <span>Drone mode for continuous sound</span>
-            </div>
+            {synthType() === "minimoog" && (
+              <div class="flex items-center gap-2">
+                <span class="text-xs">🎹</span>
+                <span>3 oscillators for rich, layered sounds</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

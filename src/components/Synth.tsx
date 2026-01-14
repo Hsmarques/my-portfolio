@@ -32,11 +32,8 @@ export default function Synth() {
   const [volume, setVolume] = createSignal(50);
   const [frequency, setFrequency] = createSignal(440);
   const [waveform, setWaveform] = createSignal<WaveformType>("sine");
-  const [isDroneMode, setIsDroneMode] = createSignal(false);
   const [isPlaying, setIsPlaying] = createSignal(false);
   const [octave, setOctave] = createSignal(0);
-  const [isMicMode, setIsMicMode] = createSignal(false);
-  const [micError, setMicError] = createSignal<string | null>(null);
 
   // ADSR Envelope
   const [attack, setAttack] = createSignal(0.01);
@@ -56,17 +53,8 @@ export default function Synth() {
   // Reverb parameters
   const [reverbMixAmount, setReverbMixAmount] = createSignal(20);
 
-  // Oscillator references
-  let droneOscillator: OscillatorNode | null = null;
-  let droneGain: GainNode | null = null;
-
   // Polyphonic voice tracking - Map of frequency to {oscillator, gain}
   const activeVoices = new Map<number, { osc: OscillatorNode; gain: GainNode }>();
-
-  // Microphone references
-  let micStream: MediaStream | null = null;
-  let micSource: MediaStreamAudioSourceNode | null = null;
-  let micGain: GainNode | null = null;
 
   onMount(() => {
     setIsClient(true);
@@ -203,130 +191,12 @@ export default function Synth() {
   });
 
   createEffect(() => {
-    if (droneOscillator && isDroneMode()) {
-      droneOscillator.frequency.setTargetAtTime(frequency(), droneOscillator.context.currentTime, 0.01);
-    }
-  });
-
-  createEffect(() => {
     const wave = waveform();
-    if (droneOscillator) droneOscillator.type = wave;
     // Update all active voices
     activeVoices.forEach((voice) => {
       voice.osc.type = wave;
     });
   });
-
-  createEffect(() => {
-    if (!isClient()) return;
-    if (isDroneMode()) startDrone();
-    else stopDrone();
-  });
-
-  // Handle mic mode toggle
-  createEffect(() => {
-    if (!isClient()) return;
-    if (isMicMode()) startMic();
-    else stopMic();
-  });
-
-  const startMic = async () => {
-    try {
-      setMicError(null);
-      const ctx = initAudio();
-      const filter = filterNode();
-      if (!filter) return;
-
-      // Request microphone access
-      micStream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          echoCancellation: false,
-          noiseSuppression: false,
-          autoGainControl: false,
-        }
-      });
-
-      // Create audio source from mic
-      micSource = ctx.createMediaStreamSource(micStream);
-      micGain = ctx.createGain();
-      micGain.gain.value = 1;
-
-      // Connect mic -> gain -> filter (which goes to effects chain)
-      micSource.connect(micGain);
-      micGain.connect(filter);
-
-      setIsPlaying(true);
-    } catch (err: any) {
-      console.error("Mic error:", err);
-      setMicError(err.message || "Could not access microphone");
-      setIsMicMode(false);
-    }
-  };
-
-  const stopMic = () => {
-    if (micSource) {
-      try {
-        micSource.disconnect();
-      } catch {}
-      micSource = null;
-    }
-    if (micGain) {
-      try {
-        micGain.disconnect();
-      } catch {}
-      micGain = null;
-    }
-    if (micStream) {
-      micStream.getTracks().forEach(track => track.stop());
-      micStream = null;
-    }
-    if (activeVoices.size === 0 && !droneOscillator) {
-      setIsPlaying(false);
-    }
-  };
-
-  const startDrone = () => {
-    const ctx = initAudio();
-    const filter = filterNode();
-    if (!filter) return;
-
-    stopDrone();
-
-    droneOscillator = ctx.createOscillator();
-    droneGain = ctx.createGain();
-
-    droneOscillator.type = waveform();
-    droneOscillator.frequency.value = frequency();
-    droneGain.gain.value = 0;
-
-    droneOscillator.connect(droneGain);
-    droneGain.connect(filter);
-    droneOscillator.start();
-
-    droneGain.gain.setTargetAtTime(1, ctx.currentTime, attack());
-    setIsPlaying(true);
-  };
-
-  const stopDrone = () => {
-    if (droneOscillator && droneGain) {
-      const ctx = audioContext();
-      if (ctx) {
-        droneGain.gain.cancelScheduledValues(ctx.currentTime);
-        droneGain.gain.setTargetAtTime(0, ctx.currentTime, release());
-
-        setTimeout(() => {
-          try {
-            droneOscillator?.stop();
-            droneOscillator?.disconnect();
-            droneGain?.disconnect();
-          } catch {}
-          droneOscillator = null;
-          droneGain = null;
-        }, release() * 3000);
-      }
-      if (activeVoices.size === 0) setIsPlaying(false);
-    }
-  };
 
   const getShiftedFrequency = (baseFreq: number) => baseFreq * Math.pow(2, octave());
 
@@ -382,21 +252,18 @@ export default function Synth() {
       }, release() * 1000 + 100);
     }
 
-    // Only set not playing if no voices and no drone
-    if (activeVoices.size === 0 && !droneOscillator) {
+      // Only set not playing if no voices
+    if (activeVoices.size === 0) {
       setIsPlaying(false);
     }
   };
 
   onCleanup(() => {
-    if (droneOscillator) try { droneOscillator.stop(); droneOscillator.disconnect(); } catch {}
     // Stop all active voices
     activeVoices.forEach((voice) => {
       try { voice.osc.stop(); voice.osc.disconnect(); voice.gain.disconnect(); } catch {}
     });
     activeVoices.clear();
-    // Stop mic
-    stopMic();
     audioContext()?.close();
   });
 
@@ -429,8 +296,8 @@ export default function Synth() {
         </div>
 
         {/* Main Grid Layout */}
-        <div class="p-4 grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-4">
-          {/* Left Column: Controls */}
+        <div class="p-4">
+          {/* Controls */}
           <div class="space-y-4">
             {/* Top Row: Oscilloscope + Waveform + Main Controls */}
             <div class="flex flex-wrap items-start gap-4 justify-center lg:justify-start">
@@ -539,67 +406,12 @@ export default function Synth() {
             </div>
           </div>
 
-          {/* Right Column: Mode Toggles */}
-          <div class="flex lg:flex-col items-center justify-center gap-2">
-            <button
-              type="button"
-              class="flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200"
-              style={{
-                background: isDroneMode() ? "linear-gradient(145deg, #2a2a2a, #1a1a1a)" : "linear-gradient(145deg, #1f1f1f, #141414)",
-                "box-shadow": isDroneMode() ? "inset 0 2px 6px rgba(0,0,0,0.5), 0 0 12px rgba(212, 175, 55, 0.3)" : "0 4px 8px rgba(0,0,0,0.3)",
-                border: isDroneMode() ? "1px solid rgba(212, 175, 55, 0.5)" : "1px solid rgba(255,255,255,0.05)",
-              }}
-              onClick={() => setIsDroneMode(!isDroneMode())}
-            >
-              <div
-                class="w-2.5 h-2.5 rounded-full transition-all"
-                style={{
-                  background: isDroneMode() ? "#D4AF37" : "#333",
-                  "box-shadow": isDroneMode() ? "0 0 6px rgba(212, 175, 55, 0.8)" : "none",
-                }}
-              />
-              <span class="text-[10px] font-bold tracking-[0.1em] uppercase" style={{ color: isDroneMode() ? "#D4AF37" : "#666" }}>
-                Drone
-              </span>
-            </button>
-
-            {/* Mic Input Toggle */}
-            <button
-              type="button"
-              class="flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-200"
-              style={{
-                background: isMicMode() ? "linear-gradient(145deg, #2a2a2a, #1a1a1a)" : "linear-gradient(145deg, #1f1f1f, #141414)",
-                "box-shadow": isMicMode() ? "inset 0 2px 6px rgba(0,0,0,0.5), 0 0 12px rgba(220, 80, 80, 0.3)" : "0 4px 8px rgba(0,0,0,0.3)",
-                border: isMicMode() ? "1px solid rgba(220, 80, 80, 0.5)" : "1px solid rgba(255,255,255,0.05)",
-              }}
-              onClick={() => setIsMicMode(!isMicMode())}
-              title="Enable microphone input to process your voice through the effects"
-            >
-              <div
-                class="w-2.5 h-2.5 rounded-full transition-all"
-                style={{
-                  background: isMicMode() ? "#DC5050" : "#333",
-                  "box-shadow": isMicMode() ? "0 0 6px rgba(220, 80, 80, 0.8)" : "none",
-                }}
-              />
-              <span class="text-[10px] font-bold tracking-[0.1em] uppercase" style={{ color: isMicMode() ? "#DC5050" : "#666" }}>
-                Mic
-              </span>
-            </button>
-
-            {/* Mic error message */}
-            {micError() && (
-              <div class="text-[8px] text-red-400 text-center max-w-[100px]">
-                {micError()}
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Keyboard Section */}
         <div class="px-4 pb-4">
           <div class="h-px mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent)" }} />
-          <PianoKeyboard onNoteOn={handleNoteOn} onNoteOff={handleNoteOff} />
+          <PianoKeyboard onNoteOn={handleNoteOn} onNoteOff={handleNoteOff} octaves={1} />
         </div>
 
         {/* Footer */}
