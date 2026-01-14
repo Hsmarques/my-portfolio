@@ -3,10 +3,11 @@ import { createSignal, createEffect, onCleanup, For } from "solid-js";
 interface PianoKeyboardProps {
   onNoteOn: (frequency: number) => void;
   onNoteOff: (frequency: number) => void;
+  octaves?: 1 | 2;
 }
 
 // Note frequencies for two octaves starting at C3
-const NOTES = [
+const NOTES_2_OCTAVES = [
   // Lower octave (C3-B3)
   { note: "C3", frequency: 130.81, key: "1", isBlack: false },
   { note: "C#3", frequency: 138.59, key: "q", isBlack: true },
@@ -36,12 +37,26 @@ const NOTES = [
   { note: "C5", frequency: 523.25, key: ",", isBlack: false },
 ];
 
-const WHITE_KEYS = NOTES.filter((n) => !n.isBlack);
-const BLACK_KEYS = NOTES.filter((n) => n.isBlack);
+// Note frequencies for one octave (C4-C5) with simplified key mapping
+const NOTES_1_OCTAVE = [
+  { note: "C4", frequency: 261.63, key: "a", isBlack: false },
+  { note: "C#4", frequency: 277.18, key: "w", isBlack: true },
+  { note: "D4", frequency: 293.66, key: "s", isBlack: false },
+  { note: "D#4", frequency: 311.13, key: "e", isBlack: true },
+  { note: "E4", frequency: 329.63, key: "d", isBlack: false },
+  { note: "F4", frequency: 349.23, key: "f", isBlack: false },
+  { note: "F#4", frequency: 369.99, key: "t", isBlack: true },
+  { note: "G4", frequency: 392.0, key: "g", isBlack: false },
+  { note: "G#4", frequency: 415.3, key: "y", isBlack: true },
+  { note: "A4", frequency: 440.0, key: "h", isBlack: false },
+  { note: "A#4", frequency: 466.16, key: "u", isBlack: true },
+  { note: "B4", frequency: 493.88, key: "j", isBlack: false },
+  { note: "C5", frequency: 523.25, key: "k", isBlack: false },
+];
 
 // Position mapping for black keys (percentage from left)
-// 14 white keys total, each ~7.14% width
-const getBlackKeyPosition = (note: string): number => {
+// For 2 octaves: 14 white keys total, each ~7.14% width
+const getBlackKeyPosition2Octaves = (note: string): number => {
   const positions: Record<string, number> = {
     "C#3": 5.5,
     "D#3": 12.5,
@@ -57,13 +72,33 @@ const getBlackKeyPosition = (note: string): number => {
   return positions[note] ?? 0;
 };
 
+// For 1 octave: 8 white keys total, each ~12.5% width
+const getBlackKeyPosition1Octave = (note: string): number => {
+  const positions: Record<string, number> = {
+    "C#4": 6.25,
+    "D#4": 18.75,
+    "F#4": 43.75,
+    "G#4": 56.25,
+    "A#4": 68.75,
+  };
+  return positions[note] ?? 0;
+};
+
 export default function PianoKeyboard(props: PianoKeyboardProps) {
+  const octaves = () => props.octaves ?? 2;
+  const NOTES = () => octaves() === 1 ? NOTES_1_OCTAVE : NOTES_2_OCTAVES;
+  const WHITE_KEYS = () => NOTES().filter((n) => !n.isBlack);
+  const BLACK_KEYS = () => NOTES().filter((n) => n.isBlack);
+  const getBlackKeyPosition = (note: string): number => {
+    return octaves() === 1 ? getBlackKeyPosition1Octave(note) : getBlackKeyPosition2Octaves(note);
+  };
+
   const [activeKeys, setActiveKeys] = createSignal<Set<string>>(new Set());
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (e.repeat) return;
 
-    const note = NOTES.find((n) => n.key === e.key.toLowerCase());
+    const note = NOTES().find((n) => n.key === e.key.toLowerCase());
     if (note && !activeKeys().has(note.note)) {
       e.preventDefault();
       setActiveKeys((prev) => new Set([...prev, note.note]));
@@ -72,7 +107,7 @@ export default function PianoKeyboard(props: PianoKeyboardProps) {
   };
 
   const handleKeyUp = (e: KeyboardEvent) => {
-    const note = NOTES.find((n) => n.key === e.key.toLowerCase());
+    const note = NOTES().find((n) => n.key === e.key.toLowerCase());
     if (note) {
       setActiveKeys((prev) => {
         const next = new Set(prev);
@@ -116,14 +151,25 @@ export default function PianoKeyboard(props: PianoKeyboardProps) {
   return (
     <div class="flex flex-col items-center gap-3">
       {/* Keyboard hints */}
-      <div class="flex flex-col items-center gap-1">
-        <p class="text-[9px] text-gray-500 tracking-wide">
-          Lower octave: <span class="text-gray-400 font-mono">1 2 3 4 5 6 7</span> (white) <span class="text-gray-400 font-mono">Q W E R T</span> (black)
-        </p>
-        <p class="text-[9px] text-gray-500 tracking-wide">
-          Upper octave: <span class="text-gray-400 font-mono">Z X C V B N M ,</span> (white) <span class="text-gray-400 font-mono">S D G H J</span> (black)
-        </p>
-      </div>
+      {octaves() === 1 ? (
+        <div class="flex flex-col items-center gap-1">
+          <p class="text-[9px] text-gray-500 tracking-wide">
+            White keys: <span class="text-gray-400 font-mono">A S D F G H J K</span>
+          </p>
+          <p class="text-[9px] text-gray-500 tracking-wide">
+            Black keys: <span class="text-gray-400 font-mono">W E T Y U</span>
+          </p>
+        </div>
+      ) : (
+        <div class="flex flex-col items-center gap-1">
+          <p class="text-[9px] text-gray-500 tracking-wide">
+            Lower octave: <span class="text-gray-400 font-mono">1 2 3 4 5 6 7</span> (white) <span class="text-gray-400 font-mono">Q W E R T</span> (black)
+          </p>
+          <p class="text-[9px] text-gray-500 tracking-wide">
+            Upper octave: <span class="text-gray-400 font-mono">Z X C V B N M ,</span> (white) <span class="text-gray-400 font-mono">S D G H J</span> (black)
+          </p>
+        </div>
+      )}
 
       {/* Piano keyboard container */}
       <div
@@ -132,7 +178,7 @@ export default function PianoKeyboard(props: PianoKeyboardProps) {
       >
         {/* White keys */}
         <div class="absolute inset-0 flex gap-px">
-          <For each={WHITE_KEYS}>
+          <For each={WHITE_KEYS()}>
             {(note) => {
               const isActive = () => activeKeys().has(note.note);
               return (
@@ -175,7 +221,7 @@ export default function PianoKeyboard(props: PianoKeyboardProps) {
         </div>
 
         {/* Black keys */}
-        <For each={BLACK_KEYS}>
+        <For each={BLACK_KEYS()}>
           {(note) => {
             const isActive = () => activeKeys().has(note.note);
             const leftPos = () => getBlackKeyPosition(note.note);
