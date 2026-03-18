@@ -2,24 +2,25 @@ import { A } from "@solidjs/router";
 
 export default function NotFound() {
   return (
-    <main class="text-center mx-auto text-gray-700 p-4">
-      <h1 class="max-6-xs text-6xl text-sky-700 font-thin uppercase my-16">Not Found</h1>
-      <p class="mt-8">
-        Visit{" "}
-        <a href="https://solidjs.com" target="_blank" class="text-sky-600 hover:underline">
-          solidjs.com
-        </a>{" "}
-        to learn how to build Solid apps.
+    <main class="mx-auto max-w-2xl px-4 py-28 text-center text-gray-100">
+      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-accent-400">
+        404
       </p>
-      <p class="my-4">
-        <A href="/" class="text-sky-600 hover:underline">
+      <h1 class="mt-4 text-5xl font-serif text-white">Page not found</h1>
+      <p class="mt-6 text-base leading-relaxed text-gray-400">
+        That route does not exist in the Vite+ app shell.
+      </p>
+      <div class="mt-10 flex items-center justify-center gap-4 text-sm font-medium">
+        <A href="/" class="rounded-full border border-white/15 px-5 py-2 hover:bg-white/5">
           Home
         </A>
-        {" - "}
-        <A href="/about" class="text-sky-600 hover:underline">
-          About Page
+        <A
+          href="/photos"
+          class="rounded-full border border-white/15 px-5 py-2 hover:bg-white/5"
+        >
+          Photos
         </A>
-      </p>
+      </div>
     </main>
   );
 }

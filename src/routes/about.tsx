@@ -68,7 +68,7 @@ export default function About() {
               </li>
               <li class="flex justify-between border-b border-white/5 pb-2">
                 <span class="text-gray-500">Tech Stack</span>
-                <span class="text-right">SolidStart, Tailwind, TS</span>
+                <span class="text-right">Solid, Vite+, TS</span>
               </li>
             </ul>
           </div>

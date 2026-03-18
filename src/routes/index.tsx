@@ -2,61 +2,13 @@ import {
   Show,
   createMemo,
   createResource,
-  createSignal,
-  onMount,
 } from "solid-js";
 import Gallery from "~/components/Gallery";
-import staticPhotos from "~/lib/photos";
-
-async function fetchManifest() {
-  if (typeof window === "undefined") return null;
-  try {
-    const res = await fetch("/photos-manifest.json", { cache: "no-cache" });
-    if (res.ok) return await res.json();
-  } catch {}
-  return null;
-}
-
-async function fetchPhotos() {
-  if (typeof window === "undefined") return null; // Return null during SSR
-  // Prioritize Cloudinary API over static manifest
-  try {
-    const res = await fetch("/api/photos");
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        return data; // Use Cloudinary photos if available
-      }
-    }
-  } catch (err) {
-    // Silently fall back to manifest
-  }
-  // Fallback to manifest if API fails or returns empty
-  const manifest = await fetchManifest();
-  if (manifest !== null) return manifest;
-  // Last resort: static photos
-  return staticPhotos;
-}
+import { fetchPhotos, sortPhotos } from "~/lib/loadPhotos";
 
 export default function Home() {
-  const [isClient, setIsClient] = createSignal(false);
-  onMount(() => setIsClient(true));
-
-  const [photos] = createResource(isClient, async () => fetchPhotos());
-  const safeList = createMemo<any[]>(() => {
-    const data = photos();
-    if (Array.isArray(data)) {
-      const list = [...data];
-      list.sort((a: any, b: any) => {
-        const ad = a.createdAt ? Date.parse(a.createdAt) : 0;
-        const bd = b.createdAt ? Date.parse(b.createdAt) : 0;
-        if (ad !== bd) return bd - ad;
-        return String(b.id).localeCompare(String(a.id));
-      });
-      return list;
-    }
-    return []; // Don't show anything until we have real data
-  });
+  const [photos] = createResource(fetchPhotos);
+  const safeList = createMemo(() => sortPhotos(photos() ?? []));
 
   return (
     <main class="bg-black min-h-screen">

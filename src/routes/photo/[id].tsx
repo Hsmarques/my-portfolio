@@ -3,55 +3,15 @@ import {
   For,
   createMemo,
   createResource,
-  createSignal,
-  onMount,
 } from "solid-js";
 import { useParams } from "@solidjs/router";
-import staticPhotos from "~/lib/photos";
 import type { Photo } from "~/lib/photos";
-
-async function fetchManifest() {
-  if (typeof window === "undefined") return null;
-  try {
-    const res = await fetch("/photos-manifest.json", { cache: "no-cache" });
-    if (res.ok) return await res.json();
-  } catch {}
-  return null;
-}
-
-async function fetchPhotos() {
-  if (typeof window === "undefined") return null; // do not return placeholders on SSR
-  // Prioritize Cloudinary API over static manifest
-  try {
-    const res = await fetch("/api/photos");
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        return data; // Use Cloudinary photos if available
-      }
-    }
-  } catch (err) {
-    // Silently fall back to manifest
-  }
-  // Fallback to manifest if API fails or returns empty
-  const manifest = await fetchManifest();
-  if (manifest !== null) return manifest;
-  // Last resort: static photos
-  return staticPhotos;
-}
+import { fetchPhotos } from "~/lib/loadPhotos";
 
 export default function SinglePhotoPage() {
   const params = useParams();
-  const [isClient, setIsClient] = createSignal(false);
-  onMount(() => setIsClient(true));
-
-  const [remotePhotos] = createResource(isClient, async () => fetchPhotos());
-
-  const photos = createMemo<any[]>(() => {
-    const data = remotePhotos();
-    if (Array.isArray(data)) return data;
-    return [];
-  });
+  const [remotePhotos] = createResource(fetchPhotos);
+  const photos = createMemo(() => remotePhotos() ?? []);
 
   const photo = createMemo(() => photos().find((p: any) => p.id === params.id));
 

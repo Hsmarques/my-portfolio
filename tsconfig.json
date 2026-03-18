@@ -10,10 +10,12 @@
     "allowJs": true,
     "noEmit": true,
     "strict": true,
-    "types": ["vinxi/types/client"],
+    "baseUrl": ".",
+    "types": ["vite/client", "node"],
     "isolatedModules": true,
     "paths": {
       "~/*": ["./src/*"]
     }
-  }
+  },
+  "include": ["src", "vite.config.ts"]
 }

@@ -6,6 +6,99 @@ const publicDir = path.resolve('public');
 const srcOptimized = path.join(publicDir, 'photos-optimized');
 const srcOriginal = path.join(publicDir, 'photos');
 const manifestPath = path.join(publicDir, 'photos-manifest.json');
+const cloudinaryFolder = 'my-portfolio';
+
+function hasCloudinaryCredentials() {
+  return Boolean(
+    process.env.CLOUDINARY_URL || (
+      process.env.CLOUDINARY_CLOUD_NAME &&
+      process.env.CLOUDINARY_API_KEY &&
+      process.env.CLOUDINARY_API_SECRET
+    )
+  );
+}
+
+async function loadCloudinaryManifest() {
+  if (!hasCloudinaryCredentials()) return null;
+
+  const { v2: cloudinary } = await import('cloudinary');
+
+  if (process.env.CLOUDINARY_URL) {
+    cloudinary.config();
+  } else {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET,
+      secure: true,
+    });
+  }
+
+  const toUrl = (publicId, options = {}) =>
+    cloudinary.url(publicId, {
+      secure: true,
+      transformation: [options],
+    });
+
+  const result = await cloudinary.search
+    .expression(`folder:${cloudinaryFolder}`)
+    .max_results(500)
+    .execute();
+
+  const resources = result.resources || [];
+
+  const items = resources.map((resource) => {
+    const exif = resource.exif || {};
+    const context = resource.context?.custom || {};
+    const createdAt = resource.created_at
+      ? new Date(resource.created_at).toISOString()
+      : undefined;
+
+    return {
+      id: resource.public_id.split('/').pop() || resource.public_id,
+      src: toUrl(resource.public_id, {
+        width: 600,
+        quality: 'auto',
+        format: 'auto',
+        crop: 'limit',
+        fetch_format: 'auto',
+      }),
+      srcFull: toUrl(resource.public_id, {
+        width: 1600,
+        quality: 'auto',
+        format: 'auto',
+        crop: 'limit',
+        fetch_format: 'auto',
+      }),
+      alt: context.alt || exif.ImageDescription || resource.public_id,
+      width: resource.width || 0,
+      height: resource.height || 0,
+      tags: context.tags
+        ? (typeof context.tags === 'string'
+            ? context.tags.split(',').map((tag) => tag.trim())
+            : context.tags)
+        : [],
+      createdAt,
+      exif: {
+        camera: context.camera || exif.Model || exif.CameraModelName || undefined,
+        lens: context.lens || exif.LensModel || exif.Lens || undefined,
+        focalLengthMm: exif.FocalLengthIn35mmFilm || exif.FocalLength || undefined,
+        aperture: exif.FNumber ? `f/${exif.FNumber}` : undefined,
+        shutter: exif.ExposureTime ? `${exif.ExposureTime}s` : undefined,
+        iso: exif.ISO || exif.ISOSpeedRatings || undefined,
+      },
+    };
+  });
+
+  items.sort((a, b) => {
+    const ad = a.createdAt ? Date.parse(a.createdAt) : 0;
+    const bd = b.createdAt ? Date.parse(b.createdAt) : 0;
+    if (ad !== bd) return bd - ad;
+    return String(b.id).localeCompare(String(a.id));
+  });
+
+  return items;
+}
 
 async function pickSourceDir() {
   try {
@@ -16,6 +109,17 @@ async function pickSourceDir() {
 }
 
 async function generate() {
+  try {
+    const cloudinaryItems = await loadCloudinaryManifest();
+    if (cloudinaryItems) {
+      await fs.writeFile(manifestPath, JSON.stringify(cloudinaryItems, null, 2));
+      console.log(`Wrote ${cloudinaryItems.length} Cloudinary items to ${manifestPath}`);
+      return;
+    }
+  } catch (e) {
+    console.warn(`Cloudinary manifest generation failed, falling back to local files: ${e.message}`);
+  }
+
   const { dir, prefix } = await pickSourceDir();
   // Load previous manifest to preserve fields if image metadata libs are absent
   let previous = [];
