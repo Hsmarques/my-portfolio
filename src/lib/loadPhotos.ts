@@ -1,22 +1,14 @@
-import staticPhotos, { type Photo } from "~/lib/photos";
+import type { Photo } from "~/lib/photos";
 
-export async function fetchManifest() {
-  if (typeof window === "undefined") return null;
+export async function fetchPhotos(): Promise<Photo[]> {
+  const res = await fetch("/api/photos", { cache: "no-cache" });
 
-  try {
-    const res = await fetch("/photos-manifest.json", { cache: "no-cache" });
-    if (!res.ok) return null;
-
-    const manifest = await res.json();
-    return Array.isArray(manifest) ? (manifest as Photo[]) : null;
-  } catch {
-    return null;
+  if (!res.ok) {
+    throw new Error(`Failed to load Cloudinary photos: ${res.status}`);
   }
-}
 
-export async function fetchPhotos() {
-  const manifest = await fetchManifest();
-  return manifest ?? staticPhotos;
+  const data = await res.json();
+  return Array.isArray(data) ? (data as Photo[]) : [];
 }
 
 export function sortPhotos(photos: Photo[]) {

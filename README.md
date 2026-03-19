@@ -5,13 +5,13 @@ Portfolio site built with SolidJS, TailwindCSS, and Vite+.
 ## Commands
 
 - `pnpm dev` - run the Vite+ dev server
-- `pnpm build` - generate the photo manifest and build the SPA
+- `pnpm build` - build the SPA
 - `pnpm preview` - preview the production build
 - `pnpm check` - run the TypeScript checker
 
 ## Photo data
 
-`scripts/generate-photos-manifest.mjs` now writes `public/photos-manifest.json` at build time.
+Photos load from the Vercel runtime endpoint at `/api/photos`.
 
-- If Cloudinary credentials are available, the manifest is generated from the `my-portfolio` folder.
-- Otherwise the manifest is generated from local files in `public/photos-optimized` or `public/photos`.
+- Cloudinary credentials must be present in the deployment environment.
+- The Cloudinary folder defaults to `my-portfolio` and can be overridden with `CLOUDINARY_FOLDER`.

@@ -35,13 +35,20 @@ export type CloudinaryResource = {
   };
 };
 
+export function hasCloudinaryCredentials(): boolean {
+  return !!(
+    process.env.CLOUDINARY_URL ||
+    (
+      process.env.CLOUDINARY_CLOUD_NAME &&
+      process.env.CLOUDINARY_API_KEY &&
+      process.env.CLOUDINARY_API_SECRET
+    )
+  );
+}
+
 export async function listCloudinaryResources(folder?: string): Promise<CloudinaryResource[]> {
   try {
-    // Verify Cloudinary is configured - check both CLOUDINARY_URL and individual vars
-    const hasUrl = !!process.env.CLOUDINARY_URL;
-    const hasIndividual = !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET);
-
-    if (!hasUrl && !hasIndividual) {
+    if (!hasCloudinaryCredentials()) {
       console.error('Cloudinary credentials not found in environment variables');
       return [];
     }

@@ -87,7 +87,9 @@ export default function PhotosPage() {
           when={filtered().length > 0}
           fallback={
             <p class="text-gray-400">
-              No photos yet. Add images to public/photos and redeploy.
+              {remotePhotos.error
+                ? "Unable to load Cloudinary photos right now."
+                : "No Cloudinary photos found."}
             </p>
           }
         >

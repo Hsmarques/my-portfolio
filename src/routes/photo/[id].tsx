@@ -33,7 +33,13 @@ export default function SinglePhotoPage() {
       >
         <Show
           when={photo()}
-          fallback={<p class="text-gray-400">Photo not found.</p>}
+          fallback={
+            <p class="text-gray-400">
+              {remotePhotos.error
+                ? "Unable to load Cloudinary photos right now."
+                : "Photo not found."}
+            </p>
+          }
         >
           {(p: any) => (
             <div class="space-y-6">
