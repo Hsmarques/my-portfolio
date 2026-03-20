@@ -66,9 +66,9 @@ export default function About() {
                 <span class="text-gray-500">Based in</span>
                 <span>United Kingdom</span>
               </li>
-              <li class="flex justify-between border-b border-white/5 pb-2">
+              <li class="flex justify-between pb-2">
                 <span class="text-gray-500">Tech Stack</span>
-                <span class="text-right">Solid, Vite+, TS</span>
+                <span class="text-right">Solid, Vite+, Vercel, TS</span>
               </li>
             </ul>
           </div>
