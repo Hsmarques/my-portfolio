@@ -17,6 +17,10 @@
   ],
   "routes": [
     {
+      "src": "/api/photos",
+      "dest": "api/photos.ts"
+    },
+    {
       "handle": "filesystem"
     },
     {
