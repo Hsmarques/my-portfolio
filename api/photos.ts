@@ -1,26 +1,86 @@
-import {
-  getCloudinaryUrl,
-  hasCloudinaryCredentials,
-  listCloudinaryResources,
-  type CloudinaryResource,
-} from "../src/lib/cloudinary";
+type CloudinaryResource = {
+  public_id: string;
+  width: number;
+  height: number;
+  created_at?: string;
+  exif?: Record<string, any>;
+  context?: {
+    custom?: {
+      alt?: string;
+      tags?: string | string[];
+      camera?: string;
+      lens?: string;
+    };
+  };
+};
 
 const cloudinaryFolder = process.env.CLOUDINARY_FOLDER || "my-portfolio";
 
-export default async function handler(req: { method?: string }, res: any) {
-  if (req.method && req.method !== "GET") {
-    res.setHeader("Allow", "GET");
-    return res.status(405).json({ error: "Method Not Allowed" });
-  }
+function hasCloudinaryCredentials() {
+  return !!(
+    process.env.CLOUDINARY_URL ||
+    (
+      process.env.CLOUDINARY_CLOUD_NAME &&
+      process.env.CLOUDINARY_API_KEY &&
+      process.env.CLOUDINARY_API_SECRET
+    )
+  );
+}
 
+export async function GET() {
   if (!hasCloudinaryCredentials()) {
-    return res.status(500).json({ error: "Cloudinary credentials are not configured" });
+    return Response.json(
+      { error: "Cloudinary credentials are not configured" },
+      { status: 500 },
+    );
   }
 
   try {
-    const resources = await listCloudinaryResources(cloudinaryFolder);
+    const { v2: cloudinary } = await import("cloudinary");
 
-    const photos = resources.map((resource: CloudinaryResource) => {
+    if (process.env.CLOUDINARY_URL) {
+      cloudinary.config();
+    } else {
+      cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+        api_key: process.env.CLOUDINARY_API_KEY,
+        api_secret: process.env.CLOUDINARY_API_SECRET,
+        secure: true,
+      });
+    }
+
+    const result = await cloudinary.search
+      .expression(`folder:${cloudinaryFolder}`)
+      .max_results(500)
+      .execute();
+
+    const resources = ((result.resources || []) as CloudinaryResource[]).sort((a, b) => {
+      const dateA = a.created_at ? Date.parse(a.created_at) : 0;
+      const dateB = b.created_at ? Date.parse(b.created_at) : 0;
+      return dateB - dateA;
+    });
+
+    const toUrl = (
+      publicId: string,
+      options: {
+        width?: number;
+        height?: number;
+        quality?: string | number;
+        format?: "auto" | "webp" | "jpg" | "png";
+        crop?: string;
+      },
+    ) =>
+      cloudinary.url(publicId, {
+        secure: true,
+        transformation: [
+          {
+            ...options,
+            fetch_format: options.format === "auto" ? "auto" : undefined,
+          },
+        ],
+      });
+
+    const photos = resources.map((resource) => {
       const exif = resource.exif || {};
       const context = resource.context?.custom || {};
       const createdAt = resource.created_at
@@ -29,13 +89,13 @@ export default async function handler(req: { method?: string }, res: any) {
 
       return {
         id: resource.public_id.split("/").pop() || resource.public_id,
-        src: getCloudinaryUrl(resource.public_id, {
+        src: toUrl(resource.public_id, {
           width: 600,
           quality: "auto",
           format: "auto",
           crop: "limit",
         }),
-        srcFull: getCloudinaryUrl(resource.public_id, {
+        srcFull: toUrl(resource.public_id, {
           width: 1600,
           quality: "auto",
           format: "auto",
@@ -61,10 +121,22 @@ export default async function handler(req: { method?: string }, res: any) {
       };
     });
 
-    res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=86400");
-    return res.status(200).json(photos);
+    return Response.json(photos, {
+      status: 200,
+      headers: {
+        "Cache-Control": "s-maxage=300, stale-while-revalidate=86400",
+      },
+    });
   } catch (error) {
     console.error("Error fetching Cloudinary photos:", error);
-    return res.status(500).json({ error: "Failed to fetch Cloudinary photos" });
+    const details = error instanceof Error ? error.message : String(error);
+
+    return Response.json(
+      {
+        error: "Failed to fetch Cloudinary photos",
+        details,
+      },
+      { status: 500 },
+    );
   }
 }
