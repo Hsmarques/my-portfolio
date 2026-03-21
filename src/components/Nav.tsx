@@ -9,7 +9,7 @@ export default function Nav() {
       : "text-gray-400 hover:text-white transition-colors";
 
   return (
-    <nav class="fixed top-0 inset-x-0 z-50 flex justify-center p-6 pointer-events-none">
+    <nav class="fixed top-0 inset-x-0 z-50 flex justify-center px-4 pt-4 pb-2 pointer-events-none">
       <div class="pointer-events-auto bg-black/60 backdrop-blur-md border border-white/10 rounded-full px-6 py-2.5 flex items-center gap-6 shadow-2xl">
         <A
           href="/"

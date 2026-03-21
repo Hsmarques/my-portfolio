@@ -5,6 +5,7 @@ import {
   createSignal,
 } from "solid-js";
 import Gallery from "~/components/Gallery";
+import PageHeader from "~/components/PageHeader";
 import { fetchPhotos, sortPhotos } from "~/lib/loadPhotos";
 
 export default function PhotosPage() {
@@ -43,13 +44,11 @@ export default function PhotosPage() {
   });
 
   return (
-    <main class="mx-auto max-w-7xl px-4 py-8">
-      <header class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-100 mb-3">Photography</h1>
-        <p class="text-gray-400">
-          A selection of my recent work.
-        </p>
-      </header>
+    <main class="mx-auto max-w-7xl px-4 pt-28 md:pt-32 pb-8">
+      <PageHeader
+        title="Photography"
+        subtitle={<>A selection of my recent work.</>}
+      />
 
       {/* Labels and search section - WIP, hidden for now */}
       {/* <section class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">

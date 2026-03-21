@@ -1,5 +1,7 @@
 import { useParams } from "@solidjs/router";
 
+import PageHeader from "~/components/PageHeader";
+
 export default function BlogPost() {
   const params = useParams<{ slug: string }>();
   
@@ -9,8 +11,6 @@ export default function BlogPost() {
     title: "Welcome to my blog!",
     date: "2024-01-15",
     content: `
-# Welcome to my blog!
-
 Hello there! 👋
 
 I'm excited to finally launch my blog. This is a space where I'll be sharing my thoughts, experiences, and learnings as a developer from Portugal.
@@ -102,10 +102,12 @@ Happy coding! 🚀
 
   if (params.slug !== "welcome") {
     return (
-      <main class="max-w-4xl mx-auto px-4 py-8">
+      <main class="max-w-4xl mx-auto px-4 pt-28 md:pt-32 pb-8">
+        <PageHeader
+          title="Post Not Found"
+          subtitle={<>The blog post you're looking for doesn't exist.</>}
+        />
         <div class="text-center">
-          <h1 class="text-4xl font-bold text-gray-100 mb-4">Post Not Found</h1>
-          <p class="text-gray-400 mb-8">The blog post you're looking for doesn't exist.</p>
           <a 
             href="/blog" 
             class="inline-block bg-accent-600 hover:bg-accent-500 text-white font-medium py-2 px-4 rounded transition-colors"
@@ -118,10 +120,9 @@ Happy coding! 🚀
   }
 
   return (
-    <article class="max-w-4xl mx-auto px-4 py-8">
-      {/* Header */}
+    <article class="max-w-4xl mx-auto px-4 pt-28 md:pt-32 pb-8">
       <header class="mb-8 pb-8 border-b border-gray-700">
-        <div class="mb-4">
+        <div class="mb-6 text-center">
           <a 
             href="/blog" 
             class="text-accent-400 hover:text-accent-300 text-sm font-medium transition-colors"
@@ -129,14 +130,19 @@ Happy coding! 🚀
             ← Back to Blog
           </a>
         </div>
-        <h1 class="text-4xl font-bold text-gray-100 mb-4">{post.title}</h1>
-        <time class="text-gray-500">
-          {new Date(post.date).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          })}
-        </time>
+        <PageHeader
+          title={post.title}
+          subtitle={
+            <>
+              {new Date(post.date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
+            </>
+          }
+          class="mb-0"
+        />
       </header>
 
       {/* Content */}
