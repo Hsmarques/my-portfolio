@@ -54,6 +54,8 @@ const NOTES_1_OCTAVE = [
   { note: "C5", frequency: 523.25, key: "k", isBlack: false },
 ];
 
+type PianoNote = (typeof NOTES_2_OCTAVES)[number];
+
 // Position mapping for black keys (percentage from left)
 // For 2 octaves: 14 white keys total, each ~7.14% width
 const getBlackKeyPosition2Octaves = (note: string): number => {
@@ -118,14 +120,14 @@ export default function PianoKeyboard(props: PianoKeyboardProps) {
     }
   };
 
-  const handleNoteStart = (note: typeof NOTES[0]) => {
+  const handleNoteStart = (note: PianoNote) => {
     if (!activeKeys().has(note.note)) {
       setActiveKeys((prev) => new Set([...prev, note.note]));
       props.onNoteOn(note.frequency);
     }
   };
 
-  const handleNoteEnd = (note: typeof NOTES[0]) => {
+  const handleNoteEnd = (note: PianoNote) => {
     if (activeKeys().has(note.note)) {
       setActiveKeys((prev) => {
         const next = new Set(prev);

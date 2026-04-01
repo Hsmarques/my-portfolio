@@ -1,67 +1,19 @@
 import {
-  For,
   Show,
-  createMemo,
   createResource,
+  createMemo,
   createSignal,
-  onMount,
 } from "solid-js";
 import Gallery from "~/components/Gallery";
-import staticPhotos, { allTags } from "~/lib/photos";
-
-async function fetchManifest() {
-  if (typeof window === "undefined") return null;
-  try {
-    const res = await fetch("/photos-manifest.json", { cache: "no-cache" });
-    if (res.ok) return await res.json();
-  } catch {}
-  return null;
-}
-
-async function fetchPhotos() {
-  if (typeof window === "undefined") return null; // do not return placeholders on SSR
-  // Prioritize Cloudinary API over static manifest
-  try {
-    const res = await fetch("/api/photos");
-    if (res.ok) {
-      const data = await res.json();
-      if (Array.isArray(data) && data.length > 0) {
-        return data; // Use Cloudinary photos if available
-      }
-    }
-  } catch (err) {
-    // Silently fall back to manifest
-  }
-  // Fallback to manifest if API fails or returns empty
-  const manifest = await fetchManifest();
-  if (manifest !== null) return manifest;
-  // Last resort: static photos
-  return staticPhotos;
-}
+import PageHeader from "~/components/PageHeader";
+import { fetchPhotos, sortPhotos } from "~/lib/loadPhotos";
 
 export default function PhotosPage() {
   const [activeTags, setActiveTags] = createSignal<Set<string>>(new Set());
   const [query, setQuery] = createSignal("");
 
-  const [isClient, setIsClient] = createSignal(false);
-  onMount(() => setIsClient(true));
-
-  const [remotePhotos] = createResource(isClient, async () => fetchPhotos());
-
-  const photos = createMemo<any[]>(() => {
-    const data = remotePhotos();
-    if (Array.isArray(data)) {
-      const list = [...data];
-      list.sort((a: any, b: any) => {
-        const ad = a.createdAt ? Date.parse(a.createdAt) : 0;
-        const bd = b.createdAt ? Date.parse(b.createdAt) : 0;
-        if (ad !== bd) return bd - ad;
-        return String(b.id).localeCompare(String(a.id));
-      });
-      return list;
-    } // manifest or API result
-    return [];
-  });
+  const [remotePhotos] = createResource(fetchPhotos);
+  const photos = createMemo(() => sortPhotos(remotePhotos() ?? []));
 
   const toggleTag = (tag: string) => {
     setActiveTags((prev) => {
@@ -92,13 +44,11 @@ export default function PhotosPage() {
   });
 
   return (
-    <main class="mx-auto max-w-7xl px-4 py-8">
-      <header class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-100 mb-3">Photography</h1>
-        <p class="text-gray-400">
-          A selection of my recent work.
-        </p>
-      </header>
+    <main class="mx-auto max-w-7xl px-4 pt-28 md:pt-32 pb-8">
+      <PageHeader
+        title="Photography"
+        subtitle={<>A selection of my recent work.</>}
+      />
 
       {/* Labels and search section - WIP, hidden for now */}
       {/* <section class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
@@ -136,7 +86,9 @@ export default function PhotosPage() {
           when={filtered().length > 0}
           fallback={
             <p class="text-gray-400">
-              No photos yet. Add images to public/photos and redeploy.
+              {remotePhotos.error
+                ? "Unable to load Cloudinary photos right now."
+                : "No Cloudinary photos found."}
             </p>
           }
         >

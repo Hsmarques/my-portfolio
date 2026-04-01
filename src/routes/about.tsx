@@ -1,14 +1,14 @@
 import { A } from "@solidjs/router";
 
+import PageHeader from "~/components/PageHeader";
+
 export default function About() {
   return (
-    <main class="mx-auto max-w-4xl px-4 py-20 text-gray-100">
-      <header class="mb-12 text-center">
-        <h1 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">About Hugo</h1>
-        <p class="text-gray-400 text-lg font-light max-w-2xl mx-auto">
-          Developer & Amateur Photographer. Based in the United Kingdom.
-        </p>
-      </header>
+    <main class="mx-auto max-w-4xl px-4 pt-28 md:pt-32 pb-20 text-gray-100">
+      <PageHeader
+        title="About Hugo"
+        subtitle={<>Developer & Amateur Photographer. Based in the United Kingdom.</>}
+      />
 
       <div class="grid grid-cols-1 md:grid-cols-5 gap-12 items-start">
         <div class="md:col-span-3 space-y-8">
@@ -66,9 +66,9 @@ export default function About() {
                 <span class="text-gray-500">Based in</span>
                 <span>United Kingdom</span>
               </li>
-              <li class="flex justify-between border-b border-white/5 pb-2">
+              <li class="flex justify-between pb-2">
                 <span class="text-gray-500">Tech Stack</span>
-                <span class="text-right">SolidStart, Tailwind, TS</span>
+                <span class="text-right">Solid, Vite+, Vercel, TS</span>
               </li>
             </ul>
           </div>

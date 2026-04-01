@@ -1,6 +1,7 @@
 import { onMount, createSignal, Show } from "solid-js";
 import Synth from "~/components/Synth";
 import MinimoogSynth from "~/components/MinimoogSynth";
+import PageHeader from "~/components/PageHeader";
 
 type SynthType = "hugo" | "minimoog";
 
@@ -13,18 +14,17 @@ export default function SynthPage() {
   });
 
   return (
-    <main class="bg-black min-h-screen pt-24 pb-16 px-4">
+    <main class="bg-black min-h-screen pt-28 md:pt-32 pb-16 px-4">
       <div class="max-w-4xl mx-auto">
-        {/* Header */}
-        <div class="text-center mb-12">
-          <h1 class="font-serif text-4xl md:text-5xl text-white mb-4">
-            Web Synth
-          </h1>
-          <p class="text-gray-400 max-w-xl mx-auto">
-            A browser-based synthesizer built with the Web Audio API. Drag the
-            knobs, select waveforms, and play notes with your keyboard.
-          </p>
-        </div>
+        <PageHeader
+          title="Web Synth"
+          subtitle={
+            <>
+              A browser-based synthesizer built with the Web Audio API. Drag the
+              knobs, select waveforms, and play notes with your keyboard.
+            </>
+          }
+        />
 
         {/* Synth Type Selector */}
         <div class="flex justify-center mb-8">

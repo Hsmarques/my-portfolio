@@ -1,5 +1,7 @@
 import { For } from "solid-js";
 
+import PageHeader from "~/components/PageHeader";
+
 export default function Blog() {
   // Static blog posts for debugging
   const posts = [
@@ -12,14 +14,16 @@ export default function Blog() {
   ];
 
   return (
-    <main class="max-w-4xl mx-auto px-4 py-8">
-      <div class="text-center mb-12">
-        <h1 class="text-4xl font-bold text-gray-100 mb-4">Blog</h1>
-        <p class="text-gray-400 text-lg">
-          Photography field notes, editing workflows, and occasional deep dives into the
-          code that runs this site.
-        </p>
-      </div>
+    <main class="max-w-4xl mx-auto px-4 pt-28 md:pt-32 pb-8">
+      <PageHeader
+        title="Blog"
+        subtitle={
+          <>
+            Photography field notes, editing workflows, and occasional deep dives
+            into the code that runs this site.
+          </>
+        }
+      />
       
       <div class="space-y-8">
         <For each={posts}>

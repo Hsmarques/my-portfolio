@@ -8,15 +8,14 @@
 
 ## Commands
 - **Dev**: `pnpm dev`
-- **Build**: `pnpm build` (includes photo manifest generation)
-- **Generate photos**: `pnpm generate:photos-manifest`
+- **Build**: `pnpm build`
 - **Optimize photos**: `pnpm optimize:photos`
 - **No tests defined** - use TypeScript compiler for validation
 
 ## Tech Stack
-- **Framework**: SolidJS with @solidjs/start (file-based routing)
+- **Framework**: SolidJS with Vite+ and @solidjs/router
 - **Styling**: TailwindCSS with custom accent colors (camel theme)
-- **Build**: Vinxi bundler
+- **Build**: Vite+
 - **Path alias**: `~/` maps to `./src/`
 
 ## Code Style

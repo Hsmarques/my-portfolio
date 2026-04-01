@@ -1,4 +1,5 @@
-// @refresh reload
-import { mount, StartClient } from "@solidjs/start/client";
+import { render } from "solid-js/web";
 
-mount(() => <StartClient />, document.getElementById("app")!);
+import App from "~/app";
+
+render(() => <App />, document.getElementById("app")!);
