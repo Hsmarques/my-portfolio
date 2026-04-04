@@ -155,20 +155,20 @@ export default function PianoKeyboard(props: PianoKeyboardProps) {
       {/* Keyboard hints */}
       {octaves() === 1 ? (
         <div class="flex flex-col items-center gap-1">
-          <p class="text-[9px] text-gray-500 tracking-wide">
-            White keys: <span class="text-gray-400 font-mono">A S D F G H J K</span>
+          <p class="text-[9px] text-vinho-300 tracking-wide">
+            White keys: <span class="text-bacalhau-300 font-mono">A S D F G H J K</span>
           </p>
-          <p class="text-[9px] text-gray-500 tracking-wide">
-            Black keys: <span class="text-gray-400 font-mono">W E T Y U</span>
+          <p class="text-[9px] text-vinho-300 tracking-wide">
+            Black keys: <span class="text-bacalhau-300 font-mono">W E T Y U</span>
           </p>
         </div>
       ) : (
         <div class="flex flex-col items-center gap-1">
-          <p class="text-[9px] text-gray-500 tracking-wide">
-            Lower octave: <span class="text-gray-400 font-mono">1 2 3 4 5 6 7</span> (white) <span class="text-gray-400 font-mono">Q W E R T</span> (black)
+          <p class="text-[9px] text-vinho-300 tracking-wide">
+            Lower octave: <span class="text-bacalhau-300 font-mono">1 2 3 4 5 6 7</span> (white) <span class="text-bacalhau-300 font-mono">Q W E R T</span> (black)
           </p>
-          <p class="text-[9px] text-gray-500 tracking-wide">
-            Upper octave: <span class="text-gray-400 font-mono">Z X C V B N M ,</span> (white) <span class="text-gray-400 font-mono">S D G H J</span> (black)
+          <p class="text-[9px] text-vinho-300 tracking-wide">
+            Upper octave: <span class="text-bacalhau-300 font-mono">Z X C V B N M ,</span> (white) <span class="text-bacalhau-300 font-mono">S D G H J</span> (black)
           </p>
         </div>
       )}
@@ -189,10 +189,10 @@ export default function PianoKeyboard(props: PianoKeyboardProps) {
                   class="relative flex-1 rounded-b transition-all duration-75"
                   style={{
                     background: isActive()
-                      ? "linear-gradient(to bottom, #e8e0d0 0%, #D4AF37 100%)"
-                      : "linear-gradient(to bottom, #fafafa 0%, #e8e0d0 100%)",
+                      ? "linear-gradient(to bottom, #FFF0D1 0%, #D49E08 100%)"
+                      : "linear-gradient(to bottom, #FFF0D1 0%, #ffe8b8 100%)",
                     "box-shadow": isActive()
-                      ? "inset 0 2px 8px rgba(0,0,0,0.3), 0 0 12px rgba(212, 175, 55, 0.6)"
+                      ? "inset 0 2px 8px rgba(0,0,0,0.3), 0 0 12px rgba(212, 158, 8, 0.6)"
                       : "inset 0 -4px 8px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.2)",
                     transform: isActive() ? "translateY(2px)" : "translateY(0)",
                     border: "1px solid #bbb",
@@ -237,10 +237,10 @@ export default function PianoKeyboard(props: PianoKeyboardProps) {
                   width: "5.5%",
                   height: "65px",
                   background: isActive()
-                    ? "linear-gradient(to bottom, #444 0%, #D4AF37 100%)"
+                    ? "linear-gradient(to bottom, #444 0%, #D49E08 100%)"
                     : "linear-gradient(to bottom, #333 0%, #111 100%)",
                   "box-shadow": isActive()
-                    ? "inset 0 2px 4px rgba(0,0,0,0.5), 0 0 12px rgba(212, 175, 55, 0.6)"
+                    ? "inset 0 2px 4px rgba(0,0,0,0.5), 0 0 12px rgba(212, 158, 8, 0.6)"
                     : "inset 0 -2px 4px rgba(255,255,255,0.1), 0 4px 8px rgba(0,0,0,0.5)",
                   transform: isActive() ? "translateY(2px)" : "translateY(0)",
                   border: "1px solid #222",

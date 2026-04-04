@@ -31,7 +31,7 @@ export default function Oscilloscope(props: OscilloscopeProps) {
       analyser.getByteTimeDomainData(dataArray);
 
       // Clear with fade effect for trail
-      ctx.fillStyle = "rgba(13, 13, 13, 0.3)";
+      ctx.fillStyle = "rgba(26, 15, 20, 0.3)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw grid lines
@@ -54,8 +54,8 @@ export default function Oscilloscope(props: OscilloscopeProps) {
 
       // Draw waveform
       ctx.lineWidth = 2;
-      ctx.strokeStyle = props.isPlaying ? "#D4AF37" : "#444";
-      ctx.shadowColor = props.isPlaying ? "rgba(212, 175, 55, 0.5)" : "transparent";
+      ctx.strokeStyle = props.isPlaying ? "#D49E08" : "#444";
+      ctx.shadowColor = props.isPlaying ? "rgba(212, 158, 8, 0.5)" : "transparent";
       ctx.shadowBlur = props.isPlaying ? 8 : 0;
 
       ctx.beginPath();
@@ -106,7 +106,7 @@ export default function Oscilloscope(props: OscilloscopeProps) {
     if (!props.isPlaying && !props.analyser) {
       const ctx = canvasRef.getContext("2d");
       if (ctx) {
-        ctx.fillStyle = "#0d0d0d";
+        ctx.fillStyle = "#1a0f14";
         ctx.fillRect(0, 0, canvasRef.width, canvasRef.height);
 
         // Draw grid
@@ -130,13 +130,13 @@ export default function Oscilloscope(props: OscilloscopeProps) {
 
   return (
     <div class="flex flex-col items-center gap-2">
-      <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400">
+      <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-bacalhau-300">
         Oscilloscope
       </span>
       <div
         class="relative rounded-lg overflow-hidden"
         style={{
-          background: "#0d0d0d",
+          background: "#1a0f14",
           "box-shadow": `
             inset 0 2px 8px rgba(0, 0, 0, 0.8),
             0 1px 0 rgba(255, 255, 255, 0.05)

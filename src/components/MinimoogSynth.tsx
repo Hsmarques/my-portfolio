@@ -259,9 +259,9 @@ export default function MinimoogSynth() {
       <div
         class="relative rounded-2xl overflow-hidden"
         style={{
-          background: "linear-gradient(145deg, #f5f0e8 0%, #e8ddd0 100%)",
+          background: "linear-gradient(145deg, #FFF0D1 0%, #ffe8b8 100%)",
           "box-shadow": "0 25px 50px -12px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3)",
-          border: "2px solid #d4a574",
+          border: "2px solid #D49E08",
         }}
       >
         {/* Wood grain side panels */}
@@ -271,12 +271,12 @@ export default function MinimoogSynth() {
             background: `
               repeating-linear-gradient(
                 90deg,
-                #8b6f47 0px,
-                #8b6f47 2px,
-                #a0825d 2px,
-                #a0825d 4px,
-                #8b6f47 4px,
-                #8b6f47 6px
+                #592532 0px,
+                #592532 2px,
+                #6e3040 2px,
+                #6e3040 4px,
+                #592532 4px,
+                #592532 6px
               )
             `,
             "box-shadow": "inset -2px 0 4px rgba(0,0,0,0.3)",
@@ -288,12 +288,12 @@ export default function MinimoogSynth() {
             background: `
               repeating-linear-gradient(
                 90deg,
-                #8b6f47 0px,
-                #8b6f47 2px,
-                #a0825d 2px,
-                #a0825d 4px,
-                #8b6f47 4px,
-                #8b6f47 6px
+                #592532 0px,
+                #592532 2px,
+                #6e3040 2px,
+                #6e3040 4px,
+                #592532 4px,
+                #592532 6px
               )
             `,
             "box-shadow": "inset 2px 0 4px rgba(0,0,0,0.3)",
@@ -301,21 +301,21 @@ export default function MinimoogSynth() {
         />
 
         {/* Header */}
-        <div class="flex items-center justify-between px-12 py-3 border-b-2" style={{ "border-color": "#c41e3a", background: "rgba(196, 30, 58, 0.1)" }}>
-          <div class="w-3 h-3 rounded-full" style={{ background: "#c41e3a", "box-shadow": "0 0 8px rgba(196, 30, 58, 0.6)" }} />
+        <div class="flex items-center justify-between px-12 py-3 border-b-2" style={{ "border-color": "#592532", background: "rgba(89, 37, 50, 0.1)" }}>
+          <div class="w-3 h-3 rounded-full" style={{ background: "#592532", "box-shadow": "0 0 8px rgba(89, 37, 50, 0.6)" }} />
           <div class="flex items-center gap-2">
             <div
               class="w-2.5 h-2.5 rounded-full transition-all duration-200"
               style={{
-                background: isPlaying() ? "#c41e3a" : "#999",
-                "box-shadow": isPlaying() ? "0 0 8px rgba(196, 30, 58, 0.8)" : "none",
+                background: isPlaying() ? "#592532" : "#999",
+                "box-shadow": isPlaying() ? "0 0 8px rgba(89, 37, 50, 0.8)" : "none",
               }}
             />
-            <h2 class="text-sm font-bold tracking-[0.3em] uppercase" style={{ color: "#c41e3a" }}>
+            <h2 class="text-sm font-bold tracking-[0.3em] uppercase" style={{ color: "#592532" }}>
               Minimoog
             </h2>
           </div>
-          <div class="w-3 h-3 rounded-full" style={{ background: "#c41e3a", "box-shadow": "0 0 8px rgba(196, 30, 58, 0.6)" }} />
+          <div class="w-3 h-3 rounded-full" style={{ background: "#592532", "box-shadow": "0 0 8px rgba(89, 37, 50, 0.6)" }} />
         </div>
 
         {/* Main Content */}
@@ -362,10 +362,10 @@ export default function MinimoogSynth() {
                     class="flex flex-col items-center gap-3 p-4 rounded-lg"
                     style={{
                       background: "rgba(255, 255, 255, 0.3)",
-                      border: "1px solid rgba(196, 30, 58, 0.2)",
+                      border: "1px solid rgba(89, 37, 50, 0.2)",
                     }}
                   >
-                    <span class="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: "#c41e3a" }}>
+                    <span class="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: "#592532" }}>
                       {osc.label}
                     </span>
 
@@ -381,14 +381,14 @@ export default function MinimoogSynth() {
                                 type="button"
                                 class="w-10 h-8 rounded transition-all duration-150 flex flex-col items-center justify-center"
                                 style={{
-                                  background: isActive() ? "rgba(196, 30, 58, 0.2)" : "rgba(255,255,255,0.5)",
-                                  "box-shadow": isActive() ? "inset 0 2px 4px rgba(0,0,0,0.2), 0 0 6px rgba(196, 30, 58, 0.3)" : "0 1px 2px rgba(0,0,0,0.1)",
-                                  border: isActive() ? "1px solid rgba(196, 30, 58, 0.5)" : "1px solid rgba(0,0,0,0.1)",
+                                  background: isActive() ? "rgba(89, 37, 50, 0.2)" : "rgba(255,255,255,0.5)",
+                                  "box-shadow": isActive() ? "inset 0 2px 4px rgba(0,0,0,0.2), 0 0 6px rgba(89, 37, 50, 0.3)" : "0 1px 2px rgba(0,0,0,0.1)",
+                                  border: isActive() ? "1px solid rgba(89, 37, 50, 0.5)" : "1px solid rgba(0,0,0,0.1)",
                                 }}
                                 onClick={() => osc.setWaveform(wave.type)}
                               >
-                                <span style={{ color: isActive() ? "#c41e3a" : "#999", "font-size": "12px" }}>{wave.icon}</span>
-                                <span class="text-[6px] uppercase" style={{ color: isActive() ? "#c41e3a" : "#999" }}>{wave.label}</span>
+                                <span style={{ color: isActive() ? "#592532" : "#999", "font-size": "12px" }}>{wave.icon}</span>
+                                <span class="text-[6px] uppercase" style={{ color: isActive() ? "#592532" : "#999" }}>{wave.label}</span>
                               </button>
                             );
                           }}
@@ -408,9 +408,9 @@ export default function MinimoogSynth() {
                                 type="button"
                                 class="w-7 h-5 rounded text-[9px] font-bold transition-all"
                                 style={{
-                                  background: isActive() ? "rgba(196, 30, 58, 0.2)" : "rgba(255,255,255,0.5)",
-                                  border: isActive() ? "1px solid rgba(196, 30, 58, 0.5)" : "1px solid rgba(0,0,0,0.1)",
-                                  color: isActive() ? "#c41e3a" : "#666",
+                                  background: isActive() ? "rgba(89, 37, 50, 0.2)" : "rgba(255,255,255,0.5)",
+                                  border: isActive() ? "1px solid rgba(89, 37, 50, 0.5)" : "1px solid rgba(0,0,0,0.1)",
+                                  color: isActive() ? "#592532" : "#666",
                                 }}
                                 onClick={() => osc.setOctave(oct)}
                               >
@@ -444,10 +444,10 @@ export default function MinimoogSynth() {
                 class="flex flex-col items-center gap-3 p-4 rounded-lg"
                 style={{
                   background: "rgba(255, 255, 255, 0.3)",
-                  border: "1px solid rgba(196, 30, 58, 0.2)",
+                  border: "1px solid rgba(89, 37, 50, 0.2)",
                 }}
               >
-                <span class="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: "#c41e3a" }}>Filter</span>
+                <span class="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: "#592532" }}>Filter</span>
                 <div class="flex gap-4">
                   <Knob value={filterCutoff()} min={100} max={10000} onChange={setFilterCutoff} label="Cutoff" unit="Hz" size={50} />
                   <Knob value={filterResonance()} min={0.1} max={20} onChange={setFilterResonance} label="Res" unit="Q" size={50} />
@@ -459,10 +459,10 @@ export default function MinimoogSynth() {
                 class="flex flex-col items-center gap-3 p-4 rounded-lg"
                 style={{
                   background: "rgba(255, 255, 255, 0.3)",
-                  border: "1px solid rgba(196, 30, 58, 0.2)",
+                  border: "1px solid rgba(89, 37, 50, 0.2)",
                 }}
               >
-                <span class="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: "#c41e3a" }}>Envelope</span>
+                <span class="text-[10px] font-bold tracking-[0.2em] uppercase" style={{ color: "#592532" }}>Envelope</span>
                 <div class="flex gap-2">
                   <Knob value={attack() * 1000} min={1} max={2000} onChange={(v) => setAttack(v / 1000)} label="A" unit="ms" size={40} />
                   <Knob value={decay() * 1000} min={1} max={2000} onChange={(v) => setDecay(v / 1000)} label="D" unit="ms" size={40} />
@@ -481,14 +481,14 @@ export default function MinimoogSynth() {
 
         {/* Keyboard Section */}
         <div class="px-6 pb-6 pl-14 pr-14">
-          <div class="h-px mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(196, 30, 58, 0.3), transparent)" }} />
+          <div class="h-px mb-4" style={{ background: "linear-gradient(to right, transparent, rgba(89, 37, 50, 0.5), transparent)" }} />
           <PianoKeyboard onNoteOn={handleNoteOn} onNoteOff={handleNoteOff} octaves={1} />
         </div>
 
         {/* Footer */}
-        <div class="px-12 py-2 border-t-2 flex justify-between items-center" style={{ "border-color": "#c41e3a", background: "rgba(196, 30, 58, 0.1)" }}>
-          <span class="text-[8px] tracking-wider" style={{ color: "#c41e3a" }}>WEB AUDIO API</span>
-          <span class="text-[8px] tracking-wider" style={{ color: "#c41e3a" }}>MODEL D</span>
+        <div class="px-12 py-2 border-t-2 flex justify-between items-center" style={{ "border-color": "#592532", background: "rgba(89, 37, 50, 0.1)" }}>
+          <span class="text-[8px] tracking-wider" style={{ color: "#592532" }}>WEB AUDIO API</span>
+          <span class="text-[8px] tracking-wider" style={{ color: "#592532" }}>MODEL D</span>
         </div>
       </div>
     </div>
