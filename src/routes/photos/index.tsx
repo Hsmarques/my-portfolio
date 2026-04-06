@@ -80,12 +80,12 @@ export default function PhotosPage() {
 
       <Show
         when={!remotePhotos.loading}
-        fallback={<p class="text-gray-400">Loading photos…</p>}
+        fallback={<p class="text-port/60">Loading photos…</p>}
       >
         <Show
           when={filtered().length > 0}
           fallback={
-            <p class="text-gray-400">
+            <p class="text-port/60">
               {remotePhotos.error
                 ? "Unable to load Cloudinary photos right now."
                 : "No Cloudinary photos found."}

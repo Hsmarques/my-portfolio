@@ -3,20 +3,26 @@
 @tailwind utilities;
 
 :root {
-  --background-rgb: 10,10,10, 0.95;
-  --foreground-rgb: 255, 255, 255;
+  --port: 89 37 50;
+  --bock: 212 158 8;
+  --cream: 255 240 209;
+  --foreground-rgb: 89 37 50;
 }
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background-rgb: 10,10,10, 0.95;
-    --foreground-rgb: 255, 255, 255;
-  }
-} */
-
 body {
-  background: rgb(var(--background-rgb));
+  min-height: 100dvh;
   color: rgb(var(--foreground-rgb));
+  background-color: #f6e9bd;
+  background-image: linear-gradient(
+    180deg,
+    #592532 0%,
+    #944d0f 28%,
+    #d9a108 52%,
+    #ebd46b 74%,
+    #f6e9bd 100%
+  );
+  background-attachment: fixed;
+  background-size: 100% 100%;
 }
 
 html {
@@ -25,8 +31,8 @@ html {
 }
 
 ::selection {
-  background-color: rgba(201, 176, 133, 0.3); /* accent-400 with opacity */
-  color: white;
+  background-color: rgba(212, 158, 8, 0.35);
+  color: rgb(var(--foreground-rgb));
 }
 
 img { image-rendering: auto; -webkit-font-smoothing: antialiased; }

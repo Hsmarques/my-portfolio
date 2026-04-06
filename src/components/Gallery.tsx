@@ -91,7 +91,7 @@ export default function Gallery(props: { photos: Photo[] }) {
                   const index = () => idToIndex().get(photo.id) ?? 0;
                   return (
                     <button
-                      class="group relative block w-full overflow-hidden rounded-sm bg-gray-900 focus:outline-none transition-all duration-500 hover:shadow-2xl hover:shadow-accent-900/20"
+                      class="group relative block w-full overflow-hidden rounded-sm bg-gray-900 focus:outline-none transition-all duration-500 hover:shadow-2xl hover:shadow-port/25"
                       onClick={() => open(index())}
                       aria-label={`Open photo ${photo.alt}`}
                     >

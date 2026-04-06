@@ -26,15 +26,15 @@ export default function SinglePhotoPage() {
   });
 
   return (
-    <main class="mx-auto max-w-7xl px-4 py-6">
+    <main class="mx-auto max-w-7xl px-4 py-6 pt-24 md:pt-28">
       <Show
         when={remotePhotos.loading === false}
-        fallback={<p class="text-gray-400">Loading…</p>}
+        fallback={<p class="text-port/60">Loading…</p>}
       >
         <Show
           when={photo()}
           fallback={
-            <p class="text-gray-400">
+            <p class="text-port/60">
               {remotePhotos.error
                 ? "Unable to load Cloudinary photos right now."
                 : "Photo not found."}
@@ -59,13 +59,13 @@ export default function SinglePhotoPage() {
               {/* Related Photos */}
               <Show when={relatedPhotos().length > 0}>
                 <section class="mt-12">
-                  <h2 class="text-xl text-gray-200 mb-6">More photos</h2>
+                  <h2 class="text-xl text-port mb-6">More photos</h2>
                   <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                     <For each={relatedPhotos()}>
                       {(relatedPhoto: Photo) => (
                         <a
                           href={`/photo/${relatedPhoto.id}`}
-                          class="group block overflow-hidden rounded-lg border border-gray-800 hover:border-accent-400 transition-colors focus:outline-none focus:ring-2 focus:ring-accent-400"
+                          class="group block overflow-hidden rounded-lg border border-port/15 hover:border-accent-500 transition-colors focus:outline-none focus:ring-2 focus:ring-accent-500"
                         >
                           <img
                             src={relatedPhoto.src}

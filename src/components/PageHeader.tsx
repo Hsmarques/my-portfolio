@@ -14,12 +14,12 @@ export default function PageHeader(props: PageHeaderProps) {
   return (
     <header class={`mb-10 md:mb-12 ${props.class ?? ""}`}>
       <div class={isCenter ? "text-center" : ""}>
-        <h1 class="font-serif text-4xl md:text-5xl text-white tracking-tight mb-4">
+        <h1 class="font-serif text-4xl md:text-5xl text-port tracking-tight mb-4">
           {props.title}
         </h1>
         {props.subtitle && (
           <div
-            class={`text-gray-400 text-base md:text-lg font-light leading-relaxed ${
+            class={`text-port/75 text-base md:text-lg font-light leading-relaxed ${
               isCenter ? "max-w-2xl mx-auto" : "max-w-2xl"
             }`}
           >
