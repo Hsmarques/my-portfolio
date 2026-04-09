@@ -1,18 +1,23 @@
-const colors = require('tailwindcss/colors');
-
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./index.html", "./src/**/*.{html,js,jsx,ts,tsx}"],
   theme: {
     extend: {
       colors: {
-        surface: '#111111',
+        /** Portuguese palette: Port wine, Super Bock gold, Bacalhau cream */
+        port: '#592532',
+        bock: '#D49E08',
+        cream: '#FFF0D1',
         accent: {
-          300: '#E5D5B9', // light sand
-          400: '#C9B085', // gold
-          500: '#AA9062', // antique gold
-          600: '#8C734B'  // bronze
+          300: '#FFF0D1',
+          400: '#D49E08',
+          500: '#B88907',
+          600: '#592532'
         }
+      },
+      backgroundImage: {
+        'palette-gradient':
+          'linear-gradient(180deg, #592532 0%, #944D0F 28%, #D9A108 52%, #EBD46B 74%, #F6E9BD 100%)'
       },
       fontFamily: {
         sans: ["Inter", "ui-sans-serif", "system-ui", "-apple-system", "Segoe UI", "Roboto", "Cantarell", "Noto Sans", "Ubuntu", "Helvetica Neue", "Arial", "sans-serif"],

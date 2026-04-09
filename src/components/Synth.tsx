@@ -284,11 +284,11 @@ export default function Synth() {
             <div
               class="w-2 h-2 rounded-full transition-all duration-200"
               style={{
-                background: isPlaying() ? "#D4AF37" : "#333",
+                background: isPlaying() ? "#D49E08" : "#333",
                 "box-shadow": isPlaying() ? "0 0 8px rgba(212, 175, 55, 0.8)" : "none",
               }}
             />
-            <h2 class="text-[10px] font-bold tracking-[0.3em] uppercase" style={{ color: "#D4AF37" }}>
+            <h2 class="text-[10px] font-bold tracking-[0.3em] uppercase" style={{ color: "#D49E08" }}>
               Hugo Synth
             </h2>
           </div>
@@ -322,8 +322,8 @@ export default function Synth() {
                             }}
                             onClick={() => setWaveform(wave.type)}
                           >
-                            <span style={{ color: isActive() ? "#D4AF37" : "#666", "font-size": "14px" }}>{wave.icon}</span>
-                            <span class="text-[7px] uppercase" style={{ color: isActive() ? "#D4AF37" : "#555" }}>{wave.label}</span>
+                            <span style={{ color: isActive() ? "#D49E08" : "#666", "font-size": "14px" }}>{wave.icon}</span>
+                            <span class="text-[7px] uppercase" style={{ color: isActive() ? "#D49E08" : "#555" }}>{wave.label}</span>
                           </button>
                         );
                       }}
@@ -344,7 +344,7 @@ export default function Synth() {
                             style={{
                               background: isActive() ? "linear-gradient(145deg, #2a2a2a, #1a1a1a)" : "linear-gradient(145deg, #1f1f1f, #141414)",
                               border: isActive() ? "1px solid rgba(212, 175, 55, 0.5)" : "1px solid rgba(255,255,255,0.05)",
-                              color: isActive() ? "#D4AF37" : "#666",
+                              color: isActive() ? "#D49E08" : "#666",
                             }}
                             onClick={() => setOctave(oct)}
                           >

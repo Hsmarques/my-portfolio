@@ -11,11 +11,11 @@ export default function Home() {
   const safeList = createMemo(() => sortPhotos(photos() ?? []));
 
   return (
-    <main class="bg-black min-h-screen">
+    <main class="min-h-screen">
       <Show
         when={!photos.loading}
         fallback={
-          <div class="h-screen w-full flex items-center justify-center bg-black text-white/50">
+          <div class="h-screen w-full flex items-center justify-center text-port/50">
             <div class="animate-pulse tracking-widest uppercase text-xs">
               Loading Gallery...
             </div>
@@ -25,10 +25,10 @@ export default function Home() {
         <Show
           when={!photos.error && safeList().length > 0}
           fallback={
-            <div class="h-screen w-full flex items-center justify-center bg-black px-6 text-center text-white/60">
+            <div class="h-screen w-full flex items-center justify-center px-6 text-center text-port/70">
               <div class="space-y-3">
                 <p class="tracking-widest uppercase text-xs">Cloudinary unavailable</p>
-                <p class="text-sm text-white/40">
+                <p class="text-sm text-port/55">
                   The gallery could not load photos from `/api/photos`.
                 </p>
               </div>
@@ -48,21 +48,21 @@ export default function Home() {
                 onDragStart={(e) => e.preventDefault()}
                 onContextMenu={(e) => e.preventDefault()}
               />
-              <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#0a0a0a]" />
+              <div class="absolute inset-0 bg-gradient-to-b from-port/75 via-port/25 to-cream/90" />
             </div>
 
             <div class="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-8 pt-20">
-              <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl text-white tracking-tight drop-shadow-2xl">
-                Capturing <span class="italic text-accent-300">Light</span> &{" "}
-                <span class="italic text-accent-300">Code</span>
+              <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl text-cream tracking-tight drop-shadow-[0_2px_24px_rgba(89,37,50,0.45)]">
+                Capturing <span class="italic text-accent-400">Light</span> &{" "}
+                <span class="italic text-accent-400">Code</span>
               </h1>
-              <p class="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md opacity-90">
+              <p class="text-lg md:text-xl text-cream/95 max-w-2xl mx-auto font-light leading-relaxed drop-shadow-md">
                 I'm Hugo - I take photos and build websites.
               </p>
               <div class="pt-8 animate-fade-in-up">
                 <a
                   href="#gallery"
-                  class="inline-block px-8 py-3 border border-white/20 hover:bg-white/10 hover:border-white/40 rounded-full text-xs font-bold tracking-[0.2em] uppercase text-white transition-all duration-300 backdrop-blur-sm"
+                  class="inline-block px-8 py-3 border border-cream/40 hover:bg-cream/15 hover:border-cream/60 rounded-full text-xs font-bold tracking-[0.2em] uppercase text-cream transition-all duration-300 backdrop-blur-sm"
                 >
                   Explore Work
                 </a>
@@ -73,13 +73,13 @@ export default function Home() {
           {/* Recent Work */}
           <section
             id="gallery"
-            class="py-24 px-4 md:px-8 max-w-7xl mx-auto bg-[#0a0a0a]"
+            class="py-24 px-4 md:px-8 max-w-7xl mx-auto rounded-t-3xl bg-cream/85 backdrop-blur-sm border-t border-port/10 shadow-[0_-20px_60px_-20px_rgba(89,37,50,0.12)]"
           >
-            <div class="flex items-end justify-between mb-12 pb-4 border-b border-white/10">
-              <h2 class="text-3xl font-serif text-white">Recent Captures</h2>
+            <div class="flex items-end justify-between mb-12 pb-4 border-b border-port/15">
+              <h2 class="text-3xl font-serif text-port">Recent Captures</h2>
               <a
                 href="/photos"
-                class="text-accent-400 hover:text-accent-300 text-sm font-medium transition-colors mb-1"
+                class="text-accent-500 hover:text-accent-400 text-sm font-medium transition-colors mb-1"
               >
                 View all photos →
               </a>
@@ -87,7 +87,7 @@ export default function Home() {
             <Gallery photos={safeList().slice(0, 9)} />
 
             <div class="mt-20 text-center">
-              <p class="text-gray-500 text-sm font-light">
+              <p class="text-port/45 text-sm font-light">
                 Designed & Built with SolidJS
               </p>
             </div>

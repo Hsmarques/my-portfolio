@@ -102,7 +102,7 @@ Happy coding! 🚀
 
   if (params.slug !== "welcome") {
     return (
-      <main class="max-w-4xl mx-auto px-4 pt-28 md:pt-32 pb-8">
+      <main class="max-w-4xl mx-auto px-4 pt-28 md:pt-32 pb-20">
         <PageHeader
           title="Post Not Found"
           subtitle={<>The blog post you're looking for doesn't exist.</>}
@@ -110,7 +110,7 @@ Happy coding! 🚀
         <div class="text-center">
           <a 
             href="/blog" 
-            class="inline-block bg-accent-600 hover:bg-accent-500 text-white font-medium py-2 px-4 rounded transition-colors"
+            class="inline-block bg-port hover:bg-port/90 text-cream font-medium py-2 px-4 rounded transition-colors"
           >
             Back to Blog
           </a>
@@ -120,12 +120,12 @@ Happy coding! 🚀
   }
 
   return (
-    <article class="max-w-4xl mx-auto px-4 pt-28 md:pt-32 pb-8">
-      <header class="mb-8 pb-8 border-b border-gray-700">
+    <article class="max-w-4xl mx-auto px-4 pt-28 md:pt-32 pb-20">
+      <header class="mb-8 pb-8 border-b border-port/15">
         <div class="mb-6 text-center">
           <a 
             href="/blog" 
-            class="text-accent-400 hover:text-accent-300 text-sm font-medium transition-colors"
+            class="text-accent-500 hover:text-accent-400 text-sm font-medium transition-colors"
           >
             ← Back to Blog
           </a>
@@ -147,17 +147,17 @@ Happy coding! 🚀
 
       {/* Content */}
       <div 
-        class="prose prose-invert prose-gray max-w-none
-          prose-headings:text-gray-100 
-          prose-p:text-gray-300 prose-p:leading-relaxed
-          prose-a:text-accent-400 prose-a:no-underline hover:prose-a:text-accent-300
-          prose-strong:text-gray-200
-          prose-code:text-accent-300 prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded
-          prose-pre:bg-gray-800 prose-pre:border prose-pre:border-gray-700
-          prose-blockquote:border-l-accent-400 prose-blockquote:text-gray-300
-          prose-ul:text-gray-300 prose-ol:text-gray-300
-          prose-li:text-gray-300
-          prose-hr:border-gray-700"
+        class="prose max-w-none
+          prose-headings:text-port 
+          prose-p:text-port/85 prose-p:leading-relaxed
+          prose-a:text-accent-500 prose-a:no-underline hover:prose-a:text-accent-400
+          prose-strong:text-port
+          prose-code:text-port prose-code:bg-cream/80 prose-code:px-1 prose-code:rounded prose-code:border prose-code:border-port/10
+          prose-pre:bg-port prose-pre:text-cream prose-pre:border prose-pre:border-port/20
+          prose-blockquote:border-l-accent-500 prose-blockquote:text-port/75
+          prose-ul:text-port/85 prose-ol:text-port/85
+          prose-li:text-port/85
+          prose-hr:border-port/20"
         innerHTML={parseMarkdown(post.content)}
       />
     </article>

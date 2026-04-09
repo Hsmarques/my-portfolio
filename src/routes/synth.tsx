@@ -14,7 +14,7 @@ export default function SynthPage() {
   });
 
   return (
-    <main class="bg-black min-h-screen pt-28 md:pt-32 pb-16 px-4">
+    <main class="min-h-screen pt-28 md:pt-32 pb-16 px-4">
       <div class="max-w-4xl mx-auto">
         <PageHeader
           title="Web Synth"
@@ -43,12 +43,12 @@ export default function SynthPage() {
                 background: synthType() === "hugo"
                   ? "linear-gradient(145deg, #2a2a2a, #1a1a1a)"
                   : "transparent",
-                color: synthType() === "hugo" ? "#D4AF37" : "#666",
+                color: synthType() === "hugo" ? "#D49E08" : "#666",
                 "box-shadow": synthType() === "hugo"
-                  ? "inset 0 2px 4px rgba(0,0,0,0.5), 0 0 8px rgba(212, 175, 55, 0.2)"
+                  ? "inset 0 2px 4px rgba(0,0,0,0.5), 0 0 8px rgba(212, 158, 8, 0.25)"
                   : "none",
                 border: synthType() === "hugo"
-                  ? "1px solid rgba(212, 175, 55, 0.3)"
+                  ? "1px solid rgba(212, 158, 8, 0.35)"
                   : "1px solid transparent",
               }}
             >
