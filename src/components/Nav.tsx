@@ -27,11 +27,6 @@ export default function Nav() {
             </A>
           </li>
           <li>
-            <A href="/synth" class={active("/synth")}>
-              Synth
-            </A>
-          </li>
-          <li>
             <A href="/about" class={active("/about")}>
               About
             </A>
