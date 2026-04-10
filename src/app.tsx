@@ -13,6 +13,7 @@ import SinglePhotoPage from "~/routes/photo/[id]";
 import PhotosPage from "~/routes/photos/index";
 import SynthPage from "~/routes/synth";
 import Homepage2 from "~/routes/homepage2";
+import Homepage3 from "~/routes/homepage3";
 
 import "./app.css";
 
@@ -37,6 +38,7 @@ export default function App() {
       <Route path="/about" component={About} />
       <Route path="/synth" component={SynthPage} />
       <Route path="/homepage2" component={Homepage2} />
+      <Route path="/homepage3" component={Homepage3} />
       <Route path="*404" component={NotFound} />
     </Router>
   );
