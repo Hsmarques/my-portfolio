@@ -71,7 +71,7 @@ export default function SinglePhotoPage() {
                             src={relatedPhoto.src}
                             alt={relatedPhoto.alt}
                             loading="lazy"
-                            class="w-full h-32 sm:h-40 object-cover transition-transform duration-300 ease-out group-hover:scale-105"
+                            class="w-full h-32 sm:h-40 object-cover"
                             draggable={false}
                             onContextMenu={(e) => e.preventDefault()}
                             onDragStart={(e) => e.preventDefault()}

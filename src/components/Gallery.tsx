@@ -99,7 +99,7 @@ export default function Gallery(props: { photos: Photo[] }) {
                         src={photo.src}
                         alt={photo.alt}
                         loading="lazy"
-                        class="transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110 w-full h-auto opacity-90 group-hover:opacity-100"
+                        class="w-full h-auto opacity-90 group-hover:opacity-100 transition-opacity duration-300"
                         width={photo.width}
                         height={photo.height}
                         draggable={false}
