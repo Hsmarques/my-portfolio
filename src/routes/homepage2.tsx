@@ -5,10 +5,21 @@ import {
   createResource,
   createSignal,
   onMount,
+  ErrorBoundary,
 } from "solid-js";
 import { A } from "@solidjs/router";
 import type { Photo } from "~/lib/photos";
 import { fetchPhotos, sortPhotos } from "~/lib/loadPhotos";
+
+const PLACEHOLDER_PHOTOS: Photo[] = Array.from({ length: 12 }, (_, i) => ({
+  id: `placeholder-${i}`,
+  src: `https://picsum.photos/seed/hugo${i}/800/600`,
+  srcFull: `https://picsum.photos/seed/hugo${i}/1600/1200`,
+  alt: `Placeholder photo ${i + 1}`,
+  width: 800,
+  height: 600,
+  tags: ["placeholder"],
+}));
 
 function FeaturedPhoto(props: { photo: Photo; priority?: boolean }) {
   return (
@@ -107,9 +118,21 @@ function PhotoStrip(props: { photos: Photo[] }) {
   );
 }
 
+async function safeFetchPhotos(): Promise<Photo[]> {
+  try {
+    return await fetchPhotos();
+  } catch {
+    return [];
+  }
+}
+
 export default function Homepage2() {
-  const [photos] = createResource(fetchPhotos);
-  const safeList = createMemo(() => sortPhotos(photos() ?? []));
+  const [photos] = createResource(safeFetchPhotos);
+  const safeList = createMemo(() => {
+    if (photos.loading) return [];
+    const raw = photos() ?? [];
+    return raw.length > 0 ? sortPhotos(raw) : PLACEHOLDER_PHOTOS;
+  });
 
   return (
     <main class="bg-surface min-h-screen">
@@ -127,7 +150,7 @@ export default function Homepage2() {
         }
       >
         <Show
-          when={!photos.error && safeList().length > 0}
+          when={safeList().length > 0}
           fallback={
             <div class="h-screen w-full flex items-center justify-center bg-surface px-6 text-center">
               <div class="space-y-4 max-w-md">
