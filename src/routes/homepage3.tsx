@@ -172,10 +172,10 @@ export default function Homepage3() {
             </p>
             <h1 class="font-serif leading-[0.9] tracking-tight mb-6 md:mb-10">
               <span class="block text-[clamp(3.5rem,12vw,11rem)] text-vinho-900">
-                Light
+                Photos
               </span>
               <span class="block text-[clamp(3.5rem,12vw,11rem)] text-vinho-800/60 italic -mt-2 md:-mt-4">
-                & Shadow
+                & Code
               </span>
             </h1>
             <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8">
@@ -205,7 +205,7 @@ export default function Homepage3() {
           ═══════════════════════════════════════════════ */}
       <section class="bg-surface py-10 md:py-16 -mt-px">
         <MarqueeStrip text="Photography" />
-        <MarqueeStrip text="Code & Light" reverse />
+        <MarqueeStrip text="Code & Pixels" reverse />
       </section>
 
       {/* ═══════════════════════════════════════════════
@@ -276,12 +276,12 @@ export default function Homepage3() {
               "background-clip": "text",
             }}
           >
-            Where light meets intention,
+            The world looks different
             <br />
-            a photograph is born
+            through the viewfinder
           </h2>
           <p class="text-bacalhau-200/60 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-            Every frame is a conversation between the scene and the observer. I chase that fleeting moment where everything aligns.
+            I take photos and build websites. This is where I share both — a collection of my favourite shots and the code that powers it all.
           </p>
           <div class="flex flex-wrap justify-center gap-4">
             <A
