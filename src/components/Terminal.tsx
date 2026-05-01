@@ -183,12 +183,12 @@ help - Shows this help message`
   };
 
   return (
-    <div class="bg-black text-green-500 p-4 rounded-lg font-mono text-left w-full max-w-2xl mx-auto relative">
+    <div class="bg-vinho-900 text-superbock p-4 rounded-lg font-mono text-left w-full max-w-2xl mx-auto relative">
       <div class="flex justify-between items-center">
         <div class="flex">
-          <span class="text-red-500">●</span>
-          <span class="text-yellow-500 ml-2">●</span>
-          <span class="text-green-500 ml-2">●</span>
+          <span class="text-vinho ml-0">●</span>
+          <span class="text-superbock ml-2">●</span>
+          <span class="text-bacalhau ml-2">●</span>
         </div>
       </div>
       <div class="mt-2 whitespace-pre-wrap break-words">

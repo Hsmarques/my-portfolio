@@ -28,14 +28,14 @@ export default function Blog() {
       <div class="space-y-8">
         <For each={posts}>
           {(post) => (
-            <article class="bg-gray-900/50 rounded-lg p-6 border border-gray-700 hover:border-gray-600 transition-colors">
+            <article class="bg-vinho/30 rounded-lg p-6 border border-superbock/15 hover:border-superbock/30 transition-colors">
               <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3">
-                <h2 class="text-xl font-semibold text-gray-100 hover:text-accent-400 transition-colors">
+                <h2 class="text-xl font-semibold text-bacalhau hover:text-superbock transition-colors">
                   <a href={`/blog/${post.slug}`} class="block">
                     {post.title}
                   </a>
                 </h2>
-                <time class="text-sm text-gray-500 mt-1 sm:mt-0">
+                <time class="text-sm text-vinho-300 mt-1 sm:mt-0">
                   {new Date(post.date).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -43,10 +43,10 @@ export default function Blog() {
                   })}
                 </time>
               </div>
-              <p class="text-gray-400 leading-relaxed">{post.excerpt}</p>
+              <p class="text-bacalhau-300 leading-relaxed">{post.excerpt}</p>
               <a 
                 href={`/blog/${post.slug}`}
-                class="inline-block mt-4 text-accent-400 hover:text-accent-300 text-sm font-medium transition-colors"
+                class="inline-block mt-4 text-superbock hover:text-superbock-300 text-sm font-medium transition-colors"
               >
                 Read more →
               </a>

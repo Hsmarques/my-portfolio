@@ -85,12 +85,12 @@ export default function Knob(props: KnobProps) {
     <div class="flex flex-col items-center gap-2 select-none group" title={props.tooltip}>
       {/* Label with tooltip indicator */}
       <div class="flex items-center gap-1">
-        <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-gray-400">
+        <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-bacalhau-300">
           {props.label}
         </span>
         {props.tooltip && (
           <span
-            class="text-[8px] text-gray-600 cursor-help opacity-50 group-hover:opacity-100 transition-opacity"
+            class="text-[8px] text-vinho-300 cursor-help opacity-50 group-hover:opacity-100 transition-opacity"
             title={props.tooltip}
           >
             ⓘ
@@ -111,8 +111,8 @@ export default function Knob(props: KnobProps) {
           style={{
             background: `conic-gradient(
               from -135deg,
-              #D4AF37 0deg,
-              #D4AF37 ${
+              #D49E08 0deg,
+              #D49E08 ${
                 ((props.value - props.min) / (props.max - props.min)) * 270
               }deg,
               #333 ${
@@ -124,7 +124,7 @@ export default function Knob(props: KnobProps) {
             padding: "4px",
           }}
         >
-          <div class="w-full h-full rounded-full bg-zinc-900" />
+          <div class="w-full h-full rounded-full bg-vinho-900" />
         </div>
 
         {/* Knob body */}
@@ -136,7 +136,7 @@ export default function Knob(props: KnobProps) {
               radial-gradient(ellipse at 30% 30%, #555 0%, #222 50%, #111 100%)
             `,
             "box-shadow": isDragging()
-              ? "0 0 20px rgba(212, 175, 55, 0.5), inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -2px 4px rgba(0,0,0,0.5)"
+              ? "0 0 20px rgba(212, 158, 8, 0.5), inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -2px 4px rgba(0,0,0,0.5)"
               : "0 4px 12px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -2px 4px rgba(0,0,0,0.5)",
             transform: `rotate(${getRotation()}deg)`,
           }}
@@ -145,8 +145,8 @@ export default function Knob(props: KnobProps) {
           <div
             class="absolute top-2 left-1/2 -translate-x-1/2 w-1 h-3 rounded-full"
             style={{
-              background: "#D4AF37",
-              "box-shadow": "0 0 6px rgba(212, 175, 55, 0.8)",
+              background: "#D49E08",
+              "box-shadow": "0 0 6px rgba(212, 158, 8, 0.8)",
             }}
           />
         </div>
@@ -167,12 +167,12 @@ export default function Knob(props: KnobProps) {
       <div class="flex items-baseline gap-1">
         <span
           class="text-sm font-mono tabular-nums"
-          style={{ color: "#D4AF37" }}
+          style={{ color: "#D49E08" }}
         >
           {getDisplayValue()}
         </span>
         {props.unit && (
-          <span class="text-[10px] text-gray-500">{props.unit}</span>
+          <span class="text-[10px] text-vinho-300">{props.unit}</span>
         )}
       </div>
     </div>

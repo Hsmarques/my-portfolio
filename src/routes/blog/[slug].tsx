@@ -110,7 +110,7 @@ Happy coding! 🚀
         <div class="text-center">
           <a 
             href="/blog" 
-            class="inline-block bg-accent-600 hover:bg-accent-500 text-white font-medium py-2 px-4 rounded transition-colors"
+            class="inline-block bg-vinho hover:bg-vinho-400 text-bacalhau font-medium py-2 px-4 rounded transition-colors"
           >
             Back to Blog
           </a>
@@ -121,11 +121,11 @@ Happy coding! 🚀
 
   return (
     <article class="max-w-4xl mx-auto px-4 pt-28 md:pt-32 pb-8">
-      <header class="mb-8 pb-8 border-b border-gray-700">
+      <header class="mb-8 pb-8 border-b border-superbock/20">
         <div class="mb-6 text-center">
           <a 
             href="/blog" 
-            class="text-accent-400 hover:text-accent-300 text-sm font-medium transition-colors"
+            class="text-superbock hover:text-superbock-300 text-sm font-medium transition-colors"
           >
             ← Back to Blog
           </a>
@@ -147,17 +147,17 @@ Happy coding! 🚀
 
       {/* Content */}
       <div 
-        class="prose prose-invert prose-gray max-w-none
-          prose-headings:text-gray-100 
-          prose-p:text-gray-300 prose-p:leading-relaxed
-          prose-a:text-accent-400 prose-a:no-underline hover:prose-a:text-accent-300
-          prose-strong:text-gray-200
-          prose-code:text-accent-300 prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded
-          prose-pre:bg-gray-800 prose-pre:border prose-pre:border-gray-700
-          prose-blockquote:border-l-accent-400 prose-blockquote:text-gray-300
-          prose-ul:text-gray-300 prose-ol:text-gray-300
-          prose-li:text-gray-300
-          prose-hr:border-gray-700"
+        class="prose prose-invert max-w-none
+          prose-headings:text-bacalhau 
+          prose-p:text-bacalhau-200 prose-p:leading-relaxed
+          prose-a:text-superbock prose-a:no-underline hover:prose-a:text-superbock-300
+          prose-strong:text-bacalhau
+          prose-code:text-superbock-300 prose-code:bg-vinho/40 prose-code:px-1 prose-code:rounded
+          prose-pre:bg-vinho/30 prose-pre:border prose-pre:border-superbock/15
+          prose-blockquote:border-l-superbock prose-blockquote:text-bacalhau-200
+          prose-ul:text-bacalhau-200 prose-ol:text-bacalhau-200
+          prose-li:text-bacalhau-200
+          prose-hr:border-superbock/20"
         innerHTML={parseMarkdown(post.content)}
       />
     </article>

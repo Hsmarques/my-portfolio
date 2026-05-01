@@ -272,23 +272,23 @@ export default function Synth() {
       <div
         class="relative rounded-2xl overflow-hidden"
         style={{
-          background: "linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%)",
-          "box-shadow": "0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05)",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
+          background: "linear-gradient(145deg, #2a1a1f 0%, #1a0f14 100%)",
+          "box-shadow": "0 25px 50px -12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(212, 158, 8, 0.05)",
+          border: "1px solid rgba(212, 158, 8, 0.12)",
         }}
       >
         {/* Header */}
-        <div class="flex items-center justify-between px-4 py-3 border-b border-white/5">
+        <div class="flex items-center justify-between px-4 py-3 border-b border-superbock/10">
           <div class="w-2.5 h-2.5 rounded-full" style={{ background: "linear-gradient(135deg, #444 0%, #222 100%)" }} />
           <div class="flex items-center gap-2">
             <div
               class="w-2 h-2 rounded-full transition-all duration-200"
               style={{
-                background: isPlaying() ? "#D4AF37" : "#333",
-                "box-shadow": isPlaying() ? "0 0 8px rgba(212, 175, 55, 0.8)" : "none",
+                background: isPlaying() ? "#D49E08" : "#333",
+                "box-shadow": isPlaying() ? "0 0 8px rgba(212, 158, 8, 0.8)" : "none",
               }}
             />
-            <h2 class="text-[10px] font-bold tracking-[0.3em] uppercase" style={{ color: "#D4AF37" }}>
+            <h2 class="text-[10px] font-bold tracking-[0.3em] uppercase" style={{ color: "#D49E08" }}>
               Hugo Synth
             </h2>
           </div>
@@ -306,7 +306,7 @@ export default function Synth() {
               {/* Waveform + Octave */}
               <div class="flex flex-col gap-3">
                 <div class="flex flex-col items-center gap-2">
-                  <span class="text-[9px] font-bold tracking-[0.2em] uppercase text-gray-500">Wave</span>
+                  <span class="text-[9px] font-bold tracking-[0.2em] uppercase text-vinho-300">Wave</span>
                   <div class="flex gap-1">
                     <For each={WAVEFORMS}>
                       {(wave) => {
@@ -317,13 +317,13 @@ export default function Synth() {
                             class="w-12 h-10 rounded transition-all duration-150 flex flex-col items-center justify-center"
                             style={{
                               background: isActive() ? "linear-gradient(145deg, #2a2a2a, #1a1a1a)" : "linear-gradient(145deg, #1f1f1f, #141414)",
-                              "box-shadow": isActive() ? "inset 0 2px 4px rgba(0,0,0,0.5), 0 0 8px rgba(212, 175, 55, 0.3)" : "0 2px 4px rgba(0,0,0,0.3)",
-                              border: isActive() ? "1px solid rgba(212, 175, 55, 0.5)" : "1px solid rgba(255,255,255,0.05)",
+                              "box-shadow": isActive() ? "inset 0 2px 4px rgba(0,0,0,0.5), 0 0 8px rgba(212, 158, 8, 0.3)" : "0 2px 4px rgba(0,0,0,0.3)",
+                              border: isActive() ? "1px solid rgba(212, 158, 8, 0.5)" : "1px solid rgba(255,255,255,0.05)",
                             }}
                             onClick={() => setWaveform(wave.type)}
                           >
-                            <span style={{ color: isActive() ? "#D4AF37" : "#666", "font-size": "14px" }}>{wave.icon}</span>
-                            <span class="text-[7px] uppercase" style={{ color: isActive() ? "#D4AF37" : "#555" }}>{wave.label}</span>
+                            <span style={{ color: isActive() ? "#D49E08" : "#666", "font-size": "14px" }}>{wave.icon}</span>
+                            <span class="text-[7px] uppercase" style={{ color: isActive() ? "#D49E08" : "#555" }}>{wave.label}</span>
                           </button>
                         );
                       }}
@@ -332,7 +332,7 @@ export default function Synth() {
                 </div>
 
                 <div class="flex flex-col items-center gap-1">
-                  <span class="text-[9px] font-bold tracking-[0.2em] uppercase text-gray-500">Octave</span>
+                  <span class="text-[9px] font-bold tracking-[0.2em] uppercase text-vinho-300">Octave</span>
                   <div class="flex gap-0.5">
                     <For each={OCTAVES}>
                       {(oct) => {
@@ -343,8 +343,8 @@ export default function Synth() {
                             class="w-8 h-6 rounded text-[10px] font-bold transition-all"
                             style={{
                               background: isActive() ? "linear-gradient(145deg, #2a2a2a, #1a1a1a)" : "linear-gradient(145deg, #1f1f1f, #141414)",
-                              border: isActive() ? "1px solid rgba(212, 175, 55, 0.5)" : "1px solid rgba(255,255,255,0.05)",
-                              color: isActive() ? "#D4AF37" : "#666",
+                              border: isActive() ? "1px solid rgba(212, 158, 8, 0.5)" : "1px solid rgba(255,255,255,0.05)",
+                              color: isActive() ? "#D49E08" : "#666",
                             }}
                             onClick={() => setOctave(oct)}
                           >
@@ -368,7 +368,7 @@ export default function Synth() {
             <div class="flex flex-wrap gap-3 justify-center lg:justify-start">
               {/* Filter */}
               <div class="flex flex-col items-center gap-2 p-2 rounded-lg" style={{ background: "rgba(0,0,0,0.2)" }}>
-                <span class="text-[8px] font-bold tracking-[0.15em] uppercase text-gray-500">Filter</span>
+                <span class="text-[8px] font-bold tracking-[0.15em] uppercase text-vinho-300">Filter</span>
                 <div class="flex gap-3">
                   <Knob value={filterCutoff()} min={100} max={10000} onChange={setFilterCutoff} label="Cut" unit="Hz" size={42} tooltip="Cutoff: Frequencies above this are filtered out (low-pass)" />
                   <Knob value={filterResonance()} min={0.1} max={20} onChange={setFilterResonance} label="Res" unit="Q" size={42} tooltip="Resonance: Boosts frequencies near the cutoff for a sharper sound" />
@@ -377,7 +377,7 @@ export default function Synth() {
 
               {/* Envelope */}
               <div class="flex flex-col items-center gap-2 p-2 rounded-lg" style={{ background: "rgba(0,0,0,0.2)" }}>
-                <span class="text-[8px] font-bold tracking-[0.15em] uppercase text-gray-500">Envelope</span>
+                <span class="text-[8px] font-bold tracking-[0.15em] uppercase text-vinho-300">Envelope</span>
                 <div class="flex gap-2">
                   <Knob value={attack() * 1000} min={1} max={2000} onChange={(v) => setAttack(v / 1000)} label="A" unit="ms" size={38} tooltip="Attack: How fast the sound fades in when you press a key" />
                   <Knob value={decay() * 1000} min={1} max={2000} onChange={(v) => setDecay(v / 1000)} label="D" unit="ms" size={38} tooltip="Decay: Time to fall from peak to sustain level" />
@@ -388,7 +388,7 @@ export default function Synth() {
 
               {/* Delay */}
               <div class="flex flex-col items-center gap-2 p-2 rounded-lg" style={{ background: "rgba(0,0,0,0.2)" }}>
-                <span class="text-[8px] font-bold tracking-[0.15em] uppercase text-gray-500">Delay</span>
+                <span class="text-[8px] font-bold tracking-[0.15em] uppercase text-vinho-300">Delay</span>
                 <div class="flex gap-2">
                   <Knob value={delayTime()} min={50} max={1000} onChange={setDelayTime} label="Time" unit="ms" size={38} />
                   <Knob value={delayFeedbackAmount()} min={0} max={80} onChange={setDelayFeedbackAmount} label="FB" unit="%" size={38} />
@@ -398,7 +398,7 @@ export default function Synth() {
 
               {/* Reverb */}
               <div class="flex flex-col items-center gap-2 p-2 rounded-lg" style={{ background: "rgba(0,0,0,0.2)" }}>
-                <span class="text-[8px] font-bold tracking-[0.15em] uppercase text-gray-500">Reverb</span>
+                <span class="text-[8px] font-bold tracking-[0.15em] uppercase text-vinho-300">Reverb</span>
                 <div class="flex gap-2">
                   <Knob value={reverbMixAmount()} min={0} max={100} onChange={setReverbMixAmount} label="Mix" unit="%" size={38} />
                 </div>
@@ -410,14 +410,14 @@ export default function Synth() {
 
         {/* Keyboard Section */}
         <div class="px-4 pb-4">
-          <div class="h-px mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent)" }} />
+          <div class="h-px mb-3" style={{ background: "linear-gradient(to right, transparent, rgba(212, 158, 8, 0.15), transparent)" }} />
           <PianoKeyboard onNoteOn={handleNoteOn} onNoteOff={handleNoteOff} octaves={1} />
         </div>
 
         {/* Footer */}
-        <div class="px-4 py-2 border-t border-white/5 flex justify-between items-center" style={{ background: "rgba(0,0,0,0.3)" }}>
-          <span class="text-[8px] text-gray-600 tracking-wider">WEB AUDIO API</span>
-          <span class="text-[8px] text-gray-600 tracking-wider">MODEL HS-04</span>
+        <div class="px-4 py-2 border-t border-superbock/10 flex justify-between items-center" style={{ background: "rgba(26, 15, 20, 0.5)" }}>
+          <span class="text-[8px] text-vinho-300 tracking-wider">WEB AUDIO API</span>
+          <span class="text-[8px] text-vinho-300 tracking-wider">MODEL HS-04</span>
         </div>
       </div>
     </div>

@@ -91,7 +91,7 @@ export default function Gallery(props: { photos: Photo[] }) {
                   const index = () => idToIndex().get(photo.id) ?? 0;
                   return (
                     <button
-                      class="group relative block w-full overflow-hidden rounded-sm bg-gray-900 focus:outline-none transition-all duration-500 hover:shadow-2xl hover:shadow-accent-900/20"
+                      class="group relative block w-full overflow-hidden rounded-sm bg-vinho-900 focus:outline-none transition-all duration-500 hover:shadow-2xl hover:shadow-superbock/20"
                       onClick={() => open(index())}
                       aria-label={`Open photo ${photo.alt}`}
                     >
@@ -99,7 +99,7 @@ export default function Gallery(props: { photos: Photo[] }) {
                         src={photo.src}
                         alt={photo.alt}
                         loading="lazy"
-                        class="transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110 w-full h-auto opacity-90 group-hover:opacity-100"
+                        class="w-full h-auto opacity-90 group-hover:opacity-100 transition-opacity duration-300"
                         width={photo.width}
                         height={photo.height}
                         draggable={false}
@@ -262,15 +262,15 @@ function Lightbox(props: {
       onContextMenu={(e) => e.preventDefault()}
     >
       <div
-        class="absolute inset-0 bg-black/95 backdrop-blur-2xl transition-opacity duration-300 animate-fade-in"
+        class="absolute inset-0 bg-vinho-900/95 backdrop-blur-2xl transition-opacity duration-300 animate-fade-in"
         onClick={props.onClose}
         role="button"
         aria-label="Close lightbox"
       />
       
       {/* Controls Header - Always visible on mobile, dimmed on desktop until hover */}
-      <div class="absolute top-0 inset-x-0 z-50 p-4 flex justify-between items-start bg-gradient-to-b from-black/60 to-transparent opacity-100 lg:opacity-30 lg:hover:opacity-100 transition-opacity duration-500">
-        <div class="text-white/80 text-sm font-medium bg-black/20 backdrop-blur px-3 py-1 rounded-full border border-white/10">
+      <div class="absolute top-0 inset-x-0 z-50 p-4 flex justify-between items-start bg-gradient-to-b from-vinho-800/80 to-transparent opacity-100 lg:opacity-30 lg:hover:opacity-100 transition-opacity duration-500">
+        <div class="text-bacalhau/80 text-sm font-medium bg-vinho/30 backdrop-blur px-3 py-1 rounded-full border border-superbock/15">
           {props.index + 1} / {props.photos.length}
         </div>
         <div class="flex gap-3">
@@ -278,7 +278,7 @@ function Lightbox(props: {
           <ShareButton id={() => photo().id} />
           <button
             onClick={props.onClose}
-            class="bg-white/10 hover:bg-white/20 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl leading-none backdrop-blur transition-colors"
+            class="bg-bacalhau/10 hover:bg-bacalhau/20 text-bacalhau rounded-full w-10 h-10 flex items-center justify-center text-2xl leading-none backdrop-blur transition-colors"
             aria-label="Close"
             title="Close (Esc)"
             data-no-drag
@@ -303,7 +303,7 @@ function Lightbox(props: {
           {/* Loading State */}
           <Show when={!loaded()}>
             <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-12 h-12 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+              <div class="w-12 h-12 border-2 border-superbock/20 border-t-superbock rounded-full animate-spin" />
             </div>
           </Show>
           
@@ -334,7 +334,7 @@ function Lightbox(props: {
                 e.stopPropagation();
                 props.onPrev();
               }}
-              class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all opacity-0 hover:opacity-100 sm:opacity-100"
+              class="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-bacalhau/70 hover:text-bacalhau hover:bg-bacalhau/10 rounded-full transition-all opacity-0 hover:opacity-100 sm:opacity-100"
               aria-label="Previous photo"
               data-no-drag
             >
@@ -348,7 +348,7 @@ function Lightbox(props: {
                 e.stopPropagation();
                 props.onNext();
               }}
-              class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10 rounded-full transition-all opacity-0 hover:opacity-100 sm:opacity-100"
+              class="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 flex items-center justify-center text-bacalhau/70 hover:text-bacalhau hover:bg-bacalhau/10 rounded-full transition-all opacity-0 hover:opacity-100 sm:opacity-100"
               aria-label="Next photo"
               data-no-drag
             >
@@ -390,11 +390,11 @@ function CopyUrlButton(props: { id: () => string }) {
           e.stopPropagation();
           copyUrl();
         }}
-        class="bg-white/10 hover:bg-white/20 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl leading-none backdrop-blur transition-colors"
+        class="bg-bacalhau/10 hover:bg-bacalhau/20 text-bacalhau rounded-full w-10 h-10 flex items-center justify-center text-xl leading-none backdrop-blur transition-colors"
         aria-label="Copy photo URL"
         title="Copy URL"
       >
-        <span class={copied() ? "text-green-400" : ""}>⎘</span>
+        <span class={copied() ? "text-superbock" : ""}>⎘</span>
       </button>
     </div>
   );
@@ -428,7 +428,7 @@ function ShareButton(props: { id: () => string }) {
           e.stopPropagation();
           share();
         }}
-        class="bg-white/10 hover:bg-white/20 text-white rounded-full w-10 h-10 flex items-center justify-center text-lg leading-none backdrop-blur transition-colors"
+        class="bg-bacalhau/10 hover:bg-bacalhau/20 text-bacalhau rounded-full w-10 h-10 flex items-center justify-center text-lg leading-none backdrop-blur transition-colors"
         aria-label="Share photo"
         title="Share"
       >

@@ -3,16 +3,12 @@
 @tailwind utilities;
 
 :root {
-  --background-rgb: 10,10,10, 0.95;
-  --foreground-rgb: 255, 255, 255;
+  --vinho: #592532;
+  --superbock: #D49E08;
+  --bacalhau: #FFF0D1;
+  --background-rgb: 26, 15, 20;
+  --foreground-rgb: 255, 240, 209;
 }
-
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background-rgb: 10,10,10, 0.95;
-    --foreground-rgb: 255, 255, 255;
-  }
-} */
 
 body {
   background: rgb(var(--background-rgb));
@@ -25,10 +21,14 @@ html {
 }
 
 ::selection {
-  background-color: rgba(201, 176, 133, 0.3); /* accent-400 with opacity */
-  color: white;
+  background-color: rgba(212, 158, 8, 0.35);
+  color: #FFF0D1;
 }
 
 img { image-rendering: auto; -webkit-font-smoothing: antialiased; }
 
 .container { max-width: 72rem; margin: 0 auto; }
+
+.gradient-portuguese {
+  background: linear-gradient(180deg, #592532 0%, #D49E08 50%, #FFF0D1 100%);
+}

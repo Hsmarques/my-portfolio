@@ -58,8 +58,8 @@ export default function PhotosPage() {
               <button
                 class={`px-3 py-1 rounded-full border ${
                   activeTags().has(tag)
-                    ? "bg-accent-600 border-accent-500 text-white"
-                    : "border-gray-700 text-gray-300 hover:border-gray-600"
+                    ? "bg-vinho border-vinho-400 text-bacalhau"
+                    : "border-superbock/20 text-bacalhau-200 hover:border-superbock/40"
                 }`}
                 onClick={() => toggleTag(tag)}
               >
@@ -73,19 +73,19 @@ export default function PhotosPage() {
             value={query()}
             onInput={(e) => setQuery(e.currentTarget.value)}
             placeholder="Search captions, tags, or gear"
-            class="w-full bg-black/30 border border-gray-700 rounded px-3 py-2 text-gray-200 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent-500"
+            class="w-full bg-vinho/20 border border-superbock/20 rounded px-3 py-2 text-bacalhau-200 placeholder-vinho-300 focus:outline-none focus:ring-2 focus:ring-superbock"
           />
         </div>
       </section> */}
 
       <Show
         when={!remotePhotos.loading}
-        fallback={<p class="text-gray-400">Loading photos…</p>}
+        fallback={<p class="text-bacalhau-300">Loading photos…</p>}
       >
         <Show
           when={filtered().length > 0}
           fallback={
-            <p class="text-gray-400">
+            <p class="text-bacalhau-300">
               {remotePhotos.error
                 ? "Unable to load Cloudinary photos right now."
                 : "No Cloudinary photos found."}
