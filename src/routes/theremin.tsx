@@ -27,6 +27,11 @@ interface ActiveRingHit {
   hit: RingHit;
 }
 
+interface FingerPoint {
+  id: string;
+  point: Point;
+}
+
 const clamp = (value: number, min: number, max: number) =>
   Math.min(Math.max(value, min), max);
 
@@ -73,13 +78,13 @@ const createHandLandmarker = async () => {
   return HandLandmarker.createFromOptions(vision, {
     baseOptions: {
       modelAssetPath: HAND_MODEL_URL,
-      delegate: "GPU",
+      delegate: "CPU",
     },
     runningMode: "VIDEO",
     numHands: 2,
-    minHandDetectionConfidence: 0.55,
-    minHandPresenceConfidence: 0.55,
-    minTrackingConfidence: 0.55,
+    minHandDetectionConfidence: 0.35,
+    minHandPresenceConfidence: 0.35,
+    minTrackingConfidence: 0.35,
   });
 };
 
@@ -98,6 +103,8 @@ export default function ThereminPage() {
   const [status, setStatus] = createSignal("Start the camera, then move an index finger into a note ring.");
   const [stageSize, setStageSize] = createSignal({ width: 1280, height: 720 });
   const [activeHits, setActiveHits] = createSignal(createEmptyHits());
+  const [detectedFingers, setDetectedFingers] = createSignal<FingerPoint[]>([]);
+  const [trackingSummary, setTrackingSummary] = createSignal("No hands detected yet.");
 
   const rings = createMemo<RingLayout[]>(() => {
     const { width, height } = stageSize();
@@ -159,6 +166,8 @@ export default function ThereminPage() {
     videoStream = null;
     lastVideoTime = -1;
     setActiveHits(createEmptyHits());
+    setDetectedFingers([]);
+    setTrackingSummary("No hands detected yet.");
     setIsRunning(false);
   };
 
@@ -169,12 +178,15 @@ export default function ThereminPage() {
 
     const stageRect = stageRef.getBoundingClientRect();
     const nextHits = createEmptyHits();
+    const nextFingers: FingerPoint[] = [];
 
-    for (const landmarks of result.landmarks) {
+    result.landmarks.forEach((landmarks, handIndex) => {
       const indexTip = landmarks[8];
-      if (!indexTip) continue;
+      if (!indexTip) return;
 
       const point = getVideoPoint(indexTip, videoRef, stageRect);
+      nextFingers.push({ id: `hand-${handIndex}`, point });
+
       const hits = rings()
         .map((ring) => ({ ring, hit: getRingHit(point, ring) }))
         .filter((entry): entry is { ring: RingLayout; hit: RingHit } => entry.hit !== null)
@@ -184,7 +196,7 @@ export default function ThereminPage() {
       if (match) {
         nextHits[match.ring.id] = { point, hit: match.hit };
       }
-    }
+    });
 
     (["left", "right"] as const).forEach((ringId) => {
       const active = nextHits[ringId];
@@ -196,6 +208,14 @@ export default function ThereminPage() {
     });
 
     setActiveHits(nextHits);
+    setDetectedFingers(nextFingers);
+    setTrackingSummary(
+      nextFingers.length === 0
+        ? "No hands detected. Keep both hands visible and well lit."
+        : `${nextFingers.length} hand${nextFingers.length === 1 ? "" : "s"} detected. ${
+            Object.values(nextHits).filter(Boolean).length
+          } ring${Object.values(nextHits).filter(Boolean).length === 1 ? "" : "s"} playing.`,
+    );
   };
 
   const runDetectionLoop = () => {
@@ -242,7 +262,7 @@ export default function ThereminPage() {
 
       setStatus("Loading hand tracker...");
       handLandmarker = await createHandLandmarker();
-      setStatus("Move either index finger into a ring to play.");
+      setStatus("Tracking is running. Move both index fingertips onto the note rings.");
       setIsRunning(true);
       runDetectionLoop();
     } catch (error) {
@@ -374,11 +394,31 @@ export default function ThereminPage() {
                 );
               }}
             </For>
+            <For each={detectedFingers()}>
+              {(finger) => (
+                <g>
+                  <circle
+                    cx={finger.point.x}
+                    cy={finger.point.y}
+                    r="18"
+                    fill="rgba(212,158,8,0.16)"
+                    stroke="rgba(255,240,209,0.7)"
+                    stroke-width="2"
+                  />
+                  <circle cx={finger.point.x} cy={finger.point.y} r="4" fill="#FFF0D1" />
+                </g>
+              )}
+            </For>
           </svg>
 
           <section class="absolute left-1/2 top-24 z-10 w-[min(92vw,34rem)] -translate-x-1/2 rounded-2xl border border-superbock-400/20 bg-surface/72 px-5 py-4 text-center shadow-2xl backdrop-blur-md">
             <p class="font-serif text-2xl font-bold tracking-tight text-bacalhau">Hand Theremin</p>
             <p class="mt-2 text-sm leading-6 text-bacalhau-200">{status()}</p>
+            <Show when={isRunning()}>
+              <p class="mt-1 text-xs uppercase tracking-[0.18em] text-superbock-300">
+                {trackingSummary()}
+              </p>
+            </Show>
             <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
               <button
                 type="button"
