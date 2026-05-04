@@ -43,31 +43,40 @@ const createEmptyHits = (): Record<RingId, ActiveRingHit | null> => ({
 const getVideoPoint = (
   landmark: NormalizedLandmark,
   video: HTMLVideoElement,
-  stage: DOMRect,
+  stageRect: DOMRect,
 ): Point => {
+  const videoRect = video.getBoundingClientRect();
   const videoAspect = video.videoWidth / video.videoHeight;
-  const stageAspect = stage.width / stage.height;
+  const elementAspect = videoRect.width / videoRect.height;
 
   if (!Number.isFinite(videoAspect) || videoAspect === 0) {
-    return { x: (1 - landmark.x) * stage.width, y: landmark.y * stage.height };
-  }
-
-  if (videoAspect > stageAspect) {
-    const renderedWidth = stage.height * videoAspect;
-    const offsetX = (stage.width - renderedWidth) / 2;
-
     return {
-      x: offsetX + (1 - landmark.x) * renderedWidth,
-      y: landmark.y * stage.height,
+      x: videoRect.left - stageRect.left + (1 - landmark.x) * videoRect.width,
+      y: videoRect.top - stageRect.top + landmark.y * videoRect.height,
     };
   }
 
-  const renderedHeight = stage.width / videoAspect;
-  const offsetY = (stage.height - renderedHeight) / 2;
+  const content =
+    videoAspect > elementAspect
+      ? {
+          width: videoRect.height * videoAspect,
+          height: videoRect.height,
+          x: (videoRect.width - videoRect.height * videoAspect) / 2,
+          y: 0,
+        }
+      : {
+          width: videoRect.width,
+          height: videoRect.width / videoAspect,
+          x: 0,
+          y: (videoRect.height - videoRect.width / videoAspect) / 2,
+        };
+
+  const unmirroredX = content.x + landmark.x * content.width;
+  const mirroredX = videoRect.width - unmirroredX;
 
   return {
-    x: (1 - landmark.x) * stage.width,
-    y: offsetY + landmark.y * renderedHeight,
+    x: videoRect.left - stageRect.left + mirroredX,
+    y: videoRect.top - stageRect.top + content.y + landmark.y * content.height,
   };
 };
 
