@@ -71,8 +71,7 @@ const getVideoPoint = (
           y: (videoRect.height - videoRect.width / videoAspect) / 2,
         };
 
-  const unmirroredX = content.x + landmark.x * content.width;
-  const mirroredX = videoRect.width - unmirroredX;
+  const mirroredX = content.x + (1 - landmark.x) * content.width;
 
   return {
     x: videoRect.left - stageRect.left + mirroredX,
