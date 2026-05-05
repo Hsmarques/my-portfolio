@@ -3,7 +3,7 @@ import type {
   HandLandmarkerResult,
   NormalizedLandmark,
 } from "@mediapipe/tasks-vision";
-import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
+import { createEffect, createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 
 import {
   createChromaticScale,
@@ -97,7 +97,6 @@ const createHandLandmarker = async () => {
 };
 
 export default function ThereminPage() {
-  let stageRef: HTMLDivElement | undefined;
   let videoRef: HTMLVideoElement | undefined;
   let animationFrame = 0;
   let videoStream: MediaStream | null = null;
@@ -113,6 +112,7 @@ export default function ThereminPage() {
   const [activeHits, setActiveHits] = createSignal(createEmptyHits());
   const [detectedFingers, setDetectedFingers] = createSignal<FingerPoint[]>([]);
   const [trackingSummary, setTrackingSummary] = createSignal("No hands detected yet.");
+  const [stageElement, setStageElement] = createSignal<HTMLDivElement>();
 
   const rings = createMemo<RingLayout[]>(() => {
     const { width, height } = stageSize();
@@ -142,19 +142,21 @@ export default function ThereminPage() {
 
   onMount(() => {
     setIsClient(true);
+  });
 
-    if (!stageRef) return;
+  createEffect(() => {
+    const element = stageElement();
+    if (!element) return;
 
     const updateStageSize = () => {
-      const rect = stageRef?.getBoundingClientRect();
-      if (!rect) return;
+      const rect = element.getBoundingClientRect();
       setStageSize({ width: rect.width, height: rect.height });
     };
 
     updateStageSize();
 
     const observer = new ResizeObserver(updateStageSize);
-    observer.observe(stageRef);
+    observer.observe(element);
     onCleanup(() => observer.disconnect());
   });
 
@@ -182,9 +184,10 @@ export default function ThereminPage() {
   onCleanup(stopEverything);
 
   const applyFrameResult = (result: HandLandmarkerResult) => {
-    if (!stageRef || !videoRef || !audio) return;
+    const stage = stageElement();
+    if (!stage || !videoRef || !audio) return;
 
-    const stageRect = stageRef.getBoundingClientRect();
+    const stageRect = stage.getBoundingClientRect();
     const nextHits = createEmptyHits();
     const nextFingers: FingerPoint[] = [];
 
@@ -292,7 +295,9 @@ export default function ThereminPage() {
         }
       >
         <div
-          ref={stageRef}
+          ref={(element) => {
+            setStageElement(element);
+          }}
           class="relative h-screen w-screen overflow-hidden bg-surface"
           aria-label="Hidden hand controlled theremin"
         >
