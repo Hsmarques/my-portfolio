@@ -12,10 +12,7 @@
     },
     {
       "src": "api/photos.ts",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": ["api/_lib/**", "shared/**"]
-      }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
