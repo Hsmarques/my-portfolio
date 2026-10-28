@@ -1,86 +1,98 @@
-import {
-  Show,
-  For,
-  createMemo,
-  createResource,
-} from "solid-js";
-import { useParams } from "@solidjs/router";
-import type { Photo } from "~/lib/photos";
-import { fetchPhotos } from "~/lib/loadPhotos";
+import { A, useParams } from "@solidjs/router";
+import { Show, createMemo, createResource } from "solid-js";
+
+import PhotoSkeleton from "~/components/PhotoSkeleton";
+import PhotoStage from "~/components/PhotoStage";
+import { fetchPhoto } from "~/lib/loadPhotos";
 
 export default function SinglePhotoPage() {
   const params = useParams();
-  const [remotePhotos] = createResource(fetchPhotos);
-  const photos = createMemo(() => remotePhotos() ?? []);
+  const id = () => decodeURIComponent(params.id || "");
+  const [photo] = createResource(id, (value) => {
+    if (!value) return Promise.reject(new Error("That photograph could not be found."));
+    return fetchPhoto(value);
+  });
 
-  const photo = createMemo(() => photos().find((p: any) => p.id === params.id));
-
-  // Get random related photos (excluding current photo)
-  const relatedPhotos = createMemo(() => {
-    const allPhotos = photos();
-    const currentId = params.id;
-    const filtered = allPhotos.filter((p: Photo) => p.id !== currentId);
-    // Shuffle and take first 6
-    const shuffled = [...filtered].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 6);
+  const seriesLink = createMemo(() => {
+    const current = photo();
+    const slug = current?.seriesSlugs?.[0];
+    return slug ? `/series/${slug}` : "/photos";
   });
 
   return (
-    <main class="mx-auto max-w-7xl px-4 py-6">
+    <main class="min-h-dvh bg-[#F7F6F2] pb-24 pt-28 text-[#181818]">
+      <div class="mx-auto mb-8 flex max-w-5xl items-center justify-between px-6 text-sm">
+        <A
+          href={seriesLink()}
+          class="text-[#181818]/70 underline-offset-4 hover:text-[#181818] hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#181818]"
+        >
+          Back
+        </A>
+      </div>
+
       <Show
-        when={remotePhotos.loading === false}
-        fallback={<p class="text-bacalhau-300">Loading…</p>}
+        when={!photo.loading}
+        fallback={
+          <div class="flex justify-center px-6">
+            <PhotoSkeleton class="h-[65vh] w-full max-w-3xl" />
+          </div>
+        }
       >
         <Show
-          when={photo()}
+          when={!photo.error && photo()}
           fallback={
-            <p class="text-bacalhau-300">
-              {remotePhotos.error
-                ? "Unable to load Cloudinary photos right now."
-                : "Photo not found."}
+            <p class="px-6 text-center text-sm text-[#181818]/70">
+              That photograph could not be found.
             </p>
           }
         >
-          {(p: any) => (
-            <div class="space-y-6">
-              <div class="w-full flex items-center justify-center relative">
-                <img
-                  src={(p() as any).srcFull || p().src}
-                  alt={p().alt}
-                  class="block w-full h-auto max-h-[calc(100dvh-200px)] object-contain rounded-lg"
-                  width={p().width}
-                  height={p().height}
-                  draggable={false}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onDragStart={(e) => e.preventDefault()}
-                />
-              </div>
-
-              {/* Related Photos */}
-              <Show when={relatedPhotos().length > 0}>
-                <section class="mt-12">
-                  <h2 class="text-xl text-bacalhau-200 mb-6">More photos</h2>
-                  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-                    <For each={relatedPhotos()}>
-                      {(relatedPhoto: Photo) => (
-                        <a
-                          href={`/photo/${relatedPhoto.id}`}
-                          class="group block overflow-hidden rounded-lg border border-vinho-700 hover:border-superbock transition-colors focus:outline-none focus:ring-2 focus:ring-superbock"
-                        >
-                          <img
-                            src={relatedPhoto.src}
-                            alt={relatedPhoto.alt}
-                            loading="lazy"
-                            class="w-full h-32 sm:h-40 object-cover"
-                            draggable={false}
-                            onContextMenu={(e) => e.preventDefault()}
-                            onDragStart={(e) => e.preventDefault()}
-                          />
-                        </a>
-                      )}
-                    </For>
-                  </div>
-                </section>
+          {(current) => (
+            <div class="px-6">
+              <PhotoStage photo={current()} />
+              <Show
+                when={
+                  current().exif &&
+                  Object.values(current().exif || {}).some(Boolean)
+                }
+              >
+                <dl class="mx-auto mt-10 grid max-w-xl grid-cols-2 gap-x-8 gap-y-2 text-xs text-[#181818]/60 sm:grid-cols-3">
+                  <Show when={current().exif?.camera}>
+                    <div>
+                      <dt class="sr-only">Camera</dt>
+                      <dd>{current().exif?.camera}</dd>
+                    </div>
+                  </Show>
+                  <Show when={current().exif?.lens}>
+                    <div>
+                      <dt class="sr-only">Lens</dt>
+                      <dd>{current().exif?.lens}</dd>
+                    </div>
+                  </Show>
+                  <Show when={current().exif?.focalLengthMm}>
+                    <div>
+                      <dt class="sr-only">Focal length</dt>
+                      <dd>{current().exif?.focalLengthMm}mm</dd>
+                    </div>
+                  </Show>
+                  <Show when={current().exif?.aperture}>
+                    <div>
+                      <dt class="sr-only">Aperture</dt>
+                      <dd>{current().exif?.aperture}</dd>
+                    </div>
+                  </Show>
+                  <Show when={current().exif?.shutter}>
+                    <div>
+                      <dt class="sr-only">Shutter</dt>
+                      <dd>{current().exif?.shutter}</dd>
+                    </div>
+                  </Show>
+                  <Show when={current().exif?.iso}>
+                    <div>
+                      <dt class="sr-only">ISO</dt>
+                      <dd>ISO {current().exif?.iso}</dd>
+                    </div>
+                  </Show>
+                </dl>
               </Show>
             </div>
           )}

@@ -2,23 +2,24 @@ import { A } from "@solidjs/router";
 
 export default function NotFound() {
   return (
-    <main class="mx-auto max-w-2xl px-4 py-28 text-center text-bacalhau-200">
-      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-superbock">
-        404
+    <main class="mx-auto flex min-h-dvh max-w-xl flex-col justify-center px-6 py-28 text-center text-[#181818]">
+      <p class="text-sm text-[#181818]/60">404</p>
+      <h1 class="mt-4 text-2xl font-medium text-balance">Page not found</h1>
+      <p class="mt-6 text-sm leading-relaxed text-[#181818]/70 text-pretty">
+        That page does not exist. Try the index of series, or head home.
       </p>
-      <h1 class="mt-4 text-5xl font-serif text-bacalhau">Page not found</h1>
-      <p class="mt-6 text-base leading-relaxed text-bacalhau-300">
-        That route does not exist in the Vite+ app shell.
-      </p>
-      <div class="mt-10 flex items-center justify-center gap-4 text-sm font-medium">
-        <A href="/" class="rounded-full border border-superbock/20 px-5 py-2 text-bacalhau hover:bg-superbock/10">
+      <div class="mt-10 flex items-center justify-center gap-6 text-sm">
+        <A
+          href="/"
+          class="underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#181818]"
+        >
           Home
         </A>
         <A
           href="/photos"
-          class="rounded-full border border-superbock/20 px-5 py-2 text-bacalhau hover:bg-superbock/10"
+          class="underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#181818]"
         >
-          Photos
+          Index
         </A>
       </div>
     </main>

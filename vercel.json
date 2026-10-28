@@ -11,7 +11,7 @@
       }
     },
     {
-      "src": "api/**/*.ts",
+      "src": "api/photos.ts",
       "use": "@vercel/node"
     }
   ],
