@@ -8,7 +8,7 @@ import {
   PROVISIONAL_SERIES_BY_ID,
   resolveAlt,
   titleForSeries,
-} from "../shared/seriesConfig";
+} from "../api/_lib/seriesConfig";
 
 const PRODUCTION =
   process.env.PHOTOS_API_PROXY ||

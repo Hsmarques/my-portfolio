@@ -7,4 +7,4 @@ export {
   isFilenameLikeAlt,
   resolveAlt,
   titleForSeries,
-} from "../../shared/seriesConfig";
+} from "../../api/_lib/seriesConfig";
