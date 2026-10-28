@@ -3,7 +3,7 @@ import {
   PROVISIONAL_SERIES_BY_ID,
   resolveAlt,
   titleForSeries,
-} from "./collections";
+} from "./collections.js";
 
 type CloudinaryResource = {
   public_id: string;

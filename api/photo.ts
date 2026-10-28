@@ -1,7 +1,7 @@
 import {
   getPhotoById,
   hasCloudinaryCredentials,
-} from "./_lib/photosCache";
+} from "./_lib/photosCache.js";
 
 export async function GET(request: Request) {
   if (!hasCloudinaryCredentials()) {

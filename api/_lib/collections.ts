@@ -7,4 +7,4 @@ export {
   isFilenameLikeAlt,
   resolveAlt,
   titleForSeries,
-} from "./seriesConfig";
+} from "./seriesConfig.js";
