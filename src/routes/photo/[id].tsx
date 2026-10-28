@@ -82,7 +82,7 @@ export default function SinglePhotoPage() {
                     {captionLine()}
                     <Show when={p().caption}>
                       <span>
-                        {captionLine() ? " — " : ""}
+                        {captionLine() ? ", " : ""}
                         {p().caption}
                       </span>
                     </Show>

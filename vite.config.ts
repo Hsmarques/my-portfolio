@@ -2,7 +2,7 @@ import { fileURLToPath, URL } from "node:url";
 
 import { defineConfig } from "vite-plus";
 import solid from "vite-plugin-solid";
-import { darkroomPhotosMiddleware } from "./scripts/dev-photos-middleware.mjs";
+import { darkroomPhotosMiddleware } from "./scripts/dev-photos-middleware";
 
 export default defineConfig({
   appType: "spa",

@@ -1,8 +1,7 @@
 import {
-  ALT_FALLBACK,
   PROVISIONAL_FEATURED_IDS,
   PROVISIONAL_SERIES_BY_ID,
-  looksLikeFilename,
+  resolveAlt,
   titleForSeries,
 } from "./collections";
 
@@ -236,13 +235,7 @@ function mapResource(
     (typeof resource.image_metadata?.ImageDescription === "string"
       ? resource.image_metadata.ImageDescription
       : undefined);
-  const alt =
-    altRaw &&
-    altRaw !== id &&
-    altRaw !== resource.public_id &&
-    !looksLikeFilename(altRaw)
-      ? altRaw
-      : ALT_FALLBACK;
+  const alt = resolveAlt(altRaw, resource.public_id, id);
 
   const taggedFeatured = tags.some((t) => t.toLowerCase() === "featured");
   const featured = taggedFeatured || PROVISIONAL_FEATURED_IDS.includes(id);

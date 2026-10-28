@@ -1,5 +1,12 @@
 import { A } from "@solidjs/router";
-import { createSignal, onCleanup, onMount, Show, type JSX } from "solid-js";
+import {
+  createEffect,
+  createSignal,
+  onCleanup,
+  onMount,
+  Show,
+  type JSX,
+} from "solid-js";
 import { EASE, IDLE_MS, prefersReducedMotion } from "~/lib/motion";
 
 type Props = {
@@ -13,6 +20,7 @@ type Props = {
 export default function DarkroomChrome(props: Props) {
   const [idleHidden, setIdleHidden] = createSignal(false);
   let timer: number | undefined;
+  let chromeEl: HTMLElement | undefined;
 
   const bump = () => {
     setIdleHidden(false);
@@ -26,7 +34,9 @@ export default function DarkroomChrome(props: Props) {
     if (typeof window === "undefined") return;
     bump();
     const events = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"] as const;
-    events.forEach((event) => window.addEventListener(event, bump, { passive: true }));
+    events.forEach((event) =>
+      window.addEventListener(event, bump, { passive: true }),
+    );
     onCleanup(() => {
       window.clearTimeout(timer);
       events.forEach((event) => window.removeEventListener(event, bump));
@@ -36,14 +46,28 @@ export default function DarkroomChrome(props: Props) {
   const chromeVisible = () =>
     props.visible === false ? false : !idleHidden();
 
+  createEffect(() => {
+    const el = chromeEl;
+    if (!el) return;
+    // Fully inert while faded so it is neither clickable nor tabbable.
+    if (chromeVisible()) el.removeAttribute("inert");
+    else el.setAttribute("inert", "");
+  });
+
   return (
     <header
-      class="pointer-events-none fixed inset-x-0 top-0 z-40 px-4 pt-4 md:px-6"
+      ref={(el) => {
+        chromeEl = el;
+      }}
+      class="fixed inset-x-0 top-0 z-40 px-4 pt-4 md:px-6"
+      classList={{
+        "pointer-events-none": !chromeVisible(),
+      }}
       style={{
         opacity: chromeVisible() ? "1" : "0",
         transition: `opacity 800ms ${EASE}`,
       }}
-      aria-hidden={!chromeVisible()}
+      aria-hidden={chromeVisible() ? undefined : true}
     >
       <div class="pointer-events-auto flex items-start justify-between gap-4 text-sm text-white">
         <A
@@ -61,7 +85,9 @@ export default function DarkroomChrome(props: Props) {
               onClick={() => props.onToggleGrid?.()}
               class="text-[#9B9B9B] hover:text-white transition-colors duration-300 ease-darkroom focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-white/40"
               aria-pressed={props.gridActive ? "true" : "false"}
-              aria-label={props.gridActive ? "Show filmstrip" : "Show contact sheet"}
+              aria-label={
+                props.gridActive ? "Show filmstrip" : "Show contact sheet"
+              }
             >
               {props.gridActive ? "filmstrip" : "grid"}
             </button>

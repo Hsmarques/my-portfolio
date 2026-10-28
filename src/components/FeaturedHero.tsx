@@ -8,46 +8,67 @@ import {
   onMount,
 } from "solid-js";
 import type { Photo } from "~/lib/photos";
-import { CROSSFADE_MS, EASE, IDLE_MS, prefersReducedMotion } from "~/lib/motion";
+import { CROSSFADE_MS, EASE, prefersReducedMotion } from "~/lib/motion";
 import ProtectedImage from "~/components/ProtectedImage";
 import PhotoSkeleton from "~/components/PhotoSkeleton";
 
 type Props = {
   photos: Photo[];
-  onUiVisibilityChange?: (visible: boolean) => void;
 };
+
+const CYCLE_MS = 5200;
 
 export default function FeaturedHero(props: Props) {
   const [index, setIndex] = createSignal(0);
-  const [uiVisible, setUiVisible] = createSignal(true);
+  const [userPaused, setUserPaused] = createSignal(false);
+  const [hoverPaused, setHoverPaused] = createSignal(false);
+  const [focusPaused, setFocusPaused] = createSignal(false);
   const [loaded, setLoaded] = createSignal<Record<string, boolean>>({});
-  let idleTimer: number | undefined;
   let cycleTimer: number | undefined;
 
   const current = createMemo(() => props.photos[index()] ?? props.photos[0]);
+  const canAutoplay = () =>
+    !prefersReducedMotion() && props.photos.length > 1;
+  const isPaused = () =>
+    !canAutoplay() || userPaused() || hoverPaused() || focusPaused();
 
-  const bumpUi = () => {
-    setUiVisible(true);
-    props.onUiVisibilityChange?.(true);
+  const clearCycle = () => {
     if (typeof window === "undefined") return;
-    if (prefersReducedMotion()) return;
-    window.clearTimeout(idleTimer);
-    idleTimer = window.setTimeout(() => {
-      setUiVisible(false);
-      props.onUiVisibilityChange?.(false);
-    }, IDLE_MS);
+    window.clearInterval(cycleTimer);
+    cycleTimer = undefined;
+  };
+
+  const startCycle = () => {
+    if (typeof window === "undefined") return;
+    clearCycle();
+    if (isPaused()) return;
+    cycleTimer = window.setInterval(() => {
+      setIndex((i) => {
+        const len = props.photos.length;
+        return len ? (i + 1) % len : 0;
+      });
+    }, CYCLE_MS);
   };
 
   const go = (next: number) => {
     if (props.photos.length === 0) return;
     const len = props.photos.length;
     setIndex(((next % len) + len) % len);
-    bumpUi();
+    // Restart the autoplay timer after a manual move (WCAG 2.2.2).
+    startCycle();
   };
+
+  createEffect(() => {
+    // Track pause signals so the interval starts/stops correctly.
+    userPaused();
+    hoverPaused();
+    focusPaused();
+    props.photos.length;
+    startCycle();
+  });
 
   onMount(() => {
     if (typeof window === "undefined") return;
-    bumpUi();
 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") {
@@ -59,30 +80,14 @@ export default function FeaturedHero(props: Props) {
       }
     };
 
-    const events = ["mousemove", "mousedown", "keydown", "touchstart"] as const;
-    events.forEach((event) => window.addEventListener(event, bumpUi, { passive: true }));
     window.addEventListener("keydown", onKey);
-
-    if (!prefersReducedMotion() && props.photos.length > 1) {
-      cycleTimer = window.setInterval(() => {
-        setIndex((i) => {
-          const len = props.photos.length;
-          return len ? (i + 1) % len : 0;
-        });
-        bumpUi();
-      }, 5200);
-    }
-
     onCleanup(() => {
-      window.clearTimeout(idleTimer);
-      window.clearInterval(cycleTimer);
-      events.forEach((event) => window.removeEventListener(event, bumpUi));
+      clearCycle();
       window.removeEventListener("keydown", onKey);
     });
   });
 
   createEffect(() => {
-    // Preload neighbours
     const photos = props.photos;
     const i = index();
     [photos[i], photos[i + 1], photos[i - 1]].forEach((photo) => {
@@ -92,7 +97,6 @@ export default function FeaturedHero(props: Props) {
     });
   });
 
-  // Touch swipe
   let touchStartX: number | null = null;
   const onTouchStart = (e: TouchEvent) => {
     touchStartX = e.changedTouches[0]?.clientX ?? null;
@@ -109,69 +113,90 @@ export default function FeaturedHero(props: Props) {
 
   return (
     <section
-      class="relative min-h-[100dvh] w-full bg-[#181818] select-none overflow-hidden"
+      class="flex min-h-[100dvh] w-full flex-col bg-black text-white select-none"
       onContextMenu={(e) => e.preventDefault()}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
+      onMouseEnter={() => setHoverPaused(true)}
+      onMouseLeave={() => setHoverPaused(false)}
+      onFocusIn={() => setFocusPaused(true)}
+      onFocusOut={(e) => {
+        const next = e.relatedTarget as Node | null;
+        if (next && e.currentTarget.contains(next)) return;
+        setFocusPaused(false);
+      }}
       aria-roledescription="carousel"
       aria-label="Featured photographs"
     >
-      <For each={props.photos}>
-        {(photo, i) => (
-          <div
-            class="absolute inset-0 flex items-center justify-center"
-            style={{
-              opacity: i() === index() ? "1" : "0",
-              transition: prefersReducedMotion()
-                ? "none"
-                : `opacity ${CROSSFADE_MS}ms ${EASE}`,
-              "pointer-events": i() === index() ? "auto" : "none",
-            }}
-            aria-hidden={i() !== index()}
-          >
-            <Show when={!loaded()[photo.id]}>
-              <PhotoSkeleton class="absolute inset-8 md:inset-16" />
-            </Show>
-            <ProtectedImage
-              src={photo.srcFull || photo.src}
-              alt={photo.alt}
-              width={photo.width}
-              height={photo.height}
-              class="max-h-[100dvh] max-w-full w-auto h-auto object-contain"
-              loading={i() === 0 ? "eager" : "lazy"}
-              onLoad={() =>
-                setLoaded((prev) => ({ ...prev, [photo.id]: true }))
-              }
-            />
-          </div>
-        )}
-      </For>
+      <div class="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden">
+        <For each={props.photos}>
+          {(photo, i) => (
+            <div
+              class="absolute inset-0 flex items-center justify-center"
+              style={{
+                opacity: i() === index() ? "1" : "0",
+                transition: prefersReducedMotion()
+                  ? "none"
+                  : `opacity ${CROSSFADE_MS}ms ${EASE}`,
+                "pointer-events": i() === index() ? "auto" : "none",
+              }}
+              aria-hidden={i() !== index()}
+            >
+              <Show when={!loaded()[photo.id]}>
+                <PhotoSkeleton class="absolute inset-8 md:inset-16" />
+              </Show>
+              <ProtectedImage
+                src={photo.srcFull || photo.src}
+                alt={photo.alt}
+                width={photo.width}
+                height={photo.height}
+                class="h-auto max-h-full w-full object-contain md:w-auto md:max-w-full"
+                loading={i() === 0 ? "eager" : "lazy"}
+                onLoad={() =>
+                  setLoaded((prev) => ({ ...prev, [photo.id]: true }))
+                }
+              />
+            </div>
+          )}
+        </For>
+      </div>
 
-      <div
-        class="pointer-events-none absolute inset-x-0 bottom-0 z-10 px-4 pb-10 md:px-8 md:pb-14"
-        style={{
-          opacity: uiVisible() ? "1" : "0",
-          transition: `opacity ${CROSSFADE_MS}ms ${EASE}`,
-        }}
-      >
-        <div class="max-w-[680px]">
+      <div class="shrink-0 bg-black px-4 pb-8 pt-6 md:px-8 md:pb-10">
+        <div class="max-w-2xl">
           <p class="text-3xl font-medium text-white text-wrap-balance">
             Coast, street, and the quiet in between.
           </p>
-          <Show when={current()}>
-            {(photo) => (
-              <p class="mt-3 font-mono text-sm text-[#9B9B9B] tabular-nums">
-                {String(index() + 1).padStart(2, "0")} /{" "}
-                {String(props.photos.length).padStart(2, "0")}
-                <Show when={photo().place || photo().year}>
-                  <span>
-                    {" · "}
-                    {[photo().place, photo().year].filter(Boolean).join(", ")}
-                  </span>
-                </Show>
-              </p>
-            )}
-          </Show>
+          <div class="mt-4 flex flex-wrap items-center gap-4">
+            <Show when={current()}>
+              {(photo) => (
+                <p class="font-mono text-sm text-[#9B9B9B] tabular-nums">
+                  {String(index() + 1).padStart(2, "0")} /{" "}
+                  {String(props.photos.length).padStart(2, "0")}
+                  <Show when={photo().place || photo().year}>
+                    <span>
+                      {" · "}
+                      {[photo().place, photo().year].filter(Boolean).join(", ")}
+                    </span>
+                  </Show>
+                </p>
+              )}
+            </Show>
+            <Show when={canAutoplay()}>
+              <button
+                type="button"
+                class="text-sm text-[#9B9B9B] hover:text-white transition-colors duration-300 ease-darkroom focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-white/40"
+                aria-pressed={isPaused() ? "true" : "false"}
+                aria-label={
+                  isPaused()
+                    ? "Play featured slideshow"
+                    : "Pause featured slideshow"
+                }
+                onClick={() => setUserPaused((v) => !v)}
+              >
+                {isPaused() ? "Play" : "Pause"}
+              </button>
+            </Show>
+          </div>
         </div>
       </div>
     </section>

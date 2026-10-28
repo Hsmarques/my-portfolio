@@ -23,12 +23,12 @@ export default function Home() {
   });
 
   return (
-    <main class="bg-[#181818] text-white min-h-[100dvh]">
+    <main class="bg-black text-white min-h-[100dvh]">
       <DarkroomChrome />
       <Show
         when={!payload.loading}
         fallback={
-          <div class="min-h-[100dvh] w-full flex items-center justify-center px-6">
+          <div class="min-h-[100dvh] w-full flex items-center justify-center px-6 bg-black">
             <PhotoSkeleton class="h-[70dvh] w-full max-w-5xl" />
           </div>
         }
@@ -36,7 +36,7 @@ export default function Home() {
         <Show
           when={!payload.error && featured().length > 0}
           fallback={
-            <div class="min-h-[100dvh] w-full flex items-center justify-center px-6 text-center">
+            <div class="min-h-[100dvh] w-full flex items-center justify-center px-6 text-center bg-black">
               <p class="text-sm text-[#9B9B9B] max-w-md text-wrap-pretty">
                 {friendlyErrorMessage(payload.error)}
               </p>
@@ -44,7 +44,9 @@ export default function Home() {
           }
         >
           <FeaturedHero photos={featured()} />
-          <SiteFooter />
+          <div class="bg-[#181818]">
+            <SiteFooter />
+          </div>
         </Show>
       </Show>
     </main>

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* Self-hosted Geist (copied from the geist npm package). Do not use the
-   jsDelivr geist CSS paths — they 404 and fall back to system fonts. */
+   jsDelivr geist CSS paths: they 404 and fall back to system fonts. */
 @font-face {
   font-family: "Geist";
   src: url("/fonts/Geist-Variable.woff2") format("woff2");

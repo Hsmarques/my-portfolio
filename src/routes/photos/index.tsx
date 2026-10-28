@@ -93,6 +93,7 @@ export default function PhotosPage() {
                     title={series.title}
                     photos={series.photos}
                     active={activeSeries() === i()}
+                    onActivate={() => setActiveSeries(i())}
                   />
                 )}
               </For>
