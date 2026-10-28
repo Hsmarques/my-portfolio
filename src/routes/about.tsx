@@ -1,79 +1,65 @@
 import { A } from "@solidjs/router";
-
-import PageHeader from "~/components/PageHeader";
+import Footer from "~/components/Footer";
 
 export default function About() {
   return (
-    <main class="mx-auto max-w-4xl px-4 pt-28 md:pt-32 pb-20 text-bacalhau-200">
-      <PageHeader
-        title="About Hugo"
-        subtitle={<>Developer & Amateur Photographer. Based in the United Kingdom.</>}
-      />
+    <div class="min-h-dvh flex flex-col bg-paper text-ink">
+      <main id="main" class="flex-1 mx-auto max-w-3xl px-4 pt-32 md:pt-40 pb-20">
+        <h1 class="text-5xl md:text-6xl font-semibold tracking-tight text-wrap-balance leading-none mb-10">
+          About
+        </h1>
 
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-12 items-start">
-        <div class="md:col-span-3 space-y-8">
-          <section>
-            <h2 class="text-xl font-serif text-superbock mb-4">Hello</h2>
-            <p class="leading-relaxed text-bacalhau-200 mb-4">
-              I'm an amateur photographer just trying to learn how to take good pictures. Photography is a way for me to disconnect and observe the world a little closer.
-            </p>
-            <p class="leading-relaxed text-bacalhau-200">
-              The photos on this website are simply a collection of my personal favorites—the ones that I feel turned out well. I'm constantly experimenting and trying to improve my craft.
-            </p>
-            <div class="pt-6">
-              <A
-                href="/photos"
-                class="inline-block px-6 py-2 border border-superbock/25 hover:bg-superbock/10 rounded-full text-sm font-medium tracking-wide text-bacalhau transition-colors"
-              >
-                View Gallery
-              </A>
-            </div>
-          </section>
-
-          <section>
-            <h2 class="text-xl font-serif text-superbock mb-6">My Gear</h2>
-            <div class="space-y-6">
-              <div>
-                <h3 class="font-medium text-bacalhau mb-2">Camera Body</h3>
-                <ul class="list-disc list-inside text-bacalhau-300 pl-2">
-                  <li>OM System OM-3</li>
-                </ul>
-              </div>
-              
-              <div>
-                <h3 class="font-medium text-bacalhau mb-2">Lenses</h3>
-                <ul class="list-disc list-inside text-bacalhau-300 pl-2 space-y-1">
-                  <li>M.Zuiko 12–45mm f/4 PRO</li>
-                  <li>OM System 40–150mm f/4 PRO</li>
-                  <li>Panasonic Leica 9mm f/1.7</li>
-                  <li>Olympus 25mm f/1.2</li>
-                  <li>M.Zuiko 45mm f/1.8</li>
-                </ul>
-              </div>
-            </div>
-          </section>
+        <div class="space-y-8 text-base leading-relaxed text-ink/80 text-pretty">
+          <p>
+            I am an amateur photographer learning to see a little more carefully.
+            Photography is a way to disconnect and look closer at quiet places.
+          </p>
+          <p>
+            The photographs here are personal favourites, the frames that felt
+            finished enough to share. I am still experimenting and trying to
+            improve.
+          </p>
         </div>
 
-        <aside class="md:col-span-2 space-y-8">
-          <div class="bg-vinho/30 border border-superbock/15 rounded-lg p-6 backdrop-blur-sm">
-            <h2 class="text-lg font-serif text-bacalhau mb-4">Quick Facts</h2>
-            <ul class="space-y-3 text-sm text-bacalhau-200">
-              <li class="flex justify-between border-b border-superbock/10 pb-2">
-                <span class="text-vinho-300">Genres</span>
-                <span>Landscape, Street, Portrait</span>
-              </li>
-              <li class="flex justify-between border-b border-superbock/10 pb-2">
-                <span class="text-vinho-300">Based in</span>
-                <span>United Kingdom</span>
-              </li>
-              <li class="flex justify-between pb-2">
-                <span class="text-vinho-300">Tech Stack</span>
-                <span class="text-right">Solid, Vite+, Vercel, TS</span>
-              </li>
-            </ul>
+        <section class="mt-16">
+          <h2 class="text-2xl font-semibold tracking-tight mb-6">Gear</h2>
+          <div class="space-y-6 text-ink/80">
+            <div>
+              <h3 class="font-medium text-ink mb-2">Camera</h3>
+              <p>OM System OM-3</p>
+            </div>
+            <div>
+              <h3 class="font-medium text-ink mb-2">Lenses</h3>
+              <ul class="space-y-1">
+                <li>M.Zuiko 12–45mm f/4 PRO</li>
+                <li>OM System 40–150mm f/4 PRO</li>
+                <li>Panasonic Leica 9mm f/1.7</li>
+                <li>Olympus 25mm f/1.2</li>
+                <li>M.Zuiko 45mm f/1.8</li>
+              </ul>
+            </div>
           </div>
+        </section>
+
+        <aside class="mt-16 space-y-3 text-sm text-ink/70">
+          <p>
+            <span class="text-ink/40">Genres</span> Landscape, street, portrait
+          </p>
+          <p>
+            <span class="text-ink/40">Based in</span> United Kingdom
+          </p>
         </aside>
-      </div>
-    </main>
+
+        <div class="mt-12">
+          <A
+            href="/"
+            class="text-sm font-medium underline-offset-4 hover:underline"
+          >
+            View series
+          </A>
+        </div>
+      </main>
+      <Footer />
+    </div>
   );
 }
