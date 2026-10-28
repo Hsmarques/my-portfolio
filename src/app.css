@@ -3,16 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --vinho: #592532;
-  --superbock: #D49E08;
-  --bacalhau: #FFF0D1;
-  --background-rgb: 26, 15, 20;
-  --foreground-rgb: 255, 240, 209;
+  --wall: #f7f6f2;
+  --ink: #181818;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: light;
 }
 
 body {
-  background: rgb(var(--background-rgb));
-  color: rgb(var(--foreground-rgb));
+  background: var(--wall);
+  color: var(--ink);
+  font-family: "Geist Sans", "Geist", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 400;
 }
 
 html {
@@ -20,15 +21,27 @@ html {
   scrollbar-gutter: stable both-edges;
 }
 
-::selection {
-  background-color: rgba(212, 158, 8, 0.35);
-  color: #FFF0D1;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
-img { image-rendering: auto; -webkit-font-smoothing: antialiased; }
+::selection {
+  background-color: rgba(24, 24, 24, 0.16);
+  color: #181818;
+}
 
-.container { max-width: 72rem; margin: 0 auto; }
-
-.gradient-portuguese {
-  background: linear-gradient(180deg, #592532 0%, #D49E08 50%, #FFF0D1 100%);
+img {
+  image-rendering: auto;
+  -webkit-font-smoothing: antialiased;
 }
