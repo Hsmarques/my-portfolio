@@ -2,17 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Self-hosted Geist (copied from the geist npm package). Do not use the
+   jsDelivr geist CSS paths: they 404 and fall back to system fonts. */
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/fonts/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  --vinho: #592532;
-  --superbock: #D49E08;
-  --bacalhau: #FFF0D1;
-  --background-rgb: 26, 15, 20;
-  --foreground-rgb: 255, 240, 209;
+  --darkroom: #181818;
+  --darkroom-muted: #9b9b9b;
+  --darkroom-raised: #1f1f1f;
+  --ease-darkroom: cubic-bezier(0.22, 1, 0.36, 1);
+  --background-rgb: 24, 24, 24;
+  --foreground-rgb: 255, 255, 255;
 }
 
 body {
-  background: rgb(var(--background-rgb));
-  color: rgb(var(--foreground-rgb));
+  background: #181818;
+  color: #ffffff;
+  font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
 }
 
 html {
@@ -21,14 +41,38 @@ html {
 }
 
 ::selection {
-  background-color: rgba(212, 158, 8, 0.35);
-  color: #FFF0D1;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
-img { image-rendering: auto; -webkit-font-smoothing: antialiased; }
+img {
+  image-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+}
 
-.container { max-width: 72rem; margin: 0 auto; }
+.filmstrip::-webkit-scrollbar {
+  display: none;
+}
 
-.gradient-portuguese {
-  background: linear-gradient(180deg, #592532 0%, #D49E08 50%, #FFF0D1 100%);
+.text-wrap-balance {
+  text-wrap: balance;
+}
+
+.text-wrap-pretty {
+  text-wrap: pretty;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
