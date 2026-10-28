@@ -237,11 +237,15 @@ function mapResource(
       ? resource.image_metadata.ImageDescription
       : undefined);
   const alt =
-    altRaw && !looksLikeFilename(altRaw) ? altRaw : ALT_FALLBACK;
+    altRaw &&
+    altRaw !== id &&
+    altRaw !== resource.public_id &&
+    !looksLikeFilename(altRaw)
+      ? altRaw
+      : ALT_FALLBACK;
 
-  const featured =
-    tags.some((t) => t.toLowerCase() === "featured") ||
-    PROVISIONAL_FEATURED_IDS.includes(id);
+  const taggedFeatured = tags.some((t) => t.toLowerCase() === "featured");
+  const featured = taggedFeatured || PROVISIONAL_FEATURED_IDS.includes(id);
 
   const seriesSlug = resolveSeriesSlug(id, resource.public_id, tags);
   const exif = extractExif(resource.image_metadata, context);
@@ -372,14 +376,23 @@ export async function getPhotosPayload(force = false): Promise<PhotosPayload> {
 
   const photos = resources.map((resource) => mapResource(resource, toUrl));
   const series = buildSeries(photos);
-  const featuredIds = photos.filter((p) => p.featured).map((p) => p.id);
+  const byPhotoId = new Map(photos.map((p) => [p.id, p]));
+  const taggedFeatured = photos
+    .filter((p) => p.tags.some((t) => t.toLowerCase() === "featured"))
+    .map((p) => p.id);
+  const provisionalFeatured = PROVISIONAL_FEATURED_IDS.filter((id) =>
+    byPhotoId.has(id),
+  );
+  const featuredIds =
+    taggedFeatured.length > 0
+      ? taggedFeatured
+      : provisionalFeatured.length > 0
+        ? provisionalFeatured
+        : photos.slice(0, Math.min(5, photos.length)).map((p) => p.id);
   const payload: PhotosPayload = {
     photos,
     series,
-    featuredIds:
-      featuredIds.length > 0
-        ? featuredIds
-        : photos.slice(0, Math.min(5, photos.length)).map((p) => p.id),
+    featuredIds,
   };
 
   const byId = new Map<string, Photo>();

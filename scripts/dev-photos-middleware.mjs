@@ -75,7 +75,12 @@ function normalizePhoto(raw) {
     PROVISIONAL_FEATURED_IDS.includes(id);
   const altRaw = raw.alt;
   const alt =
-    altRaw && !looksLikeFilename(altRaw) ? altRaw : ALT_FALLBACK;
+    altRaw &&
+    altRaw !== id &&
+    altRaw !== (raw.publicId || raw.public_id) &&
+    !looksLikeFilename(altRaw)
+      ? altRaw
+      : ALT_FALLBACK;
 
   return {
     id,
@@ -124,15 +129,20 @@ function buildPayload(photos) {
     };
   });
 
-  const featuredIds = photos.filter((p) => p.featured).map((p) => p.id);
+  const byId = new Map(photos.map((p) => [p.id, p]));
+  const featuredIds = PROVISIONAL_FEATURED_IDS.filter((id) => byId.has(id));
+  const taggedFeatured = photos.filter((p) => p.featured).map((p) => p.id);
+  const orderedFeatured =
+    featuredIds.length > 0
+      ? featuredIds
+      : taggedFeatured.length > 0
+        ? taggedFeatured
+        : photos.slice(0, Math.min(5, photos.length)).map((p) => p.id);
 
   return {
     photos,
     series,
-    featuredIds:
-      featuredIds.length > 0
-        ? featuredIds
-        : photos.slice(0, Math.min(5, photos.length)).map((p) => p.id),
+    featuredIds: orderedFeatured,
   };
 }
 
