@@ -2,9 +2,11 @@ import { A } from "@solidjs/router";
 import {
   For,
   Show,
+  createEffect,
   createMemo,
   createResource,
   createSignal,
+  onCleanup,
 } from "solid-js";
 
 import PhotoSkeleton from "~/components/PhotoSkeleton";
@@ -33,12 +35,80 @@ export default function PhotosIndexPage() {
     return entry ? coverFor(entry) : undefined;
   });
 
+  // Desktop cover layers for a true opacity crossfade.
+  const [layerA, setLayerA] = createSignal<Photo | undefined>();
+  const [layerB, setLayerB] = createSignal<Photo | undefined>();
+  const [showA, setShowA] = createSignal(false);
+  const [showB, setShowB] = createSignal(false);
+  const [activeLayer, setActiveLayer] = createSignal<"a" | "b">("a");
+
+  createEffect(() => {
+    const next = activeCover();
+    const duration = fadeDurationMs(reduced());
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    if (!next) {
+      setShowA(false);
+      setShowB(false);
+      if (duration > 0) {
+        timeoutId = setTimeout(() => {
+          setLayerA(undefined);
+          setLayerB(undefined);
+        }, duration);
+      } else {
+        setLayerA(undefined);
+        setLayerB(undefined);
+      }
+      onCleanup(() => {
+        if (timeoutId) clearTimeout(timeoutId);
+      });
+      return;
+    }
+
+    const current = activeLayer() === "a" ? layerA() : layerB();
+    if (current?.id === next.id) {
+      if (activeLayer() === "a") setShowA(true);
+      else setShowB(true);
+      return;
+    }
+
+    if (!current) {
+      setLayerA(next);
+      setActiveLayer("a");
+      setShowB(false);
+      // Next frame so the browser paints opacity 0 before fading in.
+      requestAnimationFrame(() => setShowA(true));
+      return;
+    }
+
+    if (activeLayer() === "a") {
+      setLayerB(next);
+      setActiveLayer("b");
+      requestAnimationFrame(() => {
+        setShowB(true);
+        setShowA(false);
+      });
+    } else {
+      setLayerA(next);
+      setActiveLayer("a");
+      requestAnimationFrame(() => {
+        setShowA(true);
+        setShowB(false);
+      });
+    }
+  });
+
+  const previewDuration = () => fadeDurationMs(reduced());
+
   return (
     <main class="min-h-dvh bg-[#F7F6F2] px-6 pb-24 pt-28 text-[#181818]">
       <div class="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start">
         <div>
           <h1 class="text-2xl font-medium text-balance">Index</h1>
-          <p class="mt-4 max-w-sm text-sm text-[#181818]/70 text-pretty">
+          <p class="mt-4 max-w-sm text-sm text-[#181818]/70 text-pretty lg:hidden">
+            Series from the archive, each with its cover.
+          </p>
+          <p class="mt-4 hidden max-w-sm text-sm text-[#181818]/70 text-pretty lg:block">
             Series from the archive. Hover a name to preview its cover.
           </p>
 
@@ -62,23 +132,40 @@ export default function PhotosIndexPage() {
             >
               <ul class="mt-12 space-y-4">
                 <For each={series()}>
-                  {(entry) => (
-                    <li>
-                      <A
-                        href={`/series/${entry.slug}`}
-                        class="text-sm text-[#181818] underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#181818]"
-                        onMouseEnter={() => setHovered(entry.slug)}
-                        onMouseLeave={() => setHovered(null)}
-                        onFocus={() => setHovered(entry.slug)}
-                        onBlur={() => setHovered(null)}
-                      >
-                        {entry.title}
-                        <span class="ml-3 text-xs text-[#181818]/50 tabular-nums">
-                          {entry.photoIds.length}
-                        </span>
-                      </A>
-                    </li>
-                  )}
+                  {(entry) => {
+                    const cover = () => coverFor(entry);
+                    return (
+                      <li>
+                        <A
+                          href={`/series/${entry.slug}`}
+                          class="group flex items-center gap-4 text-sm text-[#181818] underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#181818] lg:inline-flex lg:gap-0"
+                          onMouseEnter={() => setHovered(entry.slug)}
+                          onMouseLeave={() => setHovered(null)}
+                          onFocus={() => setHovered(entry.slug)}
+                          onBlur={() => setHovered(null)}
+                        >
+                          <Show when={cover()}>
+                            {(photo) => (
+                              <ProtectedImage
+                                src={photo().src}
+                                alt=""
+                                width={photo().width}
+                                height={photo().height}
+                                class="h-14 w-14 shrink-0 object-cover lg:hidden"
+                                aria-hidden="true"
+                              />
+                            )}
+                          </Show>
+                          <span class="min-w-0">
+                            {entry.title}
+                            <span class="ml-3 text-xs text-[#181818]/50 tabular-nums">
+                              {entry.photoIds.length}
+                            </span>
+                          </span>
+                        </A>
+                      </li>
+                    );
+                  }}
                 </For>
               </ul>
             </Show>
@@ -86,24 +173,38 @@ export default function PhotosIndexPage() {
         </div>
 
         <div class="relative hidden min-h-[50vh] lg:block">
-          <Show when={activeCover()} fallback={<div class="h-full" />}>
-            {(cover) => (
-              <div
-                class="sticky top-28"
-                style={{
-                  transition: `opacity ${fadeDurationMs(reduced())}ms ${EASE_OUT}`,
-                }}
-              >
+          <div class="sticky top-28 h-[min(70vh,720px)] w-full">
+            <Show when={layerA()}>
+              {(cover) => (
                 <ProtectedImage
                   src={cover().srcFull || cover().src}
                   alt={cover().alt}
                   width={cover().width}
                   height={cover().height}
-                  class="max-h-[70vh] w-auto max-w-full object-contain"
+                  class="absolute inset-0 m-auto max-h-full w-auto max-w-full object-contain"
+                  style={{
+                    opacity: showA() ? "1" : "0",
+                    transition: `opacity ${previewDuration()}ms ${EASE_OUT}`,
+                  }}
                 />
-              </div>
-            )}
-          </Show>
+              )}
+            </Show>
+            <Show when={layerB()}>
+              {(cover) => (
+                <ProtectedImage
+                  src={cover().srcFull || cover().src}
+                  alt={cover().alt}
+                  width={cover().width}
+                  height={cover().height}
+                  class="absolute inset-0 m-auto max-h-full w-auto max-w-full object-contain"
+                  style={{
+                    opacity: showB() ? "1" : "0",
+                    transition: `opacity ${previewDuration()}ms ${EASE_OUT}`,
+                  }}
+                />
+              )}
+            </Show>
+          </div>
           <Show when={catalog.loading}>
             <PhotoSkeleton class="sticky top-28 h-[60vh] w-full" />
           </Show>

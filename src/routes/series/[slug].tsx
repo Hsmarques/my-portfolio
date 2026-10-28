@@ -1,21 +1,50 @@
-import { A, useParams } from "@solidjs/router";
-import { Show, createMemo, createResource, createSignal } from "solid-js";
+import { A, useParams, useSearchParams } from "@solidjs/router";
+import { Show, createEffect, createMemo, createResource } from "solid-js";
 
 import PhotoSkeleton from "~/components/PhotoSkeleton";
 import PhotoViewer from "~/components/PhotoViewer";
 import { fetchSeries } from "~/lib/loadPhotos";
 
+function parsePhotoIndex(raw: string | string[] | undefined, length: number): number {
+  if (length <= 0) return 0;
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  const n = Number(value);
+  if (!Number.isFinite(n)) return 0;
+  const zeroBased = Math.floor(n) - 1;
+  if (zeroBased < 0) return 0;
+  if (zeroBased >= length) return length - 1;
+  return zeroBased;
+}
+
 export default function SeriesPage() {
   const params = useParams();
+  const [searchParams, setSearchParams] = useSearchParams<{ n?: string }>();
   const slug = () => params.slug || "";
   const [data] = createResource(slug, (value) => {
     if (!value) return Promise.reject(new Error("That series could not be found."));
     return fetchSeries(value);
   });
-  const [index, setIndex] = createSignal(0);
 
   const photos = createMemo(() => data()?.photos ?? []);
   const title = createMemo(() => data()?.series.title);
+  const index = createMemo(() => parsePhotoIndex(searchParams.n, photos().length));
+
+  createEffect(() => {
+    const list = photos();
+    if (list.length === 0) return;
+    const current = index() + 1;
+    const raw = Array.isArray(searchParams.n) ? searchParams.n[0] : searchParams.n;
+    if (String(raw ?? "") === String(current)) return;
+    // Keep shareable place in the URL; clamp invalid values.
+    setSearchParams({ n: String(current) }, { replace: true });
+  });
+
+  const setIndex = (next: number) => {
+    const list = photos();
+    if (list.length === 0) return;
+    const clamped = Math.min(Math.max(next, 0), list.length - 1);
+    setSearchParams({ n: String(clamped + 1) }, { replace: true });
+  };
 
   return (
     <main class="min-h-dvh bg-[#F7F6F2] pb-24 pt-28 text-[#181818]">
@@ -56,7 +85,7 @@ export default function SeriesPage() {
         >
           <PhotoViewer
             photos={photos()}
-            index={Math.min(index(), Math.max(photos().length - 1, 0))}
+            index={index()}
             onIndexChange={setIndex}
             seriesTitle={title()}
           />

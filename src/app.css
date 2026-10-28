@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Geist-Regular.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/Geist-Medium.woff2") format("woff2");
+}
+
 :root {
   --wall: #f7f6f2;
   --ink: #181818;
@@ -12,7 +28,7 @@
 body {
   background: var(--wall);
   color: var(--ink);
-  font-family: "Geist Sans", "Geist", ui-sans-serif, system-ui, sans-serif;
+  font-family: "Geist", ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
 }
 

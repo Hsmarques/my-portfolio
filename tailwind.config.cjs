@@ -51,13 +51,7 @@ module.exports = {
         },
       },
       fontFamily: {
-        sans: [
-          "Geist Sans",
-          "Geist",
-          "ui-sans-serif",
-          "system-ui",
-          "sans-serif",
-        ],
+        sans: ["Geist", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       transitionTimingFunction: {
         out: "cubic-bezier(0.22, 1, 0.36, 1)",
