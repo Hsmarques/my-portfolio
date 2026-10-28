@@ -2,10 +2,11 @@ import { fileURLToPath, URL } from "node:url";
 
 import { defineConfig } from "vite-plus";
 import solid from "vite-plugin-solid";
+import { darkroomPhotosMiddleware } from "./scripts/dev-photos-middleware.mjs";
 
 export default defineConfig({
   appType: "spa",
-  plugins: [solid()],
+  plugins: [solid(), darkroomPhotosMiddleware()],
   resolve: {
     alias: {
       "~": fileURLToPath(new URL("./src", import.meta.url)),

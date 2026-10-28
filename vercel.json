@@ -11,7 +11,11 @@
       }
     },
     {
-      "src": "api/**/*.ts",
+      "src": "api/photos.ts",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "api/photo.ts",
       "use": "@vercel/node"
     }
   ],
@@ -19,6 +23,10 @@
     {
       "src": "/api/photos",
       "dest": "api/photos.ts"
+    },
+    {
+      "src": "/api/photo",
+      "dest": "api/photo.ts"
     },
     {
       "handle": "filesystem"

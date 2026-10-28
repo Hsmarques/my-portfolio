@@ -1,98 +1,105 @@
 import {
+  For,
   Show,
-  createResource,
   createMemo,
+  createResource,
   createSignal,
 } from "solid-js";
-import Gallery from "~/components/Gallery";
-import PageHeader from "~/components/PageHeader";
-import { fetchPhotos, sortPhotos } from "~/lib/loadPhotos";
+import { A } from "@solidjs/router";
+import DarkroomChrome from "~/components/DarkroomChrome";
+import Filmstrip from "~/components/Filmstrip";
+import ContactSheet from "~/components/ContactSheet";
+import SiteFooter from "~/components/SiteFooter";
+import PhotoSkeleton from "~/components/PhotoSkeleton";
+import {
+  fetchPhotosPayload,
+  friendlyErrorMessage,
+} from "~/lib/loadPhotos";
+import type { Photo } from "~/lib/photos";
 
 export default function PhotosPage() {
-  const [activeTags, setActiveTags] = createSignal<Set<string>>(new Set());
-  const [query, setQuery] = createSignal("");
+  const [payload] = createResource(fetchPhotosPayload);
+  const [grid, setGrid] = createSignal(false);
+  const [activeSeries, setActiveSeries] = createSignal(0);
 
-  const [remotePhotos] = createResource(fetchPhotos);
-  const photos = createMemo(() => sortPhotos(remotePhotos() ?? []));
-
-  const toggleTag = (tag: string) => {
-    setActiveTags((prev) => {
-      const next = new Set(prev);
-      if (next.has(tag)) next.delete(tag);
-      else next.add(tag);
-      return next;
-    });
-  };
-
-  const filtered = createMemo(() => {
-    const selected = activeTags();
-    const q = query().trim().toLowerCase();
-    const list = photos();
-
-    return list.filter((p: any) => {
-      const matchesTags =
-        selected.size === 0 ||
-        (p.tags || []).some((t: string) => selected.has(t));
-      const matchesQuery =
-        q === "" ||
-        (p.alt || "").toLowerCase().includes(q) ||
-        (p.tags || []).some((t: string) => t.includes(q)) ||
-        (p.exif?.lens || "").toLowerCase().includes(q) ||
-        (p.exif?.camera || "").toLowerCase().includes(q);
-      return matchesTags && matchesQuery;
-    });
+  const seriesPhotos = createMemo(() => {
+    const data = payload();
+    if (!data) return [] as { title: string; slug: string; photos: Photo[] }[];
+    const byId = new Map(data.photos.map((p) => [p.id, p]));
+    return data.series.map((s) => ({
+      title: s.title,
+      slug: s.slug,
+      photos: s.photoIds.map((id) => byId.get(id)).filter(Boolean) as Photo[],
+    }));
   });
 
+  const allPhotos = createMemo(() => payload()?.photos ?? []);
+
   return (
-    <main class="mx-auto max-w-7xl px-4 pt-28 md:pt-32 pb-8">
-      <PageHeader
-        title="Photography"
-        subtitle={<>A selection of my recent work.</>}
+    <main class="bg-[#181818] text-white min-h-[100dvh] pt-16">
+      <DarkroomChrome
+        showGridToggle
+        gridActive={grid()}
+        onToggleGrid={() => setGrid((v) => !v)}
       />
 
-      {/* Labels and search section - WIP, hidden for now */}
-      {/* <section class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-        <div class="flex flex-wrap gap-2">
-          <For each={allTags}>
-            {(tag) => (
-              <button
-                class={`px-3 py-1 rounded-full border ${
-                  activeTags().has(tag)
-                    ? "bg-vinho border-vinho-400 text-bacalhau"
-                    : "border-superbock/20 text-bacalhau-200 hover:border-superbock/40"
-                }`}
-                onClick={() => toggleTag(tag)}
-              >
-                #{tag}
-              </button>
-            )}
-          </For>
-        </div>
-        <div class="w-full md:w-64">
-          <input
-            value={query()}
-            onInput={(e) => setQuery(e.currentTarget.value)}
-            placeholder="Search captions, tags, or gear"
-            class="w-full bg-vinho/20 border border-superbock/20 rounded px-3 py-2 text-bacalhau-200 placeholder-vinho-300 focus:outline-none focus:ring-2 focus:ring-superbock"
-          />
-        </div>
-      </section> */}
-
       <Show
-        when={!remotePhotos.loading}
-        fallback={<p class="text-bacalhau-300">Loading photos…</p>}
+        when={!payload.loading}
+        fallback={
+          <div class="px-4 md:px-6 space-y-8">
+            <PhotoSkeleton class="h-8 w-40" />
+            <PhotoSkeleton class="h-[60dvh] w-full" />
+          </div>
+        }
       >
         <Show
-          when={filtered().length > 0}
+          when={!payload.error && allPhotos().length > 0}
           fallback={
-            <p class="text-bacalhau-300">
-              {remotePhotos.error
-                ? "Unable to load Cloudinary photos right now."
-                : "No Cloudinary photos found."}
-            </p>
+            <div class="px-6 py-24 text-center">
+              <p class="text-sm text-[#9B9B9B]">
+                {friendlyErrorMessage(payload.error)}
+              </p>
+            </div>
           }
         >
-          <Gallery photos={filtered()} />
+          <div class="px-4 md:px-6 mb-8">
+            <h1 class="text-sm font-medium text-white">Index</h1>
+            <p class="mt-2 text-sm text-[#9B9B9B] max-w-md text-wrap-pretty">
+              Series from the archive. Open a strip, or switch to the contact sheet.
+            </p>
+            <nav class="mt-6 flex flex-wrap gap-4 text-sm" aria-label="Series">
+              <For each={seriesPhotos()}>
+                {(series, i) => (
+                  <A
+                    href={`/series/${series.slug}`}
+                    class="text-[#9B9B9B] hover:text-white transition-colors duration-300 ease-darkroom focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-white/40"
+                    onFocus={() => setActiveSeries(i())}
+                  >
+                    {series.title}
+                  </A>
+                )}
+              </For>
+            </nav>
+          </div>
+
+          <Show
+            when={!grid()}
+            fallback={<ContactSheet photos={allPhotos()} />}
+          >
+            <div class="space-y-16 pb-8">
+              <For each={seriesPhotos()}>
+                {(series, i) => (
+                  <Filmstrip
+                    title={series.title}
+                    photos={series.photos}
+                    active={activeSeries() === i()}
+                  />
+                )}
+              </For>
+            </div>
+          </Show>
+
+          <SiteFooter />
         </Show>
       </Show>
     </main>
