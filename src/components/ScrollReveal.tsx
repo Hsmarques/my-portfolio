@@ -4,6 +4,7 @@ import {
   onCleanup,
   onMount,
 } from "solid-js";
+import { Dynamic } from "solid-js/web";
 
 type ScrollRevealProps = {
   children: JSX.Element;
@@ -15,7 +16,6 @@ type ScrollRevealProps = {
  * Rise 32px + fade once on scroll (700ms). Reduced motion: fade only.
  */
 export default function ScrollReveal(props: ScrollRevealProps) {
-  const Tag = props.as || "div";
   let ref: HTMLElement | undefined;
   const [visible, setVisible] = createSignal(false);
   const [reduceMotion, setReduceMotion] = createSignal(false);
@@ -50,7 +50,8 @@ export default function ScrollReveal(props: ScrollRevealProps) {
   });
 
   return (
-    <Tag
+    <Dynamic
+      component={props.as || "div"}
       ref={(el: HTMLElement) => {
         ref = el;
       }}
@@ -63,6 +64,6 @@ export default function ScrollReveal(props: ScrollRevealProps) {
       } transition-[opacity,transform] duration-700 ease-photo motion-reduce:translate-y-0`}
     >
       {props.children}
-    </Tag>
+    </Dynamic>
   );
 }
