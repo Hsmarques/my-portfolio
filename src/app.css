@@ -2,6 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Self-hosted Geist (copied from the geist npm package). Do not use the
+   jsDelivr geist CSS paths — they 404 and fall back to system fonts. */
+@font-face {
+  font-family: "Geist";
+  src: url("/fonts/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/fonts/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --darkroom: #181818;
   --darkroom-muted: #9b9b9b;
