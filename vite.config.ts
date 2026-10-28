@@ -3,9 +3,11 @@ import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite-plus";
 import solid from "vite-plugin-solid";
 
+import { devApiPlugin } from "./scripts/dev-api-plugin";
+
 export default defineConfig({
   appType: "spa",
-  plugins: [solid()],
+  plugins: [solid(), devApiPlugin()],
   resolve: {
     alias: {
       "~": fileURLToPath(new URL("./src", import.meta.url)),

@@ -11,6 +11,7 @@ import Blog from "~/routes/blog/index";
 import Home from "~/routes/index";
 import SinglePhotoPage from "~/routes/photo/[id]";
 import PhotosPage from "~/routes/photos/index";
+import SeriesPage from "~/routes/series/[slug]";
 import SynthPage from "~/routes/synth";
 import ThereminPage from "~/routes/theremin";
 import Homepage3 from "~/routes/homepage3";
@@ -31,11 +32,13 @@ export default function App() {
       )}
     >
       <Route path="/" component={Home} />
+      <Route path="/series/:slug" component={SeriesPage} />
       <Route path="/photos" component={PhotosPage} />
       <Route path="/photo/:id" component={SinglePhotoPage} />
+      <Route path="/about" component={About} />
+      {/* Kept for direct URL access; unlinked from the photo site nav */}
       <Route path="/blog" component={Blog} />
       <Route path="/blog/:slug" component={BlogPost} />
-      <Route path="/about" component={About} />
       <Route path="/synth" component={SynthPage} />
       <Route path="/theremin" component={ThereminPage} />
       <Route path="/homepage3" component={Homepage3} />

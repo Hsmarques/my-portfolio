@@ -21,6 +21,10 @@
       "dest": "api/photos.ts"
     },
     {
+      "src": "/api/collections",
+      "dest": "api/collections.ts"
+    },
+    {
       "handle": "filesystem"
     },
     {

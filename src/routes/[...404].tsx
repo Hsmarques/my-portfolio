@@ -1,26 +1,33 @@
 import { A } from "@solidjs/router";
+import Footer from "~/components/Footer";
 
 export default function NotFound() {
   return (
-    <main class="mx-auto max-w-2xl px-4 py-28 text-center text-bacalhau-200">
-      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-superbock">
-        404
-      </p>
-      <h1 class="mt-4 text-5xl font-serif text-bacalhau">Page not found</h1>
-      <p class="mt-6 text-base leading-relaxed text-bacalhau-300">
-        That route does not exist in the Vite+ app shell.
-      </p>
-      <div class="mt-10 flex items-center justify-center gap-4 text-sm font-medium">
-        <A href="/" class="rounded-full border border-superbock/20 px-5 py-2 text-bacalhau hover:bg-superbock/10">
-          Home
-        </A>
-        <A
-          href="/photos"
-          class="rounded-full border border-superbock/20 px-5 py-2 text-bacalhau hover:bg-superbock/10"
-        >
-          Photos
-        </A>
-      </div>
-    </main>
+    <div class="min-h-dvh flex flex-col bg-paper text-ink">
+      <main id="main" class="flex-1 mx-auto max-w-xl px-4 pt-40 pb-24 text-center">
+        <p class="text-sm text-ink/40 mb-4">404</p>
+        <h1 class="text-5xl font-semibold tracking-tight leading-none">
+          Page not found
+        </h1>
+        <p class="mt-6 text-base text-ink/60 text-pretty">
+          That page is not in this book. Try the series list instead.
+        </p>
+        <div class="mt-10 flex items-center justify-center gap-6 text-sm font-medium">
+          <A
+            href="/"
+            class="underline-offset-4 hover:underline"
+          >
+            Series
+          </A>
+          <A
+            href="/about"
+            class="underline-offset-4 hover:underline"
+          >
+            About
+          </A>
+        </div>
+      </main>
+      <Footer />
+    </div>
   );
 }
